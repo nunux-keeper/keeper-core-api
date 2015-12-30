@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+  <body>
+    <h1>Redirecting...</h1>
+    <script>
+window.onload = function() {
+  function receiveMessage(e) {
+    if (e.data === 'token') {
+      e.source.postMessage('<%= token %>', e.origin);
+    }
+  }
+  window.addEventListener('message', receiveMessage);
+}
+    </script>
+  </body>
+</html>

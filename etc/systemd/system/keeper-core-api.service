@@ -1,0 +1,16 @@
+[Unit]
+Description=Nunux Keeper core API service
+After=docker.service
+Requires=docker.service
+
+[Service]
+ExecStartPre=-/usr/bin/docker kill %p
+ExecStartPre=-/usr/bin/docker rm %p
+ExecStart=/usr/bin/docker run --rm --name %p \
+    --env-file /etc/environment \
+    --env-file /etc/default/%p \
+    --link mongodb:mongodb \
+    -p 127.0.0.1:3000:3000 \
+    blab/blab-core-api
+ExecStop=/usr/bin/docker stop %p
+
