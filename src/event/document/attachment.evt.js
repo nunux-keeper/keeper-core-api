@@ -1,6 +1,7 @@
 'use strict';
 
-const logger   = require('../../helper').logger,
+const _        = require('lodash'),
+      logger   = require('../../helper').logger,
       storage  = require('../../storage'),
       download = require('../../downloader');
 
@@ -8,9 +9,12 @@ const logger   = require('../../helper').logger,
  * Download document's attachments.
  */
 const downloadAttachments = function(doc) {
-  if (doc.attachments && doc.attachments.length) {
+  const attachments = _.filter(doc.attachments, function(attachment) {
+    return attachment.origin;
+  });
+  if (attachments && attachments.length) {
     logger.debug('Downloading document attachments...');
-    download(doc.attachments, storage.getContainerName(doc.owner, 'documents', doc.id, 'files'));
+    download(attachments, storage.getContainerName(doc.owner, 'documents', doc.id, 'files'));
   }
 };
 

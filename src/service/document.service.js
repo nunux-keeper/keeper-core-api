@@ -1,12 +1,38 @@
 'use strict';
 
-const _          = require('lodash'),
-      when       = require('when'),
+const when       = require('when'),
       logger     = require('../helper').logger,
       errors     = require('../helper').errors,
+      storage    = require('../storage'),
       extractor  = require('../extractor'),
       documentDao  = require('../dao').document,
       eventHandler = require('../event');
+
+/**
+ * Process document attachments.
+ * @param {Object} doc The document
+ * @return {Promise} processing promise
+ */
+const processAttachments = function(doc) {
+  let tasks = [];
+  doc.attachments.forEach(function(attachment) {
+    if (attachment.stream) {
+      const container = storage.getContainerName(doc.owner, 'documents', doc.id, 'files');
+      tasks.push(storage.store(container, attachment.key, attachment.stream)
+        .then(function() {
+          delete attachment.stream;
+          return Promise.resolve(attachment);
+        }));
+    }
+  });
+  if (tasks.length) {
+    return Promise.all(tasks).then(function() {
+      return Promise.resolve(doc);
+    });
+  } else {
+    return Promise.resolve(doc);
+  }
+};
 
 /**
  * Document services.
@@ -56,17 +82,13 @@ DocumentService.create = function(doc) {
       //logger.debug('Document extracted: %j', _doc);
       return documentDao.create(_doc);
     }).then(function(_doc) {
-      // Remove attachments stream property from result
-      let newDoc = _.omit(_doc, 'attachments');
-      newDoc.attachments = [];
-      _doc.attachments.forEach(function(attachment) {
-        newDoc.attachments.push(_.omit(attachment, 'stream'));
-      });
-
-      logger.info('Document created: %j', newDoc);
+      // Process attachments (streams)
+      return processAttachments(_doc);
+    }).then(function(_doc) {
+      logger.info('Document created: %j', _doc);
       // Broadcast document creation event.
       eventHandler.document.emit('create', _doc);
-      return Promise.resolve(newDoc);
+      return Promise.resolve(_doc);
     });
 };
 

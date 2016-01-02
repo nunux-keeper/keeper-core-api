@@ -61,7 +61,7 @@ module.exports = {
         });
       });
     } else {
-      logger.debug('Extracting content form the document...', doc.content);
+      logger.debug('Extracting content form the document...');
       return extractContent(doc);
     }
   }

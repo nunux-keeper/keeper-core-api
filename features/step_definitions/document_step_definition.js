@@ -33,13 +33,28 @@ module.exports = function() {
     };
     attrs.raw().forEach(function(attr) {
       const prop = attr[0], value = attr[1];
-      doc[prop] = value;
+      if (prop === 'files' || prop === 'labels') {
+        if (doc[prop]) {
+          doc[prop].push(value);
+        } else {
+          doc[prop] = [value];
+        }
+      } else {
+        doc[prop] = value;
+      }
     });
-    request(app)
-      .post('/v2/document')
-      .send(doc)
-      .set('Content-Type', 'application/json')
-      .set('X-Api-Token', this.token)
+    const req = request(app).post('/v2/document');
+    if (doc.files) {
+      const files = doc.files;
+      delete doc.files;
+      req.field('document', JSON.stringify(doc));
+      files.forEach(function(file) {
+        req.attach('files', file);
+      });
+    } else {
+      req.send(doc).set('Content-Type', 'application/json');
+    }
+    req.set('X-Api-Token', this.token)
       .expect('Content-Type', /json/)
       .expect(function(res) {
         expect(res.status).to.equals(201);
@@ -104,31 +119,9 @@ module.exports = function() {
     .end(callback);
   });
 
-  this.Then(/^I should retrieve the document (\d+)(?:st|nd|rd|th) attachment$/, function (index, callback) {
-    expect(this.myDocument).to.not.be.undefined;
-    expect(this.myDocument.attachments).to.not.be.undefined;
-    expect(this.myDocument.attachments).to.have.length.of.at.least(index);
-    const attachment = this.myDocument.attachments[index - 1];
-    request(app)
-      .head('/v2/document/' + this.myDocument.id + '/files/' + attachment.key)
-      .set('X-Api-Token', this.token)
-      .expect('Content-Type', attachment.contentType)
-      .expect(200, callback);
-  });
-
   this.Then(/^I should have "([^"]*)" into the document (title|content|contentType)$/, function (value, attr, callback) {
     expect(this.myDocument).to.not.be.undefined;
     expect(this.myDocument[attr]).to.equals(value);
-    callback();
-  });
-
-  this.Then(/^I should have (\d+) attachment\(s\) of "([^"]*)" into the document$/, function (nb, type, callback) {
-    expect(this.myDocument).to.not.be.undefined;
-    expect(this.myDocument.attachments).to.not.be.undefined;
-    expect(this.myDocument.attachments).to.have.length(nb);
-    this.myDocument.attachments.forEach(function(attachment) {
-      expect(attachment.contentType).to.equal(type);
-    });
     callback();
   });
 

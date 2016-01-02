@@ -2,7 +2,8 @@
 
 const os         = require('os'),
       path       = require('path'),
-      multiparty = require('multiparty');
+      multiparty = require('multiparty'),
+      logger     = require('../helper').logger;
 
 const uploadDir = process.env.APP_VAR_DIR ? path.join(process.env.APP_VAR_DIR, 'upload') : os.tmpdir();
 
@@ -25,6 +26,13 @@ module.exports = function() {
       });
       form.on('field', function(name, value) {
         req.fields[name] = value;
+        if (name === 'document') {
+          try {
+            req.body = JSON.parse(value);
+          } catch(e) {
+            logger.error('Unable to parse document field.', e);
+          }
+        }
       });
       form.on('close', function() {
         next();

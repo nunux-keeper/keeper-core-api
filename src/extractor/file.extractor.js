@@ -13,9 +13,9 @@ var fs     = require('fs'),
 var addAttachment = function(doc, file) {
   logger.debug('Add file attachment %s to document...', file.originalFilename);
   doc.attachments.push({
-    key: hash.hashFilename(file.name),
+    key: hash.hashFilename(file.originalFilename),
     stream: fs.createReadStream(file.path),
-    contentType: file.type
+    contentType: file.headers['content-type']
   });
   return doc;
 };
@@ -34,7 +34,7 @@ module.exports = {
     if (doc.files) {
       logger.debug('Using File extractor.');
       doc.files.forEach(function(file) {
-        addAttachment(doc, doc.files[file]);
+        addAttachment(doc, file);
       });
       delete doc.files;
     }
