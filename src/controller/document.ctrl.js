@@ -38,7 +38,7 @@ module.exports = {
   create: function(req, res, next) {
     req.sanitizeBody('title').trim();
     req.checkBody('title', 'Invalid title').notEmpty().isLength(2, 128);
-    req.checkBody('origin', 'Invalid link').optional().isURL();
+    req.checkBody('origin', 'Invalid link').optional().isURL({require_valid_protocol: false});
     req.checkBody('contentType', 'Invalid content type').optional().isSupportedContentType();
     const validationErrors = req.validationErrors(true);
     if (validationErrors) {

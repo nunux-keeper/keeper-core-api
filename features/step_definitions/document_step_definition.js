@@ -14,7 +14,7 @@ const expectDocument = function(doc, expected) {
       'id', 'title', 'content', 'contentType', 'date', 'labels', '_links'
       );
   if (expected) {
-    const doNotCompare = ['_links', 'date', 'attachments', 'labels'];
+    const doNotCompare = ['_links', 'date', 'attachments', 'labels', 'origin'];
     //console.log('EXPECTED', expected);
     for (let prop in expected) {
       if (expected.hasOwnProperty(prop)) {
@@ -27,7 +27,7 @@ const expectDocument = function(doc, expected) {
 };
 
 module.exports = function() {
-  this.When(/^I create the following document:$/, function (attrs, callback) {
+  this.When(/^I create the following document:$/, {timeout: 10 * 1000}, function (attrs, callback) {
     const doc = {
       title: chance.sentence({words: 3})
     };
@@ -119,7 +119,7 @@ module.exports = function() {
     .end(callback);
   });
 
-  this.Then(/^I should have "([^"]*)" into the document (title|content|contentType)$/, function (value, attr, callback) {
+  this.Then(/^I should have "([^"]*)" into the document (title|content|contentType|origin)$/, function (value, attr, callback) {
     expect(this.myDocument).to.not.be.undefined;
     expect(this.myDocument[attr]).to.equals(value);
     callback();

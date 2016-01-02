@@ -1,12 +1,12 @@
 'use strict';
 
-const fs         = require('fs'),
-      logger     = require('../../helper').logger,
-      errors     = require('../../helper').errors,
-      hash       = require('../../helper').hash,
-      validators = require('../../helper').validators,
-      thumbnail  = require('../../helper').thumbnail,
-      request    = require('../../helper').request;
+const fs        = require('fs'),
+      validator = require('validator'),
+      logger    = require('../../helper').logger,
+      errors    = require('../../helper').errors,
+      hash      = require('../../helper').hash,
+      thumbnail = require('../../helper').thumbnail,
+      request   = require('../../helper').request;
 
 /**
  * Bookmark extractor.
@@ -20,8 +20,8 @@ module.exports = {
    */
   extract: function(doc) {
     logger.debug('Using Bookmark extractor.');
-    doc.origin = doc.origin.substring(10);
-    if (!validators.isURL(doc.origin)) {
+    doc.origin = doc.origin.substring(9);
+    if (!validator.isURL(doc.origin)) {
       return Promise.reject(new errors.BadRequest('URL not valid: ' + doc.origin));
     }
 
@@ -59,6 +59,6 @@ module.exports = {
    * @return {Boolean} True if the URL is a bookmark
    */
   detect: function(doc) {
-    return doc.origin.lastIndexOf('bookmark://', 0) === 0;
+    return doc.origin.lastIndexOf('bookmark+http', 0) === 0;
   }
 };
