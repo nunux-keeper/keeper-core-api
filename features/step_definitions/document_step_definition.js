@@ -99,19 +99,23 @@ module.exports = function() {
   });
 
 
-  this.Then(/^I should (not retrieve|retrieve) the document$/, function (get, callback) {
+  this.Then(/^I should (not retrieve|retrieve) the (raw document|document)$/, function (get, raw, callback) {
     expect(this.myDocument).to.not.be.undefined;
     const shoulBeRetrieve = get === 'retrieve';
+    const shoulBeRaw = raw === 'raw document';
+    const suffix = shoulBeRaw ? '?raw' : '';
     request(app)
-      .get('/v2/document/' + this.myDocument.id)
-      .set('Content-Type', 'application/json')
+      .get('/v2/document/' + this.myDocument.id + suffix)
       .set('X-Api-Token', this.token)
-      .expect('Content-Type', /json/)
+      .expect('Content-Type', shoulBeRaw ? this.myDocument.contentType : /json/)
       .expect(function(res) {
         if (shoulBeRetrieve) {
           expect(res.status).to.equals(200);
-          const doc = res.body;
-          expectDocument(doc, this.myDocument);
+          if (shoulBeRaw) {
+            expect(res.text).to.equals(this.myDocument.content);
+          } else {
+            expectDocument(res.body, this.myDocument);
+          }
         } else {
           expect(res.status).to.be.within(401, 404);
         }

@@ -10,15 +10,20 @@ module.exports = {
    * Get a document.
    */
   get: function(req, res, next) {
-    // Enrich status with computed properties...
-    decorator.decorate(
-      req.requestData.document,
-      decorator.document.privacy()
-    )
-    .then(function(document) {
-      const resource = new hal.Resource(document, req.url);
-      res.json(resource);
-    }, next);
+    if (req.query.raw !== undefined) {
+      res.set('Content-Type', req.requestData.document.contentType);
+      res.send(req.requestData.document.content);
+    } else {
+      // Enrich status with computed properties...
+      decorator.decorate(
+          req.requestData.document,
+          decorator.document.privacy()
+          )
+        .then(function(document) {
+          const resource = new hal.Resource(document, req.url);
+          res.json(resource);
+        }, next);
+    }
   },
 
   /**

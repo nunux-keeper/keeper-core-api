@@ -5,8 +5,9 @@ Feature: Document API
         Given I am a valid user with the uid "test"
         When I create the following document:
             | content | Simple text document |
-            | contentType | text/plain |
+            | contentType | text/plain; charset=utf-8 |
         Then I should retrieve the document
+        And  I should retrieve the raw document
         Given I am a valid user with the uid "other"
         Then I should not retrieve the document
 
