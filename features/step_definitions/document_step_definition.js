@@ -9,13 +9,13 @@ var app = require('../../src/app'),
 
 
 const expectDocument = function(doc, expected) {
+  //console.log('ACTUAL', doc);
   expect(doc).to.contain.keys(
-      'id', 'title', 'content', 'contentType', 'date', 'origin', '_links'
+      'id', 'title', 'content', 'contentType', 'date', 'labels', '_links'
       );
-  console.log('ACTUAL', doc);
   if (expected) {
     const doNotCompare = ['_links', 'date', 'attachments', 'labels'];
-    console.log('EXPECTED', expected);
+    //console.log('EXPECTED', expected);
     for (let prop in expected) {
       if (expected.hasOwnProperty(prop)) {
         if (doNotCompare.indexOf(prop) < 0) {
@@ -27,14 +27,14 @@ const expectDocument = function(doc, expected) {
 };
 
 module.exports = function() {
-
-  this.When(/^I create a random text document$/, function (callback) {
+  this.When(/^I create the following document:$/, function (attrs, callback) {
     const doc = {
-      title: chance.sentence({words: 5}),
-      content: chance.paragraph(),
-      contentType: 'text/plain',
-      origin: chance.url()
+      title: chance.sentence({words: 3})
     };
+    attrs.raw().forEach(function(attr) {
+      const prop = attr[0], value = attr[1];
+      doc[prop] = value;
+    });
     request(app)
       .post('/v2/document')
       .send(doc)
@@ -50,6 +50,39 @@ module.exports = function() {
       }.bind(this))
     .end(callback);
   });
+
+  this.When(/^I update the document with:$/, function (attrs, callback) {
+    expect(this.myDocument).to.not.be.undefined;
+    const update = {};
+    attrs.raw().forEach(function(attr) {
+      const prop = attr[0], value = attr[1];
+      update[prop] = value;
+    });
+    request(app)
+      .put('/v2/document/' + this.myDocument.id)
+      .send(update)
+      .set('Content-Type', 'application/json')
+      .set('X-Api-Token', this.token)
+      .expect('Content-Type', /json/)
+      .expect(function(res) {
+        expect(res.status).to.equals(200);
+        const updatedDoc = res.body;
+        expectDocument(updatedDoc, update);
+        expect(updatedDoc.date).not.to.be.null;
+        this.myDocument = updatedDoc;
+      }.bind(this))
+    .end(callback);
+  });
+
+  this.When(/^I delete the document$/, function (callback) {
+    expect(this.myDocument).to.not.be.undefined;
+    request(app)
+      .delete('/v2/document/' + this.myDocument.id)
+      .set('Content-Type', 'application/json')
+      .set('X-Api-Token', this.token)
+      .expect(204, callback);
+  });
+
 
   this.Then(/^I should (not retrieve|retrieve) the document$/, function (get, callback) {
     expect(this.myDocument).to.not.be.undefined;
@@ -71,41 +104,32 @@ module.exports = function() {
     .end(callback);
   });
 
-  this.When(/^I update the document (title|content) with "([^"]*)"$/, function (attr, value, callback) {
+  this.Then(/^I should retrieve the document (\d+)(?:st|nd|rd|th) attachment$/, function (index, callback) {
     expect(this.myDocument).to.not.be.undefined;
-    const update = {};
-    update[attr] = value;
+    expect(this.myDocument.attachments).to.not.be.undefined;
+    expect(this.myDocument.attachments).to.have.length.of.at.least(index);
+    const attachment = this.myDocument.attachments[index - 1];
     request(app)
-      .put('/v2/document/' + this.myDocument.id)
-      .send(update)
-      .set('Content-Type', 'application/json')
+      .head('/v2/document/' + this.myDocument.id + '/files/' + attachment.key)
       .set('X-Api-Token', this.token)
-      .expect('Content-Type', /json/)
-      .expect(function(res) {
-        expect(res.status).to.equals(200);
-        const updatedDoc = res.body;
-        expectDocument(updatedDoc, update);
-        expect(updatedDoc.date).not.to.be.null;
-        this.myDocument = updatedDoc;
-      }.bind(this))
-    .end(callback);
+      .expect('Content-Type', attachment.contentType)
+      .expect(200, callback);
   });
 
-  this.Then(/^I should have "([^"]*)" into the document (title|content)$/, function (value, attr, callback) {
+  this.Then(/^I should have "([^"]*)" into the document (title|content|contentType)$/, function (value, attr, callback) {
     expect(this.myDocument).to.not.be.undefined;
     expect(this.myDocument[attr]).to.equals(value);
     callback();
   });
 
-  this.When(/^I delete the document$/, function (callback) {
+  this.Then(/^I should have (\d+) attachment\(s\) of "([^"]*)" into the document$/, function (nb, type, callback) {
     expect(this.myDocument).to.not.be.undefined;
-    request(app)
-      .delete('/v2/document/' + this.myDocument.id)
-      .set('Content-Type', 'application/json')
-      .set('X-Api-Token', this.token)
-      .expect(function(res) {
-        expect(res.status).to.equals(204);
-      }.bind(this))
-    .end(callback);
+    expect(this.myDocument.attachments).to.not.be.undefined;
+    expect(this.myDocument.attachments).to.have.length(nb);
+    this.myDocument.attachments.forEach(function(attachment) {
+      expect(attachment.contentType).to.equal(type);
+    });
+    callback();
   });
+
 };

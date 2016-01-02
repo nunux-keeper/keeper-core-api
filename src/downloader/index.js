@@ -4,7 +4,7 @@ const logger = require('../helper').logger,
       path   = require('path');
 
 // Dynamic loading downloader...
-const DOWNLOADER = process.env.APP_DOWNLOADER;
+const DOWNLOADER = process.env.APP_DOWNLOADER || 'default';
 let downloader = null;
 require('fs').readdirSync(__dirname).forEach((file) => {
   if (file === `${DOWNLOADER}.downloader.js`) {
@@ -14,7 +14,7 @@ require('fs').readdirSync(__dirname).forEach((file) => {
 });
 
 if (!downloader) {
-  logger.debug('Downloader not found. Using none...');
+  logger.warn('Downloader not found. Using none.');
   downloader = function(/*resources, container*/) {
     logger.debug('Resource downloader disabled.');
     return Promise.resolve();

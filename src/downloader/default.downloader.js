@@ -1,14 +1,13 @@
 'use strict';
 
-const when       = require('when'),
-      nodefn     = require('when/node/function'),
-      sequence   = require('when/sequence'),
-      dns        = require('dns'),
-      url        = require('url'),
-      storage    = require('../storage'),
-      request    = require('../helper').request,
-      validators = require('../helper').validators,
-      logger     = require('../helper').logger;
+const nodefn    = require('when/node/function'),
+      sequence  = require('when/sequence'),
+      dns       = require('dns'),
+      url       = require('url'),
+      validator = require('validator'),
+      storage   = require('../storage'),
+      request   = require('../helper').request,
+      logger    = require('../helper').logger;
 
 /**
  * Download resources.
@@ -18,21 +17,21 @@ const when       = require('when'),
  */
 const download = function(resources, container) {
   const down = function(resource) {
-    if (!validators.isURL(resource.url)) {
-      logger.error('Unable to download %s. Bad URL.', resource.url);
-      return when.resolve('Bad URL: ' + resource.url);
+    if (!validator.isURL(resource.origin)) {
+      logger.error('Unable to download %s. Bad URL.', resource.origin);
+      return Promise.resolve('Bad URL: ' + resource.origin);
     }
-    logger.debug('Downloading %s to container %s...', resource.url, container);
+    logger.debug('Downloading %s to container %s...', resource.origin, container);
 
     const tryDownload = function() {
-      return storage.store(container, resource.key, request(resource.url), {'Content-Type': resource.type});
+      return storage.store(container, resource.key, request(resource.origin), {'Content-Type': resource.type});
     };
 
-    const hostname = url.parse(resource.url).hostname;
+    const hostname = url.parse(resource.origin).hostname;
     return nodefn.call(dns.resolve4, hostname)
     .then(tryDownload, function(/*e*/) {
-      logger.error('Unable to download %s. Host cannot be resolved: %s', resource.url, hostname);
-      return when.reject('Host cannot be resolved: %s', hostname);
+      logger.error('Unable to download %s. Host cannot be resolved: %s', resource.origin, hostname);
+      return Promise.reject('Host cannot be resolved: %s', hostname);
     });
   };
 

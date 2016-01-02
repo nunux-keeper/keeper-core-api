@@ -72,12 +72,20 @@ DocumentDao.prototype.search = function(/*query*/) {
  * @return {Object} the created document
  */
 DocumentDao.prototype.create = function(document) {
-  document = _.pick(document, ['title', 'content', 'contentType', 'origin', 'labels', 'attachments', 'owner']);
-  // TODO check labels and attachments attributes
-  document.date = new Date();
+  let newDoc = _.pick(document, ['title', 'content', 'contentType', 'origin', 'labels', 'owner']);
+  // Filter attachments (remove stream attribute)
+  newDoc.attachments = [];
+  document.attachments.forEach(function(attachment) {
+    newDoc.attachments.push(_.pick(attachment, ['key', 'contentType', 'contentLength', 'origin']));
+  });
+  // TODO check labels
+  newDoc.date = new Date();
   return this.collection().then((collection) => {
-    return collection.insertOne(document).then((/*r*/) => {
-      return Promise.resolve(this.objectMapper(document));
+    return collection.insertOne(newDoc).then((/*r*/) => {
+      newDoc = this.objectMapper(newDoc);
+      // Restore attachments
+      newDoc.attachments = document.attachments;
+      return Promise.resolve(newDoc);
     });
   });
 };

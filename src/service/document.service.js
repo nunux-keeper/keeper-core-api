@@ -1,6 +1,7 @@
 'use strict';
 
-const when       = require('when'),
+const _          = require('lodash'),
+      when       = require('when'),
       logger     = require('../helper').logger,
       errors     = require('../helper').errors,
       extractor  = require('../extractor'),
@@ -55,10 +56,17 @@ DocumentService.create = function(doc) {
       //logger.debug('Document extracted: %j', _doc);
       return documentDao.create(_doc);
     }).then(function(_doc) {
-      logger.info('Document created: %j', _doc);
+      // Remove attachments stream property from result
+      let newDoc = _.omit(_doc, 'attachments');
+      newDoc.attachments = [];
+      _doc.attachments.forEach(function(attachment) {
+        newDoc.attachments.push(_.omit(attachment, 'stream'));
+      });
+
+      logger.info('Document created: %j', newDoc);
       // Broadcast document creation event.
       eventHandler.document.emit('create', _doc);
-      return Promise.resolve(_doc);
+      return Promise.resolve(newDoc);
     });
 };
 
@@ -75,12 +83,6 @@ DocumentService.create = function(doc) {
 DocumentService.update = function(doc, update) {
   // Check that content can be modified
   if (update.content) {
-    if (doc.contentType.toLowerCase() !== update.contentType.toLowerCase()) {
-      return Promise.reject(new errors.BadRequest('Change document content type is not supported ('+ doc.contentType  +' -> '+ update.contentType +').'));
-    }
-    if (!/^text/g.test(doc.contentType)) {
-      return Promise.reject(new errors.BadRequest('Only text content type modification is supported: ' + doc.contentType));
-    }
     // Extract content
     doc.content = update.content;
     return extractor.content.extract(doc)

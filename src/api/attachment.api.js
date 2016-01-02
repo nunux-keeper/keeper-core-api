@@ -8,7 +8,7 @@ const controller = require('../controller'),
  */
 module.exports = function(router) {
   /**
-   * @api {get} /document/:id/attchment/:key Get document attachment
+   * @api {get} /document/:id/files/:key Get document attachment
    *
    * @apiVersion 0.0.1
    * @apiName GetDocumentAttachment
@@ -26,6 +26,6 @@ module.exports = function(router) {
    * @apiSuccessExample Success-Response:
    *     HTTP/1.1 200 OK
    */
-  router.get('/document/:id/attachment/:key', middleware.document, controller.attachment.get);
+  router.get('/document/:id/files/:key', middleware.document, controller.attachment.get);
 
 };

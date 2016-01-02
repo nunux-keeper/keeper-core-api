@@ -39,7 +39,7 @@ module.exports = {
     req.sanitizeBody('title').trim();
     req.checkBody('title', 'Invalid title').notEmpty().isLength(2, 128);
     req.checkBody('origin', 'Invalid link').optional().isURL();
-    req.checkBody('contentType', 'Invalid link').optional().isSupportedContentType();
+    req.checkBody('contentType', 'Invalid content type').optional().isSupportedContentType();
     const validationErrors = req.validationErrors(true);
     if (validationErrors) {
       return next(new errors.BadRequest(null, validationErrors));
@@ -81,7 +81,7 @@ module.exports = {
    */
   update: function(req, res, next) {
     req.sanitizeBody('title').trim();
-    req.checkBody('title', 'Invalid title').notEmpty().isLength(2, 128);
+    req.checkBody('title', 'Invalid title').optional().isLength(2, 128);
     const validationErrors = req.validationErrors(true);
     if (validationErrors) {
       return next(new errors.BadRequest(null, validationErrors));

@@ -6,7 +6,7 @@
 | storage/s3.storage.js | 187 | remove zero length files
 | controller/connector/twitter.ctrl.js | 96 | deal with other events!
 | dao/mongodb/document.dao.js | 65 | link this function with the fulltext search engine
-| dao/mongodb/document.dao.js | 76 | check labels and attachments attributes
+| dao/mongodb/document.dao.js | 81 | check labels
 | event/document/indexation.evt.js | 10 | index the document
 | event/document/indexation.evt.js | 18 | unindex the document
 

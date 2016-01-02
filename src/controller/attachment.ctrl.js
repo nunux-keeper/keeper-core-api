@@ -18,27 +18,34 @@ AttachementCtrl.get = function(req, res, next) {
   if (!attachment) {
     return next(new errors.NotFound('Attachment not found in the document.'));
   }
-  if (attachment.origin && !attachment.contentType) {
-    // Attachment not yet available: redirect to the source
-    return res.redirect(302, attachment.origin);
-  }
-  if (req.query.size && /^image\//.test(attachment.contentType)) {
-    // If conten-type is an image and the parameter size is defined, then get the thumbnail
-    attachmentservice.getThumbnail(doc, attachment, req.query.size)
-      .then(function(thumbPath) {
-        res.sendfile(thumbPath, {maxAge: 86400000});
-      });
-  } else {
-    attachmentservice.stream(doc, attachment)
-      .then(function(metas) {
-        // Send the attachment file content...
-        res.set('Content-Length', metas.size);
-        res.set('Content-Type', metas.contentType);
-        res.set('Cache-Control', 'public, max-age=86400');
-        res.set('Last-Modified', metas.lastModified);
-        metas.stream.pipe(res);
-      });
-  }
-};
+  attachmentservice.available(doc, attachment)
+    .then(function(available) {
+      if (!available) {
+        if (attachment.origin) {
+          // Attachment not yet available: redirect to the source
+          return res.redirect(302, attachment.origin);
+        } else {
+          return next(new errors.NotFound('Attachment not available.'));
+        }
+      }
+      if (req.query.size && /^image\//.test(attachment.contentType)) {
+        // If conten-type is an image and the parameter size is defined, then get the thumbnail
+        attachmentservice.getThumbnail(doc, attachment, req.query.size)
+          .then(function(thumbPath) {
+            res.sendfile(thumbPath, {maxAge: 86400000});
+          }).catch(next);
+      } else {
+        attachmentservice.stream(doc, attachment)
+          .then(function(metas) {
+            // Send the attachment file content...
+            res.append('Content-Length', metas.contentLenght);
+            res.append('Content-Type', metas.contentType);
+            res.append('Cache-Control', 'public, max-age=86400');
+            res.append('Last-Modified', metas.lastModified);
+            metas.stream.pipe(res);
+          }).catch(next);
+      }
+    });
+  };
 
 module.exports = AttachementCtrl;

@@ -1,7 +1,6 @@
 'use strict';
 
-const url     = require('url'),
-      path    = require('path'),
+const path    = require('path'),
       zlib    = require('zlib'),
       hash    = require('../helper').hash,
       logger  = require('../helper').logger,
@@ -25,23 +24,22 @@ const defaultExtractor = {
         if (err) {
           return reject(err);
         }
-        let filename = url.parse(doc.origin).pathname;
-        filename = filename.substring(filename.lastIndexOf('/') + 1);
         const encoding = res.headers['content-encoding'];
         let stream = null;
         if (encoding === 'gzip') {
-          stream = request.get(doc.link).pipe(zlib.createGunzip());
+          stream = request.get(doc.origin).pipe(zlib.createGunzip());
         } else if (encoding === 'deflate') {
-          stream = request.get(doc.link).pipe(zlib.createInflate());
+          stream = request.get(doc.origin).pipe(zlib.createInflate());
         } else {
-          stream = request.get(doc.link);
+          stream = request.get(doc.origin);
         }
 
         doc.attachments.push({
           key: hash.hashUrl(doc.origin),
           stream: stream,
           contentType: res.headers['content-type'],
-          contentLength: res.headers['content-length']
+          contentLength: res.headers['content-length'],
+          origin: doc.origin
         });
 
         resolve(doc);

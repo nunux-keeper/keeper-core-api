@@ -38,27 +38,31 @@ module.exports = {
    */
   extract: function(doc) {
     const textAttachment = _.find(doc.attachments, function(att) {
-      return /^text\/$/.test(att.contentType);
+      return /^text\//.test(att.contentType);
     });
-    if (doc.content) {
-      return extractContent(doc);
-    } else if (textAttachment) {
+    if (textAttachment) {
       // The attachment is the doc
+      logger.debug('Extracting content from the attachment...', textAttachment.key);
       doc.contentType = textAttachment.contentType;
       return new Promise(function(resolve, reject) {
         const bufs = [];
         textAttachment.stream.on('data', function(d){ bufs.push(d); });
+        textAttachment.stream.on('error', reject);
         textAttachment.stream.on('end', function() {
           doc.content = Buffer.concat(bufs).toString();
-          doc.attachment = null;
-          doc.attachments = _.remove(doc.attachments, function(att) {
-            return att.key === textAttachment.key;
+          _.remove(doc.attachments, function(att) {
+            if (att.key === textAttachment.key) {
+              logger.debug('Removing content attachment...', textAttachment.key);
+              return true;
+            }
+            return false;
           });
           extractContent(doc).then(resolve, reject);
         });
       });
     } else {
-      return Promise.resolve(doc);
+      logger.debug('Extracting content form the document...', doc.content);
+      return extractContent(doc);
     }
   }
 };

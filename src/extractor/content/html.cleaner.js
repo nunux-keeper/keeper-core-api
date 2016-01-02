@@ -58,7 +58,10 @@ const filterAttributes = function(node) {
  * @param {Object} document DOM
  */
 const filterImages = function(document, options) {
-  document.getElementsByTagName('img').forEach(function(image) {
+  var images = document.getElementsByTagName('img');
+  for (var i = 0; i < images.length; ++i) {
+    var image = images[i];
+
     if (image.hasAttribute('app-src')) {
       image.removeAttribute('src');
     } else {
@@ -84,7 +87,7 @@ const filterImages = function(document, options) {
         image.setAttribute('app-src', src);
       }
     }
-  });
+  }
 };
 
 /**
@@ -93,11 +96,13 @@ const filterImages = function(document, options) {
  * @param {Object} document DOM
  */
 const filterLinks = function(document /*, options*/) {
-  document.getElementsByTagName('a').forEach(function(link) {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; ++i) {
+    var link = links[i];
     if (link.hasAttribute('href')) {
       link.setAttribute('target', '_blank');
     }
-  });
+  }
 };
 
 /**
@@ -113,13 +118,16 @@ module.exports = {
    */
   cleanup: function(document, options) {
     // Filter all nodes...
-    document.getElementsByTagName('*').forEach(function(node) {
-      const filterChain = _.compose(
+    var nodes = document.getElementsByTagName('*');
+    for (var i = 0; i < nodes.length; ++i) {
+      var node = nodes[i];
+      var filterChain = _.compose(
         filterBlacklistedSites,
         filterAttributes
       );
       filterChain(node);
-    });
+    }
+
     // Filter images...
     filterImages(document, options);
     // Filter links...

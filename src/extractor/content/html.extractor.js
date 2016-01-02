@@ -1,7 +1,6 @@
 'use strict';
 
-const when    = require('when'),
-      mime    = require('mime'),
+const mime    = require('mime'),
       cleaner = require('./html.cleaner'),
       logger  = require('../../helper').logger,
       hash    = require('../../helper').hash,
@@ -83,12 +82,12 @@ const extractHtml = function(doc) {
  */
 module.exports = {
   /**
-   * Test if the extractor support the provided content-type.
-   * @param {String} ct the conten-type
+   * Test if the extractor support the provided document.
+   * @param {Document} doc
    * @return {Boolean} support status
    */
-  support: function(ct) {
-    return /^text\/html/.test(ct);
+  support: function(doc) {
+    return /^text\/html/.test(doc.contentType);
   },
   /**
    * Extract HTML content a document.
@@ -97,10 +96,12 @@ module.exports = {
    */
   extract: function(doc) {
     logger.debug('Using html extractor.');
-    if (doc.content && doc.content !== '') {
+    if (doc.content) {
       return extractHtml(doc);
     } else {
-      return when.reject('Content not found.');
+      logger.debug('No HTML content to parse.');
+      doc.content = '';
+      return Promise.resolve(doc);
     }
   }
 };

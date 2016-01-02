@@ -3,21 +3,28 @@ Feature: Document API
 
     Scenario: Post a simple text document
         Given I am a valid user with the uid "test"
-        When I create a random text document
+        When I create the following document:
+            | content | Simple text document |
+            | contentType | text/plain |
         Then I should retrieve the document
         Given I am a valid user with the uid "other"
         Then I should not retrieve the document
 
     Scenario: Update a simple text document
         Given I am a valid user with the uid "test"
-        When I create a random text document
-        And  I update the document title with "Test title"
+        When I create the following document:
+            | content | Simple text document to update |
+            | contentType | text/plain |
+        And  I update the document with:
+            | content | Simple updated text document |
         Then I should retrieve the document
-        And  I should have "Test title" into the document title
+        And  I should have "Simple updated text document" into the document content
 
     Scenario: Delete a simple text document
         Given I am a valid user with the uid "test"
-        When I create a random text document
+        When I create the following document:
+            | content | Simple text document to delete |
+            | contentType | text/plain |
         And  I delete the document
         Then I should not retrieve the document
 
