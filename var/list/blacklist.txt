@@ -1383,6 +1383,7 @@ dmtracking.alibaba.com
 dmtracking2.alibaba.com
 dnads.directnic.com
 doclix.com
+doubleclick.net
 domaining.in
 domainsponsor.com
 domainsteam.de
@@ -1466,6 +1467,7 @@ fastclick.com.edgesuite.net
 fc.webmasterpro.de
 feedbackresearch.com
 feedjit.com
+feeds.feedburner.com
 ffxcam.fairfax.com.au
 filitrac.com
 fimc.net

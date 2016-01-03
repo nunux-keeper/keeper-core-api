@@ -112,13 +112,15 @@ DocumentService.update = function(doc, update) {
         // Udpate content
         update.content = _doc.content;
         update.attachments = _doc.attachments;
-        return documentDao.update(doc, update)
-          .then(function(_doc) {
-            logger.info('Document updated: %j', doc.id);
-            // Broadcast document update event.
-            eventHandler.document.emit('update', _doc);
-            return Promise.resolve(_doc);
-          });
+        return documentDao.update(doc, update);
+      }).then(function(_doc) {
+        // Process attachments (streams)
+        return processAttachments(_doc);
+      }).then(function(_doc) {
+        logger.info('Document updated: %j', _doc);
+        // Broadcast document update event.
+        eventHandler.document.emit('update', _doc);
+        return Promise.resolve(_doc);
       });
   }
   // Update document

@@ -1,5 +1,7 @@
 'use strict';
 
+const url = require('url');
+
 const textListHolder = require('./text-list-holder');
 
 var ADMINS = new Set(process.env.APP_ADMIN ? process.env.APP_ADMIN.split(/[\s,]+/) : []);
@@ -21,7 +23,8 @@ validators.isAdmin = function(uid) {
  * @return Boolean the test result
  */
 validators.isBlacklisted = function(str) {
-  return textListHolder.blacklist.has(str);
+  const u = url.parse(str);
+  return textListHolder.blacklist.has(u.hostname);
 };
 
 /**

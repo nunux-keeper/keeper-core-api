@@ -66,6 +66,27 @@ module.exports = function() {
     .end(callback);
   });
 
+  this.When(/^I create the following html document$/, function (content, callback) {
+    request(app)
+      .post('/v2/document')
+      .send({
+        title: chance.sentence({words: 3}),
+        content: content,
+        contentType: 'text/html'
+      })
+      .set('Content-Type', 'application/json')
+      .set('X-Api-Token', this.token)
+      .expect('Content-Type', /json/)
+      .expect(function(res) {
+        expect(res.status).to.equals(201);
+        const newDoc = res.body;
+        expectDocument(newDoc);
+        expect(newDoc.date).not.to.be.null;
+        this.myDocument = newDoc;
+      }.bind(this))
+    .end(callback);
+  });
+
   this.When(/^I update the document with:$/, function (attrs, callback) {
     expect(this.myDocument).to.not.be.undefined;
     const update = {};
@@ -82,7 +103,7 @@ module.exports = function() {
       .expect(function(res) {
         expect(res.status).to.equals(200);
         const updatedDoc = res.body;
-        expectDocument(updatedDoc, update);
+        expectDocument(updatedDoc);
         expect(updatedDoc.date).not.to.be.null;
         this.myDocument = updatedDoc;
       }.bind(this))
@@ -123,10 +144,24 @@ module.exports = function() {
     .end(callback);
   });
 
+  this.Then(/^I should get the following document:$/, function (attrs, callback) {
+    expect(this.myDocument).to.not.be.undefined;
+    attrs.raw().forEach(function(attr) {
+      const prop = attr[0], value = attr[1];
+      expect(this.myDocument[prop]).to.equals(value);
+    }.bind(this));
+    callback();
+  });
+
   this.Then(/^I should have "([^"]*)" into the document (title|content|contentType|origin)$/, function (value, attr, callback) {
     expect(this.myDocument).to.not.be.undefined;
     expect(this.myDocument[attr]).to.equals(value);
     callback();
   });
 
+  this.Then(/^I should get the following document content$/, function (content, callback) {
+    expect(this.myDocument).to.not.be.undefined;
+    expect(this.myDocument.content).to.equals(content);
+    callback();
+  });
 };
