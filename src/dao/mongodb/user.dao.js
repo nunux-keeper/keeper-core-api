@@ -16,8 +16,8 @@ function UserDao(client) {
 
   this.objectMapper = function(doc) {
     return {
-      id:       doc._id,
-      uid:      doc.uid,
+      _id:      doc._id,
+      id:       doc.uid,
       username: doc.username,
       date:     doc.date
     };
@@ -26,12 +26,12 @@ function UserDao(client) {
 
 /**
  * Get an user.
- * @param {String} uid ID of the user.
+ * @param {String} id ID of the user.
  * @return {Object} the user
  */
-UserDao.prototype.get = function(uid) {
+UserDao.prototype.get = function(id) {
   return this.collection().then((collection) => {
-    return collection.findOne({uid: uid}).then((doc) => {
+    return collection.findOne({uid: id}).then((doc) => {
       return Promise.resolve(this.objectMapper(doc));
     });
   });
@@ -56,7 +56,9 @@ UserDao.prototype.find = function(query) {
  * @return {Object} the created user
  */
 UserDao.prototype.create = function(user) {
-  user = _.pick(user, ['uid', 'username']);
+  user = _.pick(user, ['id', 'username']);
+  user.uid = user.id;
+  delete user.id;
   user.date = new Date();
   return this.collection().then((collection) => {
     return collection.insertOne(user).then((/*r*/) => {
@@ -76,7 +78,7 @@ UserDao.prototype.update = function(user, update) {
   update.date = new Date();
   return this.collection().then((collection) => {
     return collection.findOneAndUpdate(
-        {uid: user.uid},
+        {uid: user.id},
         {$set: update},
         {
           returnOriginal: false,
@@ -95,7 +97,7 @@ UserDao.prototype.update = function(user, update) {
  */
 UserDao.prototype.remove = function(user) {
   return this.collection().then((collection) => {
-    return collection.findOneAndDelete({uid: user.uid})
+    return collection.findOneAndDelete({uid: user.id})
       .then((/*r*/) => {
         return Promise.resolve(this.objectMapper(user));
       });

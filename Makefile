@@ -7,7 +7,7 @@ IMAGE:=$(USERNAME)/$(APPNAME)
 env?=dev
 
 # Default links
-LINK_FLAGS?=--link mongodb:mongodb
+LINK_FLAGS?=--link mongodb:mongodb --link elasticsearch:elasticsearch
 # Default configuration
 ENV_FLAGS?=--env-file="./etc/default/$(env).env"
 

@@ -13,7 +13,7 @@ const downloadAttachments = function(doc) {
     return attachment.origin;
   });
   if (attachments && attachments.length) {
-    logger.debug('Downloading document attachments...');
+    logger.debug('Downloading document attachments...', doc.id);
     download(attachments, storage.getContainerName(doc.owner, 'documents', doc.id, 'files'));
   }
 };
@@ -22,7 +22,7 @@ const downloadAttachments = function(doc) {
  * Synchronize document's attachments.
  */
 const synchronizeAttachments = function(doc) {
-  logger.debug('Synchronizing document attachments...');
+  logger.debug('Synchronizing document attachments...', doc.id);
   const container = storage.getContainerName(doc.owner, 'documents', doc.id, 'files');
   storage.cleanContainer(container, doc.attachments)
     .then(function() {
@@ -35,7 +35,7 @@ const synchronizeAttachments = function(doc) {
  * Remove document's attachments.
  */
 const removeAttachments = function(doc) {
-  logger.debug('Removing document attachments...');
+  logger.debug('Removing document attachments...', doc.id);
   storage.remove(storage.getContainerName(doc.owner, 'documents', doc.id));
 };
 

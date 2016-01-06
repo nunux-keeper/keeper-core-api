@@ -1,13 +1,14 @@
 'use strict';
 
+const _ = require('lodash');
+
 /**
  * Remove private data from document.
  * @param {Object} document Document DTO
  * @return {Promise} promise of the dto
  */
 const decorateWithoutPrivateData = function(doc) {
-  delete doc.owner;
-  return Promise.resolve(doc);
+  return Promise.resolve(_.omit(doc, 'owner'));
 };
 
 module.exports = {

@@ -36,7 +36,7 @@ const defaultExtractor = {
 
         doc.attachments.push({
           key: hash.hashUrl(doc.origin),
-          stream: stream,
+          stream: stream.pipe(require('stream').PassThrough()),
           contentType: res.headers['content-type'],
           contentLength: res.headers['content-length'],
           origin: doc.origin

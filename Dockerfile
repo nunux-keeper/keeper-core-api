@@ -6,6 +6,9 @@ FROM node:5-onbuild
 
 MAINTAINER Nicolas Carlier <https://github.com/ncarlier>
 
+# Create storage directory
+RUN mkdir -p /var/opt/app/storage/upload
+
 # Ports
 EXPOSE 3000 8080
 

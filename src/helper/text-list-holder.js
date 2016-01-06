@@ -4,7 +4,7 @@ const fs     = require('fs'),
       path   = require('path'),
       logger = require('./logger');
 
-const varDir = process.env.APP_VAR_DIR || path.normalize(path.join(__dirname, '..', '..', 'var'));
+const varDir = path.normalize(path.join(__dirname, '..', '..', 'var'));
 const db = {};
 
 /**

@@ -1,6 +1,6 @@
 'use strict';
 
-var crypto = require('crypto');
+const crypto = require('crypto');
 
 /**
  * Get a hashed name.

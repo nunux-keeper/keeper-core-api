@@ -6,7 +6,7 @@ const when   = require('when'),
       nodefn = require('when/node/function'),
       logger = require('./logger');
 
-const varDir = process.env.APP_VAR_DIR || path.normalize(path.join(__dirname, '..', '..', 'var'));
+const baseDir = process.env.APP_STORAGE_LOCAL_DIR || path.normalize(path.join(__dirname, '..', '..', 'storage'));
 
 /**
  * Make directories recusively (mkdir -p)
@@ -39,11 +39,11 @@ const mkdirs = function(p) {
  */
 const getChrootPath = function() {
   const p = path.normalize(path.join.apply(null, arguments));
-  if (p.indexOf(varDir) === 0) {
+  if (p.indexOf(baseDir) === 0) {
     return p;
   } else {
-    // logger.debug('Path "%s" will be chrooted in: %s', p, varDir);
-    [].unshift.apply(arguments, [varDir]);
+    // logger.debug('Path "%s" will be chrooted in: %s', p, baseDir);
+    [].unshift.apply(arguments, [baseDir]);
     return path.normalize(path.join.apply(null, arguments));
   }
 };
@@ -146,8 +146,8 @@ const chexists = function(file) {
  * @module files
  */
 module.exports = {
-  /** Get main chroot directory. */
-  chpwd: function() { return varDir; },
+  /** Get chrooted base directory. */
+  chpwd: function() { return baseDir; },
   /** @see getChrootPath() */
   chpath: getChrootPath,
   /** @see writeToChroot() */

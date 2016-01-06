@@ -5,7 +5,7 @@ const os         = require('os'),
       multiparty = require('multiparty'),
       logger     = require('../helper').logger;
 
-const uploadDir = process.env.APP_VAR_DIR ? path.join(process.env.APP_VAR_DIR, 'upload') : os.tmpdir();
+const uploadDir = process.env.APP_STORAGE_LOCAL_DIR ? path.join(process.env.APP_STORAGE_LOCAL_DIR, 'upload') : os.tmpdir();
 
 /**
  * Middleware to handle multipart/form-data requests.

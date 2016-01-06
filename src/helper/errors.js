@@ -1,7 +1,7 @@
 /* jshint -W059 */
 /* jshint strict: false */
 
-var errorBuilder = function(code, defaultMessage) {
+const errorBuilder = function(code, defaultMessage) {
   return function(msg, meta) {
     this.status = code;
     this.meta = meta;

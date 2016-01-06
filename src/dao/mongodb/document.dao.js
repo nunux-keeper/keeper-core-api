@@ -24,7 +24,6 @@ function DocumentDao(client) {
       origin:      doc.origin,
       labels:      doc.labels,
       attachments: doc.attachments,
-      trash:       doc.trash,
       owner:       doc.owner
     } : null;
   };
@@ -39,19 +38,6 @@ DocumentDao.prototype.get = function(id) {
   return this.collection().then((collection) => {
     return collection.findOne({_id: new ObjectID(id)}).then((doc) => {
       return Promise.resolve(this.objectMapper(doc));
-    });
-  });
-};
-
-/**
- * Find documents.
- * @param {String} query Find query.
- * @return {Array} the documents
- */
-DocumentDao.prototype.find = function(query) {
-  return this.collection().then((collection) => {
-    return collection.find(query).limit(100).toArray().then((docs) => {
-      return Promise.resolve(_.map(docs, this.objectMapper));
     });
   });
 };

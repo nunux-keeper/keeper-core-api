@@ -23,7 +23,7 @@ module.exports = function(app, loginMiddleware) {
     callbackURL: app.get('realm') + '/auth/google/callback',
   }, function(accessToken, refreshToken, profile, done) {
     const user = {
-      uid: profile.emails[0].value,
+      id: profile.emails[0].value,
       username: profile.displayName
     };
 

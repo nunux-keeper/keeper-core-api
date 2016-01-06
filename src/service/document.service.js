@@ -16,7 +16,7 @@ const when       = require('when'),
 const processAttachments = function(doc) {
   let tasks = [];
   doc.attachments.forEach(function(attachment) {
-    if (attachment.stream) {
+    if (attachment.stream !== undefined) {
       const container = storage.getContainerName(doc.owner, 'documents', doc.id, 'files');
       tasks.push(storage.store(container, attachment.key, attachment.stream)
         .then(function() {
@@ -162,28 +162,6 @@ DocumentService.remove = function(owner, ids) {
 
   // Delete defined ids
   return when.map(ids, deleteDocument);
-};
-
-/**
- * Remove all documents of the trash bin.
- * @param {String} owner Document owner
- * @return {Object} the document
- */
-DocumentService.emptyTrash = function(owner) {
-  logger.debug('Emptying trash bin of %s ...', owner);
-  // Empty trash bin category
-  documentDao.find({ owner: owner, trash: true })
-    .then(function(docs) {
-      return when.map(docs, function(doc) {
-        return documentDao.remove(doc)
-          .then(function() {
-            logger.info('Document deleted: %s', doc.id);
-            // Broadcast document remove event.
-            eventHandler.document.emit('remove', doc);
-            return Promise.resolve(doc);
-          });
-      });
-    });
 };
 
 module.exports = DocumentService;

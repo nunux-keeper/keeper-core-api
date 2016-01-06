@@ -30,7 +30,7 @@ module.exports = {
    * Search documents.
    */
   search: function(req, res, next) {
-    documentService.search(req.user.uid, req.query)
+    documentService.search(req.user.id, req.query)
     .then(function(result) {
       // TODO add HAL data
       res.json(result);
@@ -58,7 +58,7 @@ module.exports = {
       content:     req.body.content,
       contentType: contentType,
       origin:      req.body.origin,
-      owner:       req.user.uid,
+      owner:       req.user.id,
       labels:      labels,
       files:       req.files
     };
@@ -125,15 +125,12 @@ module.exports = {
 
     if (ids) {
       // Delete defined ids
-      documentService.remove(req.user.uid, ids)
+      documentService.remove(req.user.id, ids)
       .then(function() {
         res.status(204).json();
       }, next);
     } else {
-      documentService.emptyTrash(req.user.uid)
-      .then(function() {
-        res.status(204).json();
-      }, next);
+      return next(new errors.BadRequest());
     }
   }
 };

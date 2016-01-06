@@ -13,7 +13,7 @@ module.exports = function(req, res, next) {
       return next(new errors.NotFound('Label not found.'));
     }
     // Only allow to see own label.
-    if (label.owner !== req.user.uid) {
+    if (label.owner !== req.user.id) {
       return next(new errors.Forbidden());
     }
 

@@ -126,9 +126,8 @@ module.exports = function(router) {
 
   /**
    * @api {delete} /document Delete list of documents
-   * @apiDescription A list of document's ID to delete can be passed in the request
-   *  payload. This list must be a JSON String array. If no payload is provided,
-   *  then all documents in the "Trash Bin" category are deleted.
+   * @apiDescription A list of document's ID to delete have to be passed in the
+   *  request payload. This list must be a JSON String array.
    * @apiVersion 0.0.1
    * @apiName DeleteDocuments
    * @apiGroup document

@@ -27,6 +27,8 @@
     "bunyan": "^1.5.1",
     "commander": "^2.9.0",
     "compression": "^1.6.0",
+    "chance": "^0.8.0",
+    "elasticsearch": "^10.0.1",
     "express": "^4.13.3",
     "express-validator": "^2.18.0",
     "fs-extra": "^0.26.3",
@@ -50,12 +52,14 @@
   },
   "devDependencies": {
     "chai": "^3.4.1",
-    "chance": "^0.8.0",
     "cucumber": "^0.9.2",
+    "gulp": "^3.9.0",
     "gulp-api-doc": "^1.1.0",
+    "gulp-cucumber": "0.0.14",
     "gulp-jshint": "^2.0.0",
     "gulp-todo": "^4.0.0",
     "jshint": "^2.8.0",
-    "jshint-stylish": "^2.1.0"
+    "jshint-stylish": "^2.1.0",
+    "supertest": "^1.1.0"
   }
 }

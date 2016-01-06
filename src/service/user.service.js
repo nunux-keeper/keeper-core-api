@@ -34,19 +34,19 @@ UserService.update = function(user, update) {
  * @return {Object} the logged user
  */
 UserService.login = function(user) {
-  const logged = userDao.get(user.uid).then(function(_user) {
+  const logged = userDao.get(user.id).then(function(_user) {
     if (_user) {
       // Return the user.
-      logger.debug('User %s authorized.', _user.uid);
+      logger.debug('User %s authorized.', _user.id);
       return Promise.resolve(_user);
-    } else if (autoGrantAccess || _.contains(admins, user.uid)) {
+    } else if (autoGrantAccess || _.contains(admins, user.id)) {
       // Create the user.
-      logger.info('User %s authorized. Will be created.', user.uid);
-      user.publicAlias = crypto.createHash('md5').update(user.uid).digest('hex');
+      logger.info('User %s authorized. Will be created.', user.id);
+      user.publicAlias = crypto.createHash('md5').update(user.id).digest('hex');
       return userDao.create(user);
     } else {
       // User not found and auto grant access is disabled.
-      logger.warn('User %s not authorized.', user.uid);
+      logger.warn('User %s not authorized.', user.id);
       return Promise.reject('ENOTAUTHORIZED');
     }
   });

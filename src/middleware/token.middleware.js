@@ -1,10 +1,9 @@
 'use strict';
 
-const jwt    = require('jsonwebtoken'),
-      errors = require('../helper').errors,
+const jwt     = require('jsonwebtoken'),
+      errors  = require('../helper').errors,
+      globals = require('../helper').globals,
       validators  = require('../helper').validators;
-
-const SECRET = process.env.APP_TOKEN_SECRET;
 
 /**
  * Middleware to handle Token.
@@ -15,7 +14,7 @@ module.exports = function() {
     if (!token) {
       return next(new errors.Unauthorized());
     }
-    jwt.verify(token, SECRET, function(err, decoded) {
+    jwt.verify(token, globals.TOKEN_SECRET, function(err, decoded) {
       if (err) {
         return next(new errors.Unauthorized(err));
       }
@@ -26,8 +25,8 @@ module.exports = function() {
         lastAccessIp: ip
       });*/
       req.user = {
-        uid: decoded.uid,
-        admin: validators.isAdmin(decoded.uid)
+        id: decoded.sub,
+        admin: validators.isAdmin(decoded.sub)
       };
       next();
     });

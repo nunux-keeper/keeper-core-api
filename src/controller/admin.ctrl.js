@@ -47,7 +47,7 @@ module.exports = {
    */
   deleteUser: function(req, res, next) {
     const uid = req.params.id;
-    if (req.user.uid === uid) {
+    if (req.user.id === uid) {
       return next(new errors.BadRequest('Unable to self destroy.'));
     }
     userService.remove(uid)

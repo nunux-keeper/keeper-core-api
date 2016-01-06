@@ -13,7 +13,7 @@ module.exports = {
    * Get all user's labels.
    */
   all: function(req, res, next) {
-    labelService.all(req.user.uid)
+    labelService.all(req.user.id)
     .then(function(labels) {
       const resource = new hal.Resource({labels: labels}, req.url);
       res.json(resource);
@@ -33,7 +33,7 @@ module.exports = {
     }
 
     const newLabel = {
-      owner: req.user.uid,
+      owner: req.user.id,
       label: req.body.label,
       color: req.body.color || '#fff'
     };

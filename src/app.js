@@ -31,8 +31,8 @@ app.set('info', {
   env: env
 });
 
-app.engine('html', require('ejs').renderFile);
-app.set('views', path.join(__dirname, '..', 'var', 'views'));
+//app.engine('html', require('ejs').renderFile);
+//app.set('views', path.join(__dirname, '..', 'var', 'views'));
 
 // Use middlewares
 app.use(middleware.logger());
