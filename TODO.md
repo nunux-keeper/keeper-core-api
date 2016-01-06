@@ -6,10 +6,7 @@
 | storage/s3.storage.js | 187 | remove zero length files
 | controller/connector/twitter.ctrl.js | 96 | deal with other events!
 | dao/elasticsearch/document.dao.js | 127 | check labels
-| dao/mongodb/document.dao.js | 51 | link this function with the fulltext search engine
-| dao/mongodb/document.dao.js | 67 | check labels
-| event/document/indexation.evt.js | 10 | index the document
-| event/document/indexation.evt.js | 18 | unindex the document
+| dao/mongodb/document.dao.js | 68 | check labels
 
 ### FIXMEs
 | Filename | line # | FIXME

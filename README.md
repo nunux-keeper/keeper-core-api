@@ -15,3 +15,13 @@
 make start
 ```
 
+## Roadmap
+
+- Cancel feature
+- Refactore storage component (see: https://github.com/AbstractFS/node-abstractfs)
+- Sharing system
+- Create plugin system:
+  - OAuth2
+  - Datasources: (twitter, pocket, etc.)
+- Monitoring
+- Data migration

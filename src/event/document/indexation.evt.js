@@ -1,29 +1,17 @@
 'use strict';
 
-const logger = require('../../helper').logger;
-
-/**
- * Index the document.
- */
-const indexDocument = function(/*document*/) {
-  logger.debug('Indexing the document...');
-  // TODO index the document
-};
-
-/**
- * Unindex the document.
- */
-const unindexDocument = function(/*document*/) {
-  logger.debug('Unindexing the document...');
-  // TODO unindex the document
-};
-
+const searchengine = require('../../dao/searchengine');
 
 /**
  * Document event handler.
  */
 module.exports = function(documentEventHandler) {
-  documentEventHandler.on('create', indexDocument);
-  documentEventHandler.on('update', indexDocument);
-  documentEventHandler.on('remove', unindexDocument);
+  // Exit if disabled...
+  if (searchengine.disabled) {
+    return;
+  }
+
+  documentEventHandler.on('create', (doc) => searchengine.indexDocument(doc));
+  documentEventHandler.on('update', (doc) => searchengine.reindexDocument(doc));
+  documentEventHandler.on('remove', (doc) => searchengine.unindexDocument(doc));
 };

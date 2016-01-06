@@ -1,11 +1,12 @@
 'use strict';
 
 const _        = require('lodash'),
-      ObjectID = require('mongodb').ObjectID;
+      ObjectID = require('mongodb').ObjectID,
+      SearchEngine = require('../searchengine');
 
 /**
- * document DAO.
- * @module document.dao
+ * Document DAO.
+ * @module dao.document
  */
 function DocumentDao(client) {
   this.client = client;
@@ -47,9 +48,9 @@ DocumentDao.prototype.get = function(id) {
  * @param {String} query Search query.
  * @return {Array} the documents
  */
-DocumentDao.prototype.search = function(/*query*/) {
-  // TODO link this function with the fulltext search engine
-  return Promise.resolve([]);
+DocumentDao.prototype.search = function(query) {
+  // Delegate search to the searchengine.
+  return SearchEngine.search(query);
 };
 
 /**
