@@ -1,6 +1,7 @@
 'use strict';
 
-const logger   = require('../helper').logger,
+const _        = require('lodash'),
+      logger   = require('../helper').logger,
       labelDao = require('../dao').label;
 
 /**
@@ -33,6 +34,8 @@ LabelService.all = function(owner) {
  * @return {Object} the created label
  */
 LabelService.create = function(label) {
+  label = _.pick(label, ['label', 'color', 'owner']);
+  label.date = new Date();
   return labelDao.create(label)
     .then(function(_label) {
       logger.info('Label created: %j', _label);
@@ -47,6 +50,8 @@ LabelService.create = function(label) {
  * @return {Object} the updated label
  */
 LabelService.update = function(label, update) {
+  update = _.pick(update, ['label', 'color']);
+  update.date = new Date();
   return labelDao.update(label, update)
     .then(function(_label) {
       logger.info('Label updated: %j', _label);

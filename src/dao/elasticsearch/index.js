@@ -47,6 +47,7 @@ module.exports = function(uri) {
       logger.debug('Loading %s ElasticSearch DAO..', name);
       const Dao = require(path.join(__dirname, file));
       daos[name] = new Dao(client, indexName, useAsMainDatabaseEngine);
+      daos[name].configure();
     }
   });
   return daos;

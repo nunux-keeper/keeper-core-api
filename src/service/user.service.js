@@ -21,6 +21,8 @@ const UserService = {};
  * @return {Object} the updated user
  */
 UserService.update = function(user, update) {
+  update = _.pick(update, 'username');
+  update.date = new Date();
   return userDao.update(user, update)
     .then(function(u) {
       logger.info('User updated: %j', u);

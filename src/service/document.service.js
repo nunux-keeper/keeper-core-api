@@ -1,6 +1,7 @@
 'use strict';
 
-const when       = require('when'),
+const _          = require('lodash'),
+      when       = require('when'),
       logger     = require('../helper').logger,
       errors     = require('../helper').errors,
       storage    = require('../storage'),
@@ -65,6 +66,7 @@ DocumentService.search = function(owner, query) {
  * @return {Object} the created document
  */
 DocumentService.create = function(doc) {
+  let attachments;
   doc.attachments = [];
   // First try to extract document content from file(s)
   //logger.debug('Document to extract: %j', doc);
@@ -79,9 +81,18 @@ DocumentService.create = function(doc) {
       return extractor.content.extract(_doc);
     }).then(function(_doc) {
       // Create document
+      attachments = _doc.attachments;
       //logger.debug('Document extracted: %j', _doc);
-      return documentDao.create(_doc);
+      const newDoc = _.pick(_doc, ['title', 'content', 'contentType', 'origin', 'labels', 'owner']);
+      newDoc.date = new Date();
+      newDoc.attachments = [];
+      attachments.forEach(function(attachment) {
+        newDoc.attachments.push(_.pick(attachment, ['key', 'contentType', 'contentLength', 'origin']));
+      });
+      // TODO check labels
+      return documentDao.create(newDoc);
     }).then(function(_doc) {
+      _doc.attachments = attachments;
       // Process attachments (streams)
       return processAttachments(_doc);
     }).then(function(_doc) {
@@ -103,6 +114,8 @@ DocumentService.create = function(doc) {
  * @return {Object} the updated document
  */
 DocumentService.update = function(doc, update) {
+  update = _.pick(update, ['title', 'labels', 'content']);
+  update.date = new Date();
   // Check that content can be modified
   if (update.content) {
     // Extract content
