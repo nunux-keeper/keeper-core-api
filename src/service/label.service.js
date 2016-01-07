@@ -14,7 +14,7 @@ const LabelService = {};
 /**
  * Get a label (or a ghost label).
  * @param {String} id ID of the label.
- * @param {Boolean} ghost Ghot flag
+ * @param {Boolean} ghost Ghost flag
  * @return {Object} the label
  */
 LabelService.get = function(id, ghost) {

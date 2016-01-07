@@ -119,6 +119,20 @@ module.exports = function() {
       .expect(204, callback);
   });
 
+  this.When(/^I restore the document$/, function (callback) {
+    expect(this.myDocument).to.not.be.undefined;
+    request(app)
+      .post('/v2/document/' + this.myDocument.id + '/restore')
+      .set('Content-Type', 'application/json')
+      .set('X-Api-Token', this.token)
+      .expect(function(res) {
+        expect(res.status).to.equals(200);
+        const restoredDoc = res.body;
+        expectDocument(restoredDoc, this.myDocument);
+        expect(restoredDoc.date).not.to.be.null;
+      }.bind(this))
+    .end(callback);
+  });
 
   this.Then(/^I should (not retrieve|retrieve) the (raw document|document)$/, function (get, raw, callback) {
     expect(this.myDocument).to.not.be.undefined;

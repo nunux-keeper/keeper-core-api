@@ -34,10 +34,10 @@ const synchronizeAttachments = function(doc) {
 /**
  * Remove document's attachments.
  */
-const removeAttachments = function(doc) {
+/*const removeAttachments = function(doc) {
   logger.debug('Removing document attachments...', doc.id);
   storage.remove(storage.getContainerName(doc.owner, 'documents', doc.id));
-};
+};*
 
 
 /**
@@ -46,5 +46,5 @@ const removeAttachments = function(doc) {
 module.exports = function(documentEventHandler) {
   documentEventHandler.on('create', downloadAttachments);
   documentEventHandler.on('update', synchronizeAttachments);
-  documentEventHandler.on('remove', removeAttachments);
+  //documentEventHandler.on('remove', removeAttachments);
 };

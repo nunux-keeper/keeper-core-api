@@ -28,4 +28,9 @@ Feature: Document API
             | contentType | text/plain |
         And  I delete the document
         Then I should not retrieve the document
+        When I restore the document
+        Then I should retrieve the document
+        When I delete the document
+        Then I should not retrieve the document
+
 

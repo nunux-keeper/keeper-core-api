@@ -1,13 +1,12 @@
 'use strict';
 
 const _          = require('lodash'),
-      when       = require('when'),
       logger     = require('../helper').logger,
-      errors     = require('../helper').errors,
       storage    = require('../storage'),
       extractor  = require('../extractor'),
-      documentDao  = require('../dao').document,
-      eventHandler = require('../event');
+      documentDao      = require('../dao').document,
+      documentGhostDao = require('../dao').document_ghost,
+      eventHandler     = require('../event');
 
 /**
  * Process document attachments.
@@ -42,12 +41,13 @@ const processAttachments = function(doc) {
 const DocumentService = {};
 
 /**
- * Get a document.
+ * Get a document (or a ghost document).
  * @param {String} docId Document ID
+ * @param {Boolean} ghost Ghost flag
  * @return {Object} the document
  */
-DocumentService.get = function(docId) {
-  return documentDao.get(docId);
+DocumentService.get = function(docId, ghost) {
+  return ghost ? documentGhostDao.get(docId) : documentDao.get(docId);
 };
 
 /**
@@ -109,7 +109,7 @@ DocumentService.create = function(doc) {
  * - title
  * - content (only if text content type)
  * - categories
- * @param {Object} doc    Document to create
+ * @param {Object} doc    Document to update
  * @param {Object} update Update to apply
  * @return {Object} the updated document
  */
@@ -147,34 +147,39 @@ DocumentService.update = function(doc, update) {
 };
 
 /**
- * Remove documents.
- * @param {String} owner Document owner
- * @param {Array} ids List of documents ID
- * @return {Array} deleted documents
+ * Remove document.
+ * @param {Object} doc     Document to delete
+ * @return {Array} deleted document
  */
-DocumentService.remove = function(owner, ids) {
-  const deleteDocument = function(id) {
-    return documentDao.get(id)
-      .then(function(doc) {
-        if (!doc) {
-          return Promise.reject(new errors.NotFound('Document not found.'));
-        }
-        if (doc.owner === owner) {
-          return documentDao.remove(doc)
-            .then(function() {
-              logger.info('Document deleted: %s', id);
-              // Broadcast document remove event.
-              eventHandler.document.emit('remove', doc);
-              return Promise.resolve(doc);
-            });
-        } else {
-          return Promise.reject(new errors.Forbidden());
-        }
-      });
-  };
+DocumentService.remove = function(doc) {
+  doc.date = new Date();
+  return documentGhostDao.create(doc)
+    .then(function() {
+      return documentDao.remove(doc);
+    })
+    .then(function() {
+      logger.info('Document deleted: %j', doc.id);
+      // Broadcast document remove event.
+      eventHandler.document.emit('remove', doc);
+      return Promise.resolve(doc);
+    });
+};
 
-  // Delete defined ids
-  return when.map(ids, deleteDocument);
+/**
+ * Restore deleted document.
+ * @param {Object} ghost document to restore
+ * @return {Object} the restored document
+ */
+DocumentService.restore = function(ghost) {
+  return documentDao.create(ghost)
+    .then(function(doc) {
+      return documentGhostDao.remove(doc);
+    }).then(function(doc) {
+      logger.info('Document restored: %j', doc.id);
+      // Broadcast document restore event.
+      eventHandler.document.emit('restore', doc);
+      return Promise.resolve(doc);
+    });
 };
 
 module.exports = DocumentService;

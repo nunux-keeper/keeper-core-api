@@ -125,21 +125,7 @@ module.exports = function(router) {
   router.post('/document', controller.document.create);
 
   /**
-   * @api {delete} /document Delete list of documents
-   * @apiDescription A list of document's ID to delete have to be passed in the
-   *  request payload. This list must be a JSON String array.
-   * @apiVersion 0.0.1
-   * @apiName DeleteDocuments
-   * @apiGroup document
-   * @apiPermission user
-   *
-   * @apiSuccessExample Success-Response:
-   *     HTTP/1.1 204 OK
-   */
-  router.delete('/document', controller.document.del);
-
-  /**
-   * @api {delete} /documenti/:id Delete a document
+   * @api {delete} /document/:id Delete a document
    * @apiVersion 0.0.1
    * @apiName DeleteDocument
    * @apiGroup document
@@ -151,4 +137,19 @@ module.exports = function(router) {
    *     HTTP/1.1 204 OK
    */
   router.delete('/document/:id', middleware.document, controller.document.del);
+
+  /**
+   * @api {post} /document/:id/restore Restore deleted document
+   * @apiVersion 0.0.1
+   * @apiName RestoreDeletedDocument
+   * @apiGroup document
+   * @apiPermission user
+   *
+   * @apiParam {String} id Id of the deleted document.
+   *
+   * @apiSuccessStructure Dcoument
+   */
+  router.post('/document/:id/restore', controller.document.restore);
+
+
 };

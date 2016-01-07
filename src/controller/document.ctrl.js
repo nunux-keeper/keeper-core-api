@@ -116,21 +116,31 @@ module.exports = {
    * Delete one or more documents.
    */
   del: function(req, res, next) {
-    let ids = null;
-    if (req.params.id) {
-      ids = [req.params.id];
-    } else if (req.body && Array.isArray(req.body)) {
-      ids = req.body;
-    }
-
-    if (ids) {
-      // Delete defined ids
-      documentService.remove(req.user.id, ids)
+    const doc = req.requestData.document;
+    documentService.remove(doc)
       .then(function() {
         res.status(204).json();
       }, next);
-    } else {
-      return next(new errors.BadRequest());
-    }
+  },
+
+  /**
+   * Restore deleted label.
+   */
+  restore: function(req, res, next) {
+    documentService.get(req.params.id, true)
+      .then(function(ghost) {
+        if (!ghost) {
+          return Promise.reject(new errors.NotFound('Document ghost not found.'));
+        }
+        // Only allow to see own document.
+        if (ghost.owner !== req.user.id) {
+          return Promise.reject(new errors.Forbidden());
+        }
+        return documentService.restore(ghost);
+      }).then(function(doc) {
+        const resource = new hal.Resource(doc, req.url);
+        res.status(200).json(resource);
+      }, next);
   }
+
 };

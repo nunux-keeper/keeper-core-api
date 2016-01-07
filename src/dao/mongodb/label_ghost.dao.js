@@ -8,7 +8,7 @@ const AbstractMongodbDao = require('./abstract');
  */
 class LabelGhostDao extends AbstractMongodbDao {
   constructor(client) {
-    super(client, 'label-ghost');
+    super(client, 'label_ghost');
   }
 }
 
