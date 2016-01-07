@@ -12,20 +12,6 @@ class DocumentDao extends AbstractMongodbDao {
     super(client, 'document');
   }
 
-  objectMapper(doc) {
-    return doc ? {
-      id:          doc._id ? doc._id.toString() : null,
-      title:       doc.title,
-      content:     doc.content,
-      contentType: doc.contentType,
-      date:        doc.date,
-      origin:      doc.origin,
-      labels:      doc.labels,
-      attachments: doc.attachments,
-      owner:       doc.owner
-    } : null;
-  }
-
   /**
    * Search documents.
    * @param {String} query Search query.

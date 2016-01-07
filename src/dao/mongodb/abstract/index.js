@@ -16,7 +16,14 @@ class AbstractMongodbDao {
   }
 
   objectMapper(doc) {
-    return doc;
+    if (!doc) {
+      return null;
+    }
+    const result = _.omit(doc, '_id');
+    if (doc._id) {
+      result.id = doc._id.toString();
+    }
+    return result;
   }
 
   /**
@@ -53,8 +60,11 @@ class AbstractMongodbDao {
    * @param {Object} doc doc to create
    * @return {Object} the created doc
    */
-  create(doc, pick) {
-    const newDoc = pick ? _.pick(doc, pick) : doc;
+  create(doc) {
+    const newDoc = _.omit(doc, 'id');
+    if (doc.id) {
+      newDoc._id = new ObjectID(doc.id);
+    }
     return this.getCollection().then((collection) => {
       return collection.insertOne(newDoc).then((/*r*/) => {
         return Promise.resolve(this.objectMapper(newDoc));
@@ -90,10 +100,12 @@ class AbstractMongodbDao {
    */
   remove(doc) {
     return this.getCollection().then((collection) => {
-      return collection.findOneAndDelete({_id: new ObjectID(doc._id || doc.id)})
-        .then((/*r*/) => {
-          return Promise.resolve(this.objectMapper(doc));
-        });
+      return collection.findOneAndDelete({
+        _id: doc._id ? doc._id : new ObjectID(doc.id)
+      })
+      .then((/*r*/) => {
+        return Promise.resolve(this.objectMapper(doc));
+      });
     });
   }
 

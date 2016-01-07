@@ -87,4 +87,18 @@ module.exports = function(router) {
    *     HTTP/1.1 204 OK
    */
   router.delete('/label/:id', middleware.label, controller.label.del);
+
+  /**
+   * @api {post} /label/:id/restore Restore deleted label
+   * @apiVersion 0.0.1
+   * @apiName RestoreDeletedLabel
+   * @apiGroup label
+   * @apiPermission user
+   *
+   * @apiParam {String} id Id of the deleted label.
+   *
+   * @apiSuccessStructure Label
+   */
+  router.post('/label/:id/restore', controller.label.restore);
+
 };

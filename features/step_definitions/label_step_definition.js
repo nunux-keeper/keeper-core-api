@@ -97,9 +97,25 @@ module.exports = function() {
       .delete('/v2/label/' + this.myLabel.id)
       .set('Content-Type', 'application/json')
       .set('X-Api-Token', this.token)
-      .expect(function(/*res*/) {
-        this.myLabel = null;
-      }.bind(this))
-    .expect(204, callback);
+      .expect(204, callback);
   });
+
+  this.When(/^I restore the previous label$/, function (callback) {
+    expect(this.myLabel).to.not.be.undefined;
+    request(app)
+      .post('/v2/label/' + this.myLabel.id + '/restore')
+      .set('Content-Type', 'application/json')
+      .set('X-Api-Token', this.token)
+      .expect(function(res) {
+        const newLabel = res.body;
+        expect(newLabel).to.contain.keys(
+            'id', 'label', 'color', 'date', '_links'
+        );
+        expect(newLabel.id).to.equals(this.myLabel.id);
+        expect(newLabel.label).to.equals(this.myLabel.label);
+        expect(newLabel.color).to.equals(this.myLabel.color);
+      }.bind(this))
+      .expect(200, callback);
+  });
+
 };

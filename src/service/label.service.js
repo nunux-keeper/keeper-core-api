@@ -2,7 +2,8 @@
 
 const _        = require('lodash'),
       logger   = require('../helper').logger,
-      labelDao = require('../dao').label;
+      labelDao = require('../dao').label,
+      labelGhostDao = require('../dao').label_ghost;
 
 /**
  * Label services.
@@ -11,12 +12,13 @@ const _        = require('lodash'),
 const LabelService = {};
 
 /**
- * Get a label.
+ * Get a label (or a ghost label).
  * @param {String} id ID of the label.
+ * @param {Boolean} ghost Ghot flag
  * @return {Object} the label
  */
-LabelService.get = function(id) {
-  return labelDao.get(id);
+LabelService.get = function(id, ghost) {
+  return ghost ? labelGhostDao.get(id) : labelDao.get(id);
 };
 
 /**
@@ -65,11 +67,31 @@ LabelService.update = function(label, update) {
  * @return {Object} the deleted label
  */
 LabelService.remove = function(label) {
-  return labelDao.remove(label)
+  label.date = new Date();
+  return labelGhostDao.create(label)
+    .then(function() {
+      return labelDao.remove(label);
+    })
     .then(function() {
       logger.info('Label deleted: %j', label);
       return Promise.resolve(label);
     });
 };
+
+/**
+ * Restore deleted label.
+ * @param {Object} ghost label to restore
+ * @return {Object} the restored label
+ */
+LabelService.restore = function(ghost) {
+  return labelDao.create(ghost)
+    .then(function(label) {
+      return labelGhostDao.remove(label);
+    }).then(function(label) {
+      logger.info('Label restored: %j', label);
+      return Promise.resolve(label);
+    });
+};
+
 
 module.exports = LabelService;

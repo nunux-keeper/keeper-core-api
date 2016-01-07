@@ -76,5 +76,25 @@ module.exports = {
     .then(function() {
       res.status(204).json();
     }, next);
+  },
+
+  /**
+   * Restore deleted label.
+   */
+  restore: function(req, res, next) {
+    labelService.get(req.params.id, true)
+      .then(function(ghost) {
+        if (!ghost) {
+          return Promise.reject(new errors.NotFound('Label ghost not found.'));
+        }
+        // Only allow to see own label.
+        if (ghost.owner !== req.user.id) {
+          return Promise.reject(new errors.Forbidden());
+        }
+        return labelService.restore(ghost);
+      }).then(function(label) {
+        const resource = new hal.Resource(label, req.url);
+        res.status(200).json(resource);
+      }, next);
   }
 };
