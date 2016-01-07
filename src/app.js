@@ -31,6 +31,9 @@ app.set('info', {
   env: env
 });
 
+// Disable some properties
+app.disable('x-powered-by');
+
 //app.engine('html', require('ejs').renderFile);
 //app.set('views', path.join(__dirname, '..', 'var', 'views'));
 
