@@ -20,7 +20,7 @@ module.exports = function(uri) {
     return Promise.resolve();
   };
 
-  client.indices.exists({
+  const configured = client.indices.exists({
     index: indexName
   }).then(function(exists) {
     if (!exists) {
@@ -31,9 +31,12 @@ module.exports = function(uri) {
         logger.info('Index %s created:', indexName, r);
         return Promise.resolve(r);
       });
+    } else {
+      return Promise.resolve();
     }
   }).catch(function(err) {
     logger.error('Unable to create index index %s ...', indexName, err);
+    return Promise.reject(err);
   });
 
   // Dynamic loading DAOs...
@@ -47,7 +50,7 @@ module.exports = function(uri) {
       logger.debug('Loading %s ElasticSearch DAO..', name);
       const Dao = require(path.join(__dirname, file));
       daos[name] = new Dao(client, indexName, useAsMainDatabaseEngine);
-      daos[name].configure();
+      configured.then(() => daos[name].configure());
     }
   });
   return daos;

@@ -1,8 +1,7 @@
 'use strict';
 
-const redis  = require('then-redis'),
-      url    = require('url'),
-      logger = require('./logger');
+const redis  = require('redis'),
+      url    = require('url');
 
 /**
  * Get Redis URI.
@@ -47,20 +46,9 @@ const connect = function(str) {
   return redisClient;
 };
 
-const client = connect(getRedisUri());
-
-client.on('error', function(err) {
-  logger.error('Redis error encountered', err);
-});
-
-client.on('end', function() {
-  logger.info('Redis connection closed');
-});
-
 /**
  * Redis helper.
  * @module redis
  */
-module.exports = client;
-
+module.exports =  connect(getRedisUri());
 

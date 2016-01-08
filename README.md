@@ -18,6 +18,9 @@ make start
 ## Roadmap
 
 - Cancel feature
+  - ES DAO
+  - Ghostbuster daemon
+- Manage docuement attachments
 - Refactore storage component (see: https://github.com/AbstractFS/node-abstractfs)
 - Sharing system
 - Create plugin system:

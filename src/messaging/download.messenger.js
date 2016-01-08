@@ -14,7 +14,14 @@ function DownloadMessenger(client) {
  * @return {Promise} promise of the push
  */
 DownloadMessenger.prototype.push = function(data) {
-  return this.client.rpush(this.topic, JSON.stringify(data));
+  return new Promise((resolve, reject) => {
+    this.client.rpush(this.topic, JSON.stringify(data), (err) => {
+      if (err) {
+        return reject(err);
+      }
+      resolve(data);
+    });
+  });
 };
 
 /**
@@ -23,9 +30,13 @@ DownloadMessenger.prototype.push = function(data) {
  * @return {Promise} promise of the pull with status in param
  */
 DownloadMessenger.prototype.pull = function(timeout) {
-  return this.client.blpop(this.topic, timeout)
-  .then(function(data) {
-    return Promise.resolve(JSON.parse(data));
+  return new Promise((resolve, reject) => {
+    this.client.blpop(this.topic, timeout, (err, data) => {
+      if (err) {
+        return reject(err);
+      }
+      resolve(JSON.parse(data));
+    });
   });
 };
 

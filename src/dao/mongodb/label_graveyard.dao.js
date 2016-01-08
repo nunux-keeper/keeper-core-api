@@ -6,10 +6,10 @@ const AbstractMongodbDao = require('./abstract');
  * Label ghost DAO.
  * @module label_ghost.dao
  */
-class LabelGhostDao extends AbstractMongodbDao {
+class LabelGraveyardDao extends AbstractMongodbDao {
   constructor(client) {
-    super(client, 'label_ghost');
+    super(client, 'label_graveyard');
   }
 }
 
-module.exports = LabelGhostDao;
+module.exports = LabelGraveyardDao;

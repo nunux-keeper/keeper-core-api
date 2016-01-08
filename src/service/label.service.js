@@ -3,7 +3,7 @@
 const _        = require('lodash'),
       logger   = require('../helper').logger,
       labelDao = require('../dao').label,
-      labelGhostDao = require('../dao').label_ghost;
+      labelGraveyardDao = require('../dao').label_graveyard;
 
 /**
  * Label services.
@@ -18,7 +18,7 @@ const LabelService = {};
  * @return {Object} the label
  */
 LabelService.get = function(id, ghost) {
-  return ghost ? labelGhostDao.get(id) : labelDao.get(id);
+  return ghost ? labelGraveyardDao.get(id) : labelDao.get(id);
 };
 
 /**
@@ -68,7 +68,7 @@ LabelService.update = function(label, update) {
  */
 LabelService.remove = function(label) {
   label.date = new Date();
-  return labelGhostDao.create(label)
+  return labelGraveyardDao.create(label)
     .then(function() {
       return labelDao.remove(label);
     })
@@ -86,7 +86,7 @@ LabelService.remove = function(label) {
 LabelService.restore = function(ghost) {
   return labelDao.create(ghost)
     .then(function(label) {
-      return labelGhostDao.remove(label);
+      return labelGraveyardDao.remove(label);
     }).then(function(label) {
       logger.info('Label restored: %j', label);
       return Promise.resolve(label);

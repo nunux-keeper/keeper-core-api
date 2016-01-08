@@ -2,7 +2,7 @@
 
 const logger = require('../helper').logger,
       path   = require('path'),
-      redis  = require('../helper').redis;
+      redis  = require('../helper/redis');
 
 // Dynamic loading Messaging...
 const messengers = {};

@@ -6,7 +6,7 @@ const bunyan = require('bunyan');
 const logger = bunyan.createLogger({
   name: process.title,
   stream: process.stdout,
-  level: process.env.APP_LOG_LEVEL || 'debug'
+  level: process.env.APP_LOG_LEVEL || 'error'
 });
 
 /**

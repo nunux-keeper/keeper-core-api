@@ -4,9 +4,9 @@ const _          = require('lodash'),
       logger     = require('../helper').logger,
       storage    = require('../storage'),
       extractor  = require('../extractor'),
-      documentDao      = require('../dao').document,
-      documentGhostDao = require('../dao').document_ghost,
-      eventHandler     = require('../event');
+      documentDao  = require('../dao').document,
+      eventHandler = require('../event'),
+      documentGraveyardDao = require('../dao').document_graveyard;
 
 /**
  * Process document attachments.
@@ -47,7 +47,7 @@ const DocumentService = {};
  * @return {Object} the document
  */
 DocumentService.get = function(docId, ghost) {
-  return ghost ? documentGhostDao.get(docId) : documentDao.get(docId);
+  return ghost ? documentGraveyardDao.get(docId) : documentDao.get(docId);
 };
 
 /**
@@ -153,7 +153,7 @@ DocumentService.update = function(doc, update) {
  */
 DocumentService.remove = function(doc) {
   doc.date = new Date();
-  return documentGhostDao.create(doc)
+  return documentGraveyardDao.create(doc)
     .then(function() {
       return documentDao.remove(doc);
     })
@@ -173,7 +173,7 @@ DocumentService.remove = function(doc) {
 DocumentService.restore = function(ghost) {
   return documentDao.create(ghost)
     .then(function(doc) {
-      return documentGhostDao.remove(doc);
+      return documentGraveyardDao.remove(doc);
     }).then(function(doc) {
       logger.info('Document restored: %j', doc.id);
       // Broadcast document restore event.
