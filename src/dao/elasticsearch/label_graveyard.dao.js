@@ -3,12 +3,12 @@
 const AbstractMongodbDao = require('./abstract');
 
 /**
- * Label DAO.
- * @module label.dao
+ * Label graveyard DAO.
+ * @module label_graveyard.dao
  */
-class LabelDao extends AbstractMongodbDao {
+class LabelGraveyardDao extends AbstractMongodbDao {
   constructor(client, index) {
-    super(client, index, 'label');
+    super(client, index, 'label_graveyard');
   }
 
   getMapping() {
@@ -23,5 +23,5 @@ class LabelDao extends AbstractMongodbDao {
   }
 }
 
-module.exports = LabelDao;
+module.exports = LabelGraveyardDao;
 

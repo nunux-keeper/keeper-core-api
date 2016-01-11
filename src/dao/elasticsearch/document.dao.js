@@ -28,15 +28,11 @@ class DocumentDao extends AbstractMongodbDao {
     };
   }
 
-  buildQuery(query) {
-    var q = {
+  buildSearchQuery(query) {
+    const result = {
       fields: ['title', 'contentType', 'labels', 'attachments', 'origin'],
       from: query.from,
       size: query.size,
-      sort: [
-        '_score',
-        { date: {order: query.order}}
-      ],
       query: {
         filtered: {
           query: { match_all: {} },
@@ -45,8 +41,15 @@ class DocumentDao extends AbstractMongodbDao {
       }
     };
 
+    if (query.order) {
+      result.sort = [
+        '_score',
+        { date: {order: query.order}}
+      ];
+    }
+
     if (query.q) {
-      q.query.filtered.query = {
+      result.query.filtered.query = {
         query_string: {
           fields: ['title^5', 'content'],
           query: query.q
@@ -54,7 +57,7 @@ class DocumentDao extends AbstractMongodbDao {
       };
     }
 
-    return q;
+    return result;
   }
 
   /**
@@ -66,7 +69,7 @@ class DocumentDao extends AbstractMongodbDao {
     return this.client.search({
       index: this.index,
       type: this.type,
-      body: this.buildQuery(query)
+      body: this.buildSearchQuery(query)
     }).then((data) => {
       const result = {};
       result.total = data.hits.total;

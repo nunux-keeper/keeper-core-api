@@ -4,7 +4,7 @@ const AbstractMongodbDao = require('./abstract');
 
 /**
  * Document graveyard DAO.
- * @module document_ghost.dao
+ * @module document_graveyard.dao
  */
 class DocumentGraveyardDao extends AbstractMongodbDao {
   constructor(client) {

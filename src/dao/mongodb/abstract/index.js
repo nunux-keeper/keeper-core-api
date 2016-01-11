@@ -42,14 +42,15 @@ class AbstractMongodbDao {
   /**
    * Find documents.
    * @param {Object} query Find query.
+   * @param {Object} params Find parameters.
    * @return {Array} the documents
    */
   find(query, params) {
     const p = _.defaults(params || {}, {
-      limit: 100
+      size: 100
     });
     return this.getCollection().then((collection) => {
-      return collection.find(query).limit(p.limit).toArray().then((docs) => {
+      return collection.find(query).limit(p.size).toArray().then((docs) => {
         return Promise.resolve(_.map(docs, this.objectMapper));
       });
     });

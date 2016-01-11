@@ -57,7 +57,10 @@ DocumentService.get = function(docId, ghost) {
  * @return {Object} the documents
  */
 DocumentService.search = function(owner, query) {
-  return documentDao.search(owner, query);
+  const _query = _.pick(query, ['from', 'order', 'size', 'q']);
+  _query.owner = owner;
+
+  return documentDao.search(_.defaults(_query, {order: 'asc', size: 50}));
 };
 
 /**

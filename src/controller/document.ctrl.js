@@ -30,6 +30,14 @@ module.exports = {
    * Search documents.
    */
   search: function(req, res, next) {
+    req.checkQuery('from', 'Invalid from param').optional().isAlphanumeric();
+    req.checkQuery('size', 'Invalid size param').optional().isInt({ min: 5, max: 100 });
+    req.checkQuery('order', 'Invalid order param').optional().isIn(['asc', 'desc']);
+    const validationErrors = req.validationErrors(true);
+    if (validationErrors) {
+      return next(new errors.BadRequest(null, validationErrors));
+    }
+
     documentService.search(req.user.id, req.query)
     .then(function(result) {
       // TODO add HAL data

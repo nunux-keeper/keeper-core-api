@@ -3,6 +3,13 @@
 const _      = require('lodash'),
       logger = require('../../../helper').logger;
 
+const buildTerm = function(name, value) {
+  const result = {term: {}};
+  result.term[name] = value;
+  return result;
+};
+
+
 class AbstractElasticsearchDao {
   constructor(client, index, type) {
     this.client = client;
@@ -31,22 +38,36 @@ class AbstractElasticsearchDao {
   }
 
   /**
-   * Build elasticsearch query to find labels.
-   * @param {String} owner owner used to filter the query
-   * @param {String} q query
+   * Build elasticsearch query.
+   * @param {Object} query query
+   * @param {Object} query query
    * @returns {Object} query DSL
    */
-  buildQuery(/*query*/) {
-    return {
-      size: 100,
-      query: {
-        filtered: {
-          query: { match_all: {} },
+  buildFindQuery(query, params) {
+    const fields = Object.keys(this.getMapping().properties);
+    const result ={
+      fields: fields,
+      size: params.size,
+      query: {}
+    };
+    const termCount = Object.keys(query).length;
+    if (termCount === 1) {
+      const prop = Object.keys(query)[0];
+      result.query.term = buildTerm(prop, query[prop]).term;
+    } else if (termCount > 1) {
+      result.query.bool = {
+        must: []
+      };
+      for (const prop in query) {
+        if (query.hasOwnProperty(prop)) {
+          const value = query[prop];
+          result.query.bool.must.push(buildTerm(prop, value));
         }
       }
-    };
+    }
+    logger.debug('Builded search query:', result);
+    return result;
   }
-
 
   /**
    * Get document.
@@ -68,13 +89,18 @@ class AbstractElasticsearchDao {
   /**
    * Find documents.
    * @param {Object} query Find query.
+   * @param {Object} params Find parameters.
    * @return {Array} the documents
    */
-  find(query) {
+  find(query, params) {
+    const p = _.defaults(params || {}, {
+      size: 100
+    });
+
     return this.client.search({
       index: this.index,
       type: this.type,
-      body: this.buildQuery(query)
+      body: this.buildFindQuery(query, p)
     }).then((r) => {
       const result = [];
       r.hits.hits.forEach(function(hit) {
@@ -99,6 +125,7 @@ class AbstractElasticsearchDao {
     return this.client.create({
       index: this.index,
       type: this.type,
+      id: doc.id,
       body: doc,
       refresh: true
     }).then(function(r) {

@@ -3,8 +3,8 @@
 const AbstractMongodbDao = require('./abstract');
 
 /**
- * Label ghost DAO.
- * @module label_ghost.dao
+ * Label graveyard DAO.
+ * @module label_graveyard.dao
  */
 class LabelGraveyardDao extends AbstractMongodbDao {
   constructor(client) {

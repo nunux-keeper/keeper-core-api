@@ -19,22 +19,6 @@ class UserDao extends AbstractMongodbDao {
       }
     };
   }
-
-  buildQuery(query) {
-    return {
-      fields: ['username'],
-      size: 100,
-      sort: [
-        '_score',
-        { date: {order: query.order}}
-      ],
-      query: {
-        filtered: {
-          query: { match_all: {} },
-        }
-      }
-    };
-  }
 }
 
 module.exports = UserDao;
