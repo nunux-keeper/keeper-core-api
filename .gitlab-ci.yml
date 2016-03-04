@@ -1,0 +1,29 @@
+image: node:5
+
+services:
+  - mongo:latest
+  - elasticsearch:latest
+  - redis:latest
+
+before_script:
+  - apt-get update -qy
+  - apt-get install -y imagemagick
+  - mkdir -p /var/opt/app/storage
+  - npm install --unsafe-perm
+
+variables:
+  APP_SEARCH_ENGINE_URI: "elasticsearch://elasticsearch:9200/keeper"
+  APP_REDIS_URI: "redis://redis:6379/1"
+  APP_ADMIN: "system"
+  APP_STORAGE_LOCAL_DIR: "/var/opt/app/storage"
+
+spec:feature:mongo:
+  stage: test
+  script:
+    - APP_DATABASE_URI="mongodb://mongo/keeper" npm test
+
+spec:feature:elasticsearch:
+  stage: test
+  script:
+    - APP_DATABASE_URI="elasticsearch://elasticsearch:9200/keeper" npm test
+
