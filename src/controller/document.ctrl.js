@@ -132,7 +132,7 @@ module.exports = {
   },
 
   /**
-   * Restore deleted label.
+   * Restore deleted document.
    */
   restore: function(req, res, next) {
     documentService.get(req.params.id, true)

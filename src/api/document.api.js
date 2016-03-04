@@ -34,7 +34,7 @@ module.exports = function(router) {
    *        "attachments": [{
    *          "key": "1234567890",
    *          "contentType": "image/png",
-   *          "origin": "http://foo.bar/foo.png
+   *          "origin": "http://foo.bar/foo.png"
    *        }]
    *     }
    */
