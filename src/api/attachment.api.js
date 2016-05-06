@@ -1,12 +1,12 @@
-'use strict';
+'use strict'
 
-const controller = require('../controller'),
-      middleware = require('../middleware');
+const controller = require('../controller')
+const middleware = require('../middleware')
 
 /**
  * Attachement API.
  */
-module.exports = function(router) {
+module.exports = function (router) {
   /**
    * @api {get} /document/:id/files/:key Get document attachment
    *
@@ -26,6 +26,5 @@ module.exports = function(router) {
    * @apiSuccessExample Success-Response:
    *     HTTP/1.1 200 OK
    */
-  router.get('/document/:id/files/:key', middleware.document, controller.attachment.get);
-
-};
+  router.get('/document/:id/files/:key', middleware.document, controller.attachment.get)
+}

@@ -1,13 +1,13 @@
-'use strict';
+'use strict'
 
-const express = require('express'),
-      controller = require('../controller');
+const express = require('express')
+const controller = require('../controller')
 
 /**
  * Info API.
  */
-module.exports = function(app) {
-  const router = express.Router();
+module.exports = function (app) {
+  const router = express.Router()
 
   /**
    * @api {get} / get API infos
@@ -28,10 +28,10 @@ module.exports = function(app) {
    *        "version": "1.0"
    *     }
    */
-  router.get('/', function(req, res, next) {
-    req.appInfo = app.get('info');
-    next();
-  }, controller.monitoring.get);
+  router.get('/', function (req, res, next) {
+    req.appInfo = app.get('info')
+    next()
+  }, controller.monitoring.get)
 
-  return router;
-};
+  return router
+}

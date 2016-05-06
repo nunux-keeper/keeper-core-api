@@ -1,16 +1,16 @@
-'use strict';
+'use strict'
 
-const logger = require('../helper').logger,
-      path   = require('path');
+const logger = require('../helper').logger
+const path = require('path')
 
 // Dynamic loading Controllers...
-const controllers = {};
+const controllers = {}
 require('fs').readdirSync(__dirname).forEach((file) => {
   if (/^[a-z_]+\.ctrl\.js$/.test(file)) {
-    const name = path.basename(file, '.ctrl.js');
-    logger.debug('Loading %s controller...', name);
-    controllers[name] = require(path.join(__dirname, file));
+    const name = path.basename(file, '.ctrl.js')
+    logger.debug('Loading %s controller...', name)
+    controllers[name] = require(path.join(__dirname, file))
   }
-});
+})
 
-module.exports = controllers;
+module.exports = controllers

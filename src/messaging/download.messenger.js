@@ -1,11 +1,11 @@
-'use strict';
+'use strict'
 
 /**
  * Download messenger.
  */
-function DownloadMessenger(client) {
-  this.client = client;
-  this.topic = 'download';
+function DownloadMessenger (client) {
+  this.client = client
+  this.topic = 'download'
 }
 
 /**
@@ -13,32 +13,32 @@ function DownloadMessenger(client) {
  * @param {Object} status Status
  * @return {Promise} promise of the push
  */
-DownloadMessenger.prototype.push = function(data) {
+DownloadMessenger.prototype.push = function (data) {
   return new Promise((resolve, reject) => {
     this.client.rpush(this.topic, JSON.stringify(data), (err) => {
       if (err) {
-        return reject(err);
+        return reject(err)
       }
-      resolve(data);
-    });
-  });
-};
+      resolve(data)
+    })
+  })
+}
 
 /**
  * Pull status from expiration queue.
  * @param {Integer} timeout timeout in sec
  * @return {Promise} promise of the pull with status in param
  */
-DownloadMessenger.prototype.pull = function(timeout) {
+DownloadMessenger.prototype.pull = function (timeout) {
   return new Promise((resolve, reject) => {
     this.client.blpop(this.topic, timeout, (err, data) => {
       if (err) {
-        return reject(err);
+        return reject(err)
       }
-      resolve(JSON.parse(data));
-    });
-  });
-};
+      resolve(JSON.parse(data))
+    })
+  })
+}
 
-module.exports = DownloadMessenger;
+module.exports = DownloadMessenger
 

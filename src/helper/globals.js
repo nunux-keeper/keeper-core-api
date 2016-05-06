@@ -1,6 +1,6 @@
-'use strict';
+'use strict'
 
-const Chance = require('chance');
+const Chance = require('chance')
 
 /**
  * Globals variables.
@@ -13,5 +13,5 @@ module.exports = {
   SEARCH_ENGINE_URI: process.env.APP_SEARCH_ENGINE_URI || 'elasticsearch://elasticsearch/keeper',
   // Secret use to encypt token
   TOKEN_SECRET: process.env.APP_TOKEN_SECRET || new Chance().hash({length: 16})
-};
+}
 

@@ -1,9 +1,9 @@
-'use strict';
+'use strict'
 
-const _       = require('lodash'),
-      url     = require('url'),
-      logger  = require('../helper').logger,
-      globals = require('../helper').globals;
+const _ = require('lodash')
+const url = require('url')
+const logger = require('../helper').logger
+const globals = require('../helper').globals
 
 /**
  * Search engine.
@@ -13,25 +13,25 @@ class SearchEngine {
   /**
    * Constructor.
    */
-  constructor() {
+  constructor () {
     // Disable the event handler if the search feature is not delegated.
-    this.disabled = globals.SEARCH_ENGINE_URI === globals.DATABASE_URI;
+    this.disabled = globals.SEARCH_ENGINE_URI === globals.DATABASE_URI
     if (this.disabled) {
-      return;
+      return
     }
-    const providerName = url.parse(globals.SEARCH_ENGINE_URI).protocol.slice(0, -1);
-    this._provider = require(`./${providerName}`)(globals.SEARCH_ENGINE_URI).document;
+    const providerName = url.parse(globals.SEARCH_ENGINE_URI).protocol.slice(0, -1)
+    this._provider = require(`./${providerName}`)(globals.SEARCH_ENGINE_URI).document
   }
 
   /**
    * Get search engine provider.
    * @return {Object} the provider
    */
-  getProvider() {
+  getProvider () {
     if (this.disabled) {
-      return Promise.reject('Search engine disabled.');
+      return Promise.reject('Search engine disabled.')
     }
-    return Promise.resolve(this._provider);
+    return Promise.resolve(this._provider)
   }
 
   /**
@@ -39,14 +39,14 @@ class SearchEngine {
    * @param {Object} doc Document to index
    * @return {Promise} Indexed document
    */
-  indexDocument(doc) {
+  indexDocument (doc) {
     return this.getProvider().then((provider) => {
-      logger.debug('Indexing the document...', doc.id);
-      return provider.create(doc);
+      logger.debug('Indexing the document...', doc.id)
+      return provider.create(doc)
     }).catch((err) => {
-      logger.error('Unable to index document:', doc, err);
-      return Promise.reject(err);
-    });
+      logger.error('Unable to index document:', doc, err)
+      return Promise.reject(err)
+    })
   }
 
   /**
@@ -54,14 +54,14 @@ class SearchEngine {
    * @param {Object} doc Document to re-index
    * @return {Promise} Re-indexed document
    */
-  reindexDocument(doc) {
+  reindexDocument (doc) {
     return this.getProvider().then((provider) => {
-      logger.debug('Reindexing the document...', doc.id);
-      return provider.update(doc, _.omit(doc, 'id'));
+      logger.debug('Reindexing the document...', doc.id)
+      return provider.update(doc, _.omit(doc, 'id'))
     }).catch((err) => {
-      logger.error('Unable to reindex document:', doc, err);
-      return Promise.reject(err);
-    });
+      logger.error('Unable to reindex document:', doc, err)
+      return Promise.reject(err)
+    })
   }
 
   /**
@@ -69,14 +69,14 @@ class SearchEngine {
    * @param {Object} doc Document to unindex
    * @return {Promise} Unindexed document
    */
-  unindexDocument(doc) {
+  unindexDocument (doc) {
     return this.getProvider().then((provider) => {
-      logger.debug('Unindexing the document...', doc.id);
-      return provider.remove(doc);
+      logger.debug('Unindexing the document...', doc.id)
+      return provider.remove(doc)
     }).catch((err) => {
-      logger.error('Unable to unindex document:', doc, err);
-      return Promise.reject(err);
-    });
+      logger.error('Unable to unindex document:', doc, err)
+      return Promise.reject(err)
+    })
   }
 
   /**
@@ -84,16 +84,15 @@ class SearchEngine {
    * @param {Object} query the search query
    * @return {Promise} the search result.
    */
-  search(query) {
+  search (query) {
     return this.getProvider().then((provider) => {
-      logger.debug('Searching documents...', query);
-      return provider.search(query);
+      logger.debug('Searching documents...', query)
+      return provider.search(query)
     }).catch((err) => {
-      logger.error('Unable to search documents:', query, err);
-      return Promise.reject(err);
-    });
+      logger.error('Unable to search documents:', query, err)
+      return Promise.reject(err)
+    })
   }
 }
 
-
-module.exports = new SearchEngine();
+module.exports = new SearchEngine()

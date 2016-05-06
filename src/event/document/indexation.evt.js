@@ -1,18 +1,18 @@
-'use strict';
+'use strict'
 
-const searchengine = require('../../dao/searchengine');
+const searchengine = require('../../dao/searchengine')
 
 /**
  * Document event handler.
  */
-module.exports = function(documentEventHandler) {
+module.exports = function (documentEventHandler) {
   // Exit if disabled...
   if (searchengine.disabled) {
-    return;
+    return
   }
 
-  documentEventHandler.on('create', (doc) => searchengine.indexDocument(doc));
-  documentEventHandler.on('update', (doc) => searchengine.reindexDocument(doc));
-  documentEventHandler.on('remove', (doc) => searchengine.unindexDocument(doc));
-  documentEventHandler.on('restore', (doc) => searchengine.indexDocument(doc));
-};
+  documentEventHandler.on('create', (doc) => searchengine.indexDocument(doc))
+  documentEventHandler.on('update', (doc) => searchengine.reindexDocument(doc))
+  documentEventHandler.on('remove', (doc) => searchengine.unindexDocument(doc))
+  documentEventHandler.on('restore', (doc) => searchengine.indexDocument(doc))
+}

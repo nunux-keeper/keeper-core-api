@@ -1,29 +1,29 @@
-'use strict';
+'use strict'
 
-const _        = require('lodash'),
-      ObjectID = require('mongodb').ObjectID;
+const _ = require('lodash')
+const ObjectID = require('mongodb').ObjectID
 
 class AbstractMongodbDao {
-  constructor(client, collection) {
-    this.client = client;
-    this.collection = collection;
+  constructor (client, collection) {
+    this.client = client
+    this.collection = collection
   }
 
-  getCollection() {
+  getCollection () {
     return this.client.then((db) => {
-      return Promise.resolve(db.collection(this.collection));
-    });
+      return Promise.resolve(db.collection(this.collection))
+    })
   }
 
-  objectMapper(doc) {
+  objectMapper (doc) {
     if (!doc) {
-      return null;
+      return null
     }
-    const result = _.omit(doc, '_id');
+    const result = _.omit(doc, '_id')
     if (doc._id) {
-      result.id = doc._id.toString();
+      result.id = doc._id.toString()
     }
-    return result;
+    return result
   }
 
   /**
@@ -31,12 +31,12 @@ class AbstractMongodbDao {
    * @param {String} id ID of the document.
    * @return {Object} the document
    */
-  get(id) {
+  get (id) {
     return this.getCollection().then((collection) => {
       return collection.findOne({_id: new ObjectID(id)}).then((doc) => {
-        return Promise.resolve(this.objectMapper(doc));
-      });
-    });
+        return Promise.resolve(this.objectMapper(doc))
+      })
+    })
   }
 
   /**
@@ -45,15 +45,15 @@ class AbstractMongodbDao {
    * @param {Object} params Find parameters.
    * @return {Array} the documents
    */
-  find(query, params) {
+  find (query, params) {
     const p = _.defaults(params || {}, {
       size: 100
-    });
+    })
     return this.getCollection().then((collection) => {
       return collection.find(query).limit(p.size).toArray().then((docs) => {
-        return Promise.resolve(_.map(docs, this.objectMapper));
-      });
-    });
+        return Promise.resolve(_.map(docs, this.objectMapper))
+      })
+    })
   }
 
   /**
@@ -61,16 +61,16 @@ class AbstractMongodbDao {
    * @param {Object} doc doc to create
    * @return {Object} the created doc
    */
-  create(doc) {
-    const newDoc = _.omit(doc, 'id');
+  create (doc) {
+    const newDoc = _.omit(doc, 'id')
     if (doc.id) {
-      newDoc._id = new ObjectID(doc.id);
+      newDoc._id = new ObjectID(doc.id)
     }
     return this.getCollection().then((collection) => {
-      return collection.insertOne(newDoc).then((/*r*/) => {
-        return Promise.resolve(this.objectMapper(newDoc));
-      });
-    });
+      return collection.insertOne(newDoc).then((/* r */) => {
+        return Promise.resolve(this.objectMapper(newDoc))
+      })
+    })
   }
 
   /**
@@ -79,19 +79,17 @@ class AbstractMongodbDao {
    * @param {Object} update Update to apply
    * @return {Object} the updated document
    */
-  update(doc, update) {
+  update (doc, update) {
     return this.getCollection().then((collection) => {
       return collection.findOneAndUpdate(
           {_id: new ObjectID(doc._id || doc.id)},
           {$set: update},
-          {
-            returnOriginal: false,
-            upsert: true
-          })
+          {returnOriginal: false, upsert: true}
+      )
       .then((r) => {
-        return Promise.resolve(this.objectMapper(r.value));
-      });
-    });
+        return Promise.resolve(this.objectMapper(r.value))
+      })
+    })
   }
 
   /**
@@ -99,17 +97,17 @@ class AbstractMongodbDao {
    * @param {Object} doc Document to to delete
    * @return {Object} the deleted document
    */
-  remove(doc) {
+  remove (doc) {
     return this.getCollection().then((collection) => {
       return collection.findOneAndDelete({
         _id: doc._id ? doc._id : new ObjectID(doc.id)
       })
-      .then((/*r*/) => {
-        return Promise.resolve(this.objectMapper(doc));
-      });
-    });
+      .then((/* r */) => {
+        return Promise.resolve(this.objectMapper(doc))
+      })
+    })
   }
 
 }
 
-module.exports = AbstractMongodbDao;
+module.exports = AbstractMongodbDao

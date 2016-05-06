@@ -1,7 +1,7 @@
-'use strict';
+'use strict'
 
-const logger = require('../../helper').logger,
-      url    = require('url');
+const logger = require('../../helper').logger
+const url = require('url')
 
 /**
  * Youtube URL content extractor.
@@ -13,16 +13,17 @@ module.exports = {
    * @param {Document} doc
    * @return {Promise} Promise of the document with extracted content.
    */
-  extract: function(doc) {
-    logger.debug('Using Youtube URL extractor.');
+  extract: function (doc) {
+    logger.debug('Using Youtube URL extractor.')
 
-    const u = url.parse(doc.origin, true), v = u.query.v;
+    const u = url.parse(doc.origin, true)
+    const v = u.query.v
     doc.content = `<iframe width="560" height="315"
       src="//www.youtube.com/embed/${v}"
-      frameborder="0" allowfullscreen></iframe>`;
-    doc.title = 'Youtube video: ' + v;
-    doc.contentType = 'text/html';
-    return Promise.resolve(doc);
+      frameborder="0" allowfullscreen></iframe>`
+    doc.title = 'Youtube video: ' + v
+    doc.contentType = 'text/html'
+    return Promise.resolve(doc)
   },
 
   /**
@@ -30,7 +31,7 @@ module.exports = {
    * @param {Document} doc
    * @return {Boolean} True if the URL is from Youtube.
    */
-  detect: function(doc) {
-    return doc.origin.lastIndexOf('https://www.youtube.com/watch', 0) === 0;
+  detect: function (doc) {
+    return doc.origin.lastIndexOf('https://www.youtube.com/watch', 0) === 0
   }
-};
+}

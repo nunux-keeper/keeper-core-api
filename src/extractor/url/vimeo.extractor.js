@@ -1,7 +1,7 @@
-'use strict';
+'use strict'
 
-const logger = require('../../helper').logger,
-      url    = require('url');
+const logger = require('../../helper').logger
+const url = require('url')
 
 /**
  * Vimeo URL content extractor.
@@ -13,16 +13,17 @@ module.exports = {
    * @param {Document} doc
    * @return {Promise} Promise of the document with extracted content.
    */
-  extract: function(doc) {
-    logger.debug('Using Vimeo URL extractor.');
+  extract: function (doc) {
+    logger.debug('Using Vimeo URL extractor.')
 
-    const u = url.parse(doc.origin), v = u.pathname.split('/')[1];
+    const u = url.parse(doc.origin)
+    const v = u.pathname.split('/')[1]
     doc.content = `<iframe src="//player.vimeo.com/video/${v}"
       width="500" height="281" frameborder="0"
-      webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>`;
-    doc.title = 'Vimeo video: ' + v;
-    doc.contentType = 'text/html';
-    return Promise.resolve(doc);
+      webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>`
+    doc.title = 'Vimeo video: ' + v
+    doc.contentType = 'text/html'
+    return Promise.resolve(doc)
   },
 
   /**
@@ -30,7 +31,7 @@ module.exports = {
    * @param {Document} doc
    * @return {Boolean} True if the URL is from Vimeo.
    */
-  detect: function(doc) {
-    return doc.origin.lastIndexOf('http://vimeo.com', 0) === 0;
+  detect: function (doc) {
+    return doc.origin.lastIndexOf('http://vimeo.com', 0) === 0
   }
-};
+}

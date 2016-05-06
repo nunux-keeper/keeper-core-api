@@ -1,0 +1,22 @@
+# vim:ft=yaml:
+
+# So parent files don't get applied
+root: true
+
+env:
+  browser: false
+  node: true
+
+extends:
+  - standard
+
+rules:
+  semi: [2, never]
+  no-caller: 1
+  key-spacing: [0, { align: colon}]
+
+globals:
+  __DEV__              : false
+  __PROD__             : false
+  __DEBUG__            : false
+

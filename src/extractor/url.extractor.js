@@ -1,37 +1,37 @@
-'use strict';
+'use strict'
 
-const path    = require('path'),
-      zlib    = require('zlib'),
-      hash    = require('../helper').hash,
-      logger  = require('../helper').logger,
-      request = require('../helper').request;
+const path = require('path')
+const zlib = require('zlib')
+const hash = require('../helper').hash
+const logger = require('../helper').logger
+const request = require('../helper').request
 
 // Load URL extractors
-const urlExtractors = {};
+const urlExtractors = {}
 require('fs').readdirSync(path.join(__dirname, 'url')).forEach((file) => {
   if (/^[a-z_]+\.extractor\.js$/.test(file)) {
-    const name = path.basename(file, '.extractor.js');
-    logger.debug('Loading %s URL extractor..', name);
-    urlExtractors[name] = require(path.join(__dirname, 'url', file));
+    const name = path.basename(file, '.extractor.js')
+    logger.debug('Loading %s URL extractor..', name)
+    urlExtractors[name] = require(path.join(__dirname, 'url', file))
   }
-});
+})
 
 const defaultExtractor = {
-  extract: function(doc) {
-    logger.debug('Using default URL extractor.');
-    return new Promise(function(resolve, reject) {
+  extract: function (doc) {
+    logger.debug('Using default URL extractor.')
+    return new Promise(function (resolve, reject) {
       request.head(doc.origin, function (err, res) {
         if (err) {
-          return reject(err);
+          return reject(err)
         }
-        const encoding = res.headers['content-encoding'];
-        let stream = null;
+        const encoding = res.headers['content-encoding']
+        let stream = null
         if (encoding === 'gzip') {
-          stream = request.get(doc.origin).pipe(zlib.createGunzip());
+          stream = request.get(doc.origin).pipe(zlib.createGunzip())
         } else if (encoding === 'deflate') {
-          stream = request.get(doc.origin).pipe(zlib.createInflate());
+          stream = request.get(doc.origin).pipe(zlib.createInflate())
         } else {
-          stream = request.get(doc.origin);
+          stream = request.get(doc.origin)
         }
 
         doc.attachments.push({
@@ -40,13 +40,13 @@ const defaultExtractor = {
           contentType: res.headers['content-type'],
           contentLength: res.headers['content-length'],
           origin: doc.origin
-        });
+        })
 
-        resolve(doc);
-      });
-    });
+        resolve(doc)
+      })
+    })
   }
-};
+}
 
 /**
  * URL content extractor.
@@ -60,22 +60,22 @@ module.exports = {
    * @param {Document} doc
    * @return {Promise} Promise of the document with extracted content.
    */
-  extract: function(doc) {
+  extract: function (doc) {
     if (doc.origin && !doc.content) {
-      let extractor = null;
+      let extractor = null
       for (let ext in urlExtractors) {
         if (urlExtractors[ext].detect(doc)) {
-          extractor = urlExtractors[ext];
-          break;
+          extractor = urlExtractors[ext]
+          break
         }
       }
       if (extractor) {
-        return extractor.extract(doc);
+        return extractor.extract(doc)
       } else {
-        return defaultExtractor.extract(doc);
+        return defaultExtractor.extract(doc)
       }
     } else {
-      return Promise.resolve(doc);
+      return Promise.resolve(doc)
     }
   }
-};
+}

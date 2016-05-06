@@ -1,6 +1,6 @@
-'use strict';
+'use strict'
 
-const crypto = require('crypto');
+const crypto = require('crypto')
 
 /**
  * Get a hashed name.
@@ -8,17 +8,17 @@ const crypto = require('crypto');
  * @param {String} name
  * @returns {String} hash
  */
-const getHashName = function(name) {
+const getHashName = function (name) {
   // Clean query if URL
-  const cleanName = name.replace(/\?.*$/,'');
+  const cleanName = name.replace(/\?.*$/, '')
   // Extract extension
-  let ext = cleanName.split('.').pop();
+  let ext = cleanName.split('.').pop()
   if (ext) {
-    ext = ext.match(/^[a-zA-Z0-9]+/)[0];
+    ext = ext.match(/^[a-zA-Z0-9]+/)[0]
   }
   // Return hash
-  return crypto.createHash('md5').update(cleanName).digest('hex') + (ext ? '.' + ext : '');
-};
+  return crypto.createHash('md5').update(cleanName).digest('hex') + (ext ? '.' + ext : '')
+}
 
 /**
  * Hash helper.
@@ -27,5 +27,5 @@ const getHashName = function(name) {
 module.exports = {
   hashUrl: getHashName,
   hashFilename: getHashName
-};
+}
 

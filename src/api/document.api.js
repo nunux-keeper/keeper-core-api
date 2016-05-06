@@ -1,12 +1,12 @@
-'use strict';
+'use strict'
 
-const controller = require('../controller'),
-      middleware = require('../middleware');
+const controller = require('../controller')
+const middleware = require('../middleware')
 
 /**
  * Document API.
  */
-module.exports = function(router) {
+module.exports = function (router) {
   /**
    * @apiDefineSuccessStructure Document
    * @apiSuccess {String}   id          ID of the document.
@@ -72,7 +72,7 @@ module.exports = function(router) {
    *        ]
    *     }
    */
-  router.get('/document', controller.document.search);
+  router.get('/document', controller.document.search)
 
   /**
    * @api {get} /document Get document
@@ -85,7 +85,7 @@ module.exports = function(router) {
    *
    * @apiSuccessStructure Document
    */
-  router.get('/document/:id', middleware.document, controller.document.get);
+  router.get('/document/:id', middleware.document, controller.document.get)
 
   /**
    * @api {put} /document/:id Update document
@@ -102,7 +102,7 @@ module.exports = function(router) {
    *
    * @apiSuccessStructure Document
    */
-  router.put('/document/:id', middleware.document, controller.document.update);
+  router.put('/document/:id', middleware.document, controller.document.update)
 
   /**
    * @api {post} /document Create document
@@ -122,7 +122,7 @@ module.exports = function(router) {
    *
    * @apiSuccessStructure Document
    */
-  router.post('/document', controller.document.create);
+  router.post('/document', controller.document.create)
 
   /**
    * @api {delete} /document/:id Delete a document
@@ -136,7 +136,7 @@ module.exports = function(router) {
    * @apiSuccessExample Success-Response:
    *     HTTP/1.1 204 OK
    */
-  router.delete('/document/:id', middleware.document, controller.document.del);
+  router.delete('/document/:id', middleware.document, controller.document.del)
 
   /**
    * @api {post} /document/:id/restore Restore deleted document
@@ -149,7 +149,5 @@ module.exports = function(router) {
    *
    * @apiSuccessStructure Dcoument
    */
-  router.post('/document/:id/restore', controller.document.restore);
-
-
-};
+  router.post('/document/:id/restore', controller.document.restore)
+}

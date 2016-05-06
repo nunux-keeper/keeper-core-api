@@ -1,17 +1,17 @@
-'use strict';
+'use strict'
 
-const passport       = require('passport'),
-      GoogleStrategy = require('passport-google-oauth').OAuth2Strategy,
-      nodefn         = require('when/node/function'),
-      logger         = require('../../../helper').logger;
+const logger = require('../../../helper').logger
+const nodefn = require('when/node/function')
+const passport = require('passport')
+const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy
 
 /**
  * Google auth provider configuration.
  */
-module.exports = function(app, loginMiddleware) {
+module.exports = function (app, loginMiddleware) {
   if (!process.env.APP_GOOGLE_KEY || !process.env.APP_GOOGLE_SECRET) {
-    logger.error('APP_GOOGLE_KEY or APP_GOOGLE_SECRET not set. Google authentication cannot be configured!');
-    return;
+    logger.error('APP_GOOGLE_KEY or APP_GOOGLE_SECRET not set. Google authentication cannot be configured!')
+    return
   }
 
   /**
@@ -20,15 +20,15 @@ module.exports = function(app, loginMiddleware) {
   passport.use(new GoogleStrategy({
     clientID: process.env.APP_GOOGLE_KEY,
     clientSecret: process.env.APP_GOOGLE_SECRET,
-    callbackURL: app.get('realm') + '/auth/google/callback',
-  }, function(accessToken, refreshToken, profile, done) {
+    callbackURL: app.get('realm') + '/auth/google/callback'
+  }, function (accessToken, refreshToken, profile, done) {
     const user = {
       id: profile.emails[0].value,
       username: profile.displayName
-    };
+    }
 
-    nodefn.bindCallback(user, done);
-  }));
+    nodefn.bindCallback(user, done)
+  }))
 
   /**
    * Google auth entry point.
@@ -36,7 +36,7 @@ module.exports = function(app, loginMiddleware) {
   app.get(
     '/auth/google',
     passport.authenticate('google', {session: false, scope: 'https://www.googleapis.com/auth/userinfo.email'})
-  );
+  )
 
   /**
    * Google auth return URL.
@@ -45,5 +45,5 @@ module.exports = function(app, loginMiddleware) {
     '/auth/google/callback',
     passport.authenticate('google', {session: false, failureRedirect: '/'}),
     loginMiddleware
-  );
-};
+  )
+}

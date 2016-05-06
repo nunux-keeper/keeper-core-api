@@ -1,15 +1,15 @@
-'use strict';
+'use strict'
 
-const AbstractMongodbDao = require('./abstract');
+const AbstractMongodbDao = require('./abstract')
 
 /**
  * Label graveyard DAO.
  * @module label_graveyard.dao
  */
 class LabelGraveyardDao extends AbstractMongodbDao {
-  constructor(client) {
-    super(client, 'label_graveyard');
+  constructor (client) {
+    super(client, 'label_graveyard')
   }
 }
 
-module.exports = LabelGraveyardDao;
+module.exports = LabelGraveyardDao

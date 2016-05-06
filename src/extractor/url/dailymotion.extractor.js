@@ -1,7 +1,7 @@
-'use strict';
+'use strict'
 
-const logger = require('../../helper').logger,
-      url    = require('url');
+const logger = require('../../helper').logger
+const url = require('url')
 
 /**
  * Dailymotion URL content extractor.
@@ -13,16 +13,16 @@ module.exports = {
    * @param {Document} doc
    * @return {Promise} Promise of the document with extracted content.
    */
-  extract: function(doc) {
-    logger.debug('Using Dailymotion URL extractor.');
+  extract: function (doc) {
+    logger.debug('Using Dailymotion URL extractor.')
 
-    var u = url.parse(doc.origin),
-        v = u.pathname.split('/')[2];
+    const u = url.parse(doc.origin)
+    const v = u.pathname.split('/')[2]
     doc.content = `<iframe frameborder="0" width="480" height="270"
-    src="//www.dailymotion.com/embed/video/${v}"  allowfullscreen></iframe>`;
-    doc.title = 'Dailymotion video: ' + v;
-    doc.contentType = 'text/html';
-    return Promise.resolve(doc);
+    src="//www.dailymotion.com/embed/video/${v}"  allowfullscreen></iframe>`
+    doc.title = 'Dailymotion video: ' + v
+    doc.contentType = 'text/html'
+    return Promise.resolve(doc)
   },
 
   /**
@@ -30,7 +30,7 @@ module.exports = {
    * @param {Document} doc
    * @return {Boolean} True if the URL is from Dailymotion.
    */
-  detect: function(doc) {
-    return doc.origin.lastIndexOf('http://www.dailymotion.com/video/', 0) === 0;
+  detect: function (doc) {
+    return doc.origin.lastIndexOf('http://www.dailymotion.com/video/', 0) === 0
   }
-};
+}

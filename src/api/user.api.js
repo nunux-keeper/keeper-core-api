@@ -1,11 +1,11 @@
-'use strict';
+'use strict'
 
-const controller = require('../controller');
+const controller = require('../controller')
 
 /**
  * User API.
  */
-module.exports = function(router) {
+module.exports = function (router) {
   /**
    * @apiDefineSuccessStructure User
    * @apiSuccess {String}  uid              ID of the User (email).
@@ -37,7 +37,7 @@ module.exports = function(router) {
    *
    * @apiSuccessStructure User
    */
-  router.get('/user/current', controller.user.get);
+  router.get('/user/current', controller.user.get)
 
   /**
    * @api {put} /user/current Update current user information
@@ -50,5 +50,5 @@ module.exports = function(router) {
    *
    * @apiSuccessStructure User
    */
-  router.put('/user/current', controller.user.update);
-};
+  router.put('/user/current', controller.user.update)
+}

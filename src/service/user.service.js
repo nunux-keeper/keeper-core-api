@@ -1,18 +1,18 @@
-'use strict';
+'use strict'
 
-const _       = require('lodash'),
-      crypto  = require('crypto'),
-      logger  = require('../helper').logger,
-      userDao = require('../dao').user;
+const _ = require('lodash')
+const crypto = require('crypto')
+const logger = require('../helper').logger
+const userDao = require('../dao').user
 
-const autoGrantAccess = process.env.APP_AUTO_GRANT_ACCESS !== 'false';
-const admins = process.env.APP_ADMIN ? process.env.APP_ADMIN.split(/[\s,]+/) : [];
+const autoGrantAccess = process.env.APP_AUTO_GRANT_ACCESS !== 'false'
+const admins = process.env.APP_ADMIN ? process.env.APP_ADMIN.split(/[\s,]+/) : []
 
 /**
  * User services.
  * @module user.service
  */
-const UserService = {};
+const UserService = {}
 
 /**
  * Update user's data.
@@ -20,41 +20,40 @@ const UserService = {};
  * @param {String} update Update data
  * @return {Object} the updated user
  */
-UserService.update = function(user, update) {
-  update = _.pick(update, 'username');
-  update.date = new Date();
+UserService.update = function (user, update) {
+  update = _.pick(update, 'username')
+  update.date = new Date()
   return userDao.update(user, update)
-    .then(function(u) {
-      logger.info('User updated: %j', u);
-      return Promise.resolve(u);
-    });
-};
+    .then(function (u) {
+      logger.info('User updated: %j', u)
+      return Promise.resolve(u)
+    })
+}
 
 /**
  * Login.
  * @param {String} user User to login
  * @return {Object} the logged user
  */
-UserService.login = function(user) {
-  const logged = userDao.get(user.id).then(function(_user) {
+UserService.login = function (user) {
+  const logged = userDao.get(user.id).then(function (_user) {
     if (_user) {
       // Return the user.
-      logger.debug('User %s authorized.', _user.id);
-      return Promise.resolve(_user);
+      logger.debug('User %s authorized.', _user.id)
+      return Promise.resolve(_user)
     } else if (autoGrantAccess || _.contains(admins, user.id)) {
       // Create the user.
-      logger.info('User %s authorized. Will be created.', user.id);
-      user.publicAlias = crypto.createHash('md5').update(user.id).digest('hex');
-      return userDao.create(user);
+      logger.info('User %s authorized. Will be created.', user.id)
+      user.publicAlias = crypto.createHash('md5').update(user.id).digest('hex')
+      return userDao.create(user)
     } else {
       // User not found and auto grant access is disabled.
-      logger.warn('User %s not authorized.', user.id);
-      return Promise.reject('ENOTAUTHORIZED');
+      logger.warn('User %s not authorized.', user.id)
+      return Promise.reject('ENOTAUTHORIZED')
     }
-  });
+  })
 
-  return logged;
-};
+  return logged
+}
 
-
-module.exports = UserService;
+module.exports = UserService

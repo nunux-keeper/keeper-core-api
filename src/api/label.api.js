@@ -1,12 +1,12 @@
-'use strict';
+'use strict'
 
-const controller = require('../controller'),
-      middleware = require('../middleware');
+const controller = require('../controller')
+const middleware = require('../middleware')
 
 /**
  * Label API.
  */
-module.exports = function(router) {
+module.exports = function (router) {
   /**
    * @apiDefineSuccessStructure Label
    * @apiSuccess {String} id    Label ID.
@@ -41,7 +41,7 @@ module.exports = function(router) {
    *     {...}
    *     ]
    */
-  router.get('/label', controller.label.all);
+  router.get('/label', controller.label.all)
 
   /**
    * @api {put} /label/:id Update label details
@@ -57,7 +57,7 @@ module.exports = function(router) {
    *
    * @apiSuccessStructure Label
    */
-  router.put('/label/:id', middleware.label, controller.label.update);
+  router.put('/label/:id', middleware.label, controller.label.update)
 
   /**
    * @api {post} /label Create label
@@ -72,7 +72,7 @@ module.exports = function(router) {
    *
    * @apiSuccessStructure Label
    */
-  router.post('/label', controller.label.create);
+  router.post('/label', controller.label.create)
 
   /**
    * @api {delete} /label/:id Delete label
@@ -86,7 +86,7 @@ module.exports = function(router) {
    * @apiSuccessExample Success-Response:
    *     HTTP/1.1 204 OK
    */
-  router.delete('/label/:id', middleware.label, controller.label.del);
+  router.delete('/label/:id', middleware.label, controller.label.del)
 
   /**
    * @api {post} /label/:id/restore Restore deleted label
@@ -99,6 +99,5 @@ module.exports = function(router) {
    *
    * @apiSuccessStructure Label
    */
-  router.post('/label/:id/restore', controller.label.restore);
-
-};
+  router.post('/label/:id/restore', controller.label.restore)
+}
