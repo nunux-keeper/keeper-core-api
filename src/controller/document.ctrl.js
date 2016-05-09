@@ -1,9 +1,30 @@
 'use strict'
 
+const _ = require('lodash')
 const hal = require('hal')
 const errors = require('../helper').errors
 const decorator = require('../decorator')
 const documentService = require('../service').document
+
+const documentSchema = {
+  'title': {
+    optional: true,
+    isLength: {
+      options: [{ min: 2, max: 128 }],
+      errorMessage: 'Invalid title'
+    }
+  },
+  'origin': {
+    optional: true,
+    isURL: {
+      options: [{require_valid_protocol: false}]
+    }
+  },
+  'contentType': {
+    optional: true,
+    isSupportedContentType: {}
+  }
+}
 
 module.exports = {
   /**
@@ -49,27 +70,36 @@ module.exports = {
    * Post new document.
    */
   create: function (req, res, next) {
-    req.sanitizeBody('title').trim()
-    req.checkBody('title', 'Invalid title').notEmpty().isLength(2, 128)
-    req.checkBody('origin', 'Invalid link').optional().isURL({require_valid_protocol: false})
-    req.checkBody('contentType', 'Invalid content type').optional().isSupportedContentType()
+    let doc
+
+    // console.log('Content-Type', req.get('Content-Type'))
+    // console.log('Content', req.body)
+
+    if (_.isObject(req.body)) {
+      req.sanitizeBody('title').trim()
+      req.checkBody(documentSchema)
+      req.checkBody('title', 'Title is required').notEmpty()
+      doc = _.pick(req.body, ['title', 'content', 'contentType', 'origin', 'labels'])
+      doc.contentType = doc.contentType || 'text/html'
+    } else {
+      req.sanitizeQuery('title').trim()
+      req.checkQuery(documentSchema)
+      req.checkQuery('title', 'Title is required').notEmpty()
+      doc = _.pick(req.query, ['title', 'origin', 'labels'])
+      doc.content = req.body
+      doc.contentType = req.get('Content-Type')
+    }
+
+    // Validate inputs...
     const validationErrors = req.validationErrors(true)
     if (validationErrors) {
       return next(new errors.BadRequest(null, validationErrors))
     }
 
-    const labels = req.body.labels ? req.body.labels : []
-    const contentType = req.body.contentType ? req.body.contentType : 'text/html'
-
-    const doc = {
-      title: req.body.title,
-      content: req.body.content,
-      contentType: contentType,
-      origin: req.body.origin,
-      owner: req.user.id,
-      labels: labels,
-      files: req.files
-    }
+    // Create document object...
+    doc.owner = req.user.id
+    doc.files = req.files
+    doc.labels = doc.labels || []
 
     // Create document...
     documentService.create(doc)
@@ -93,20 +123,31 @@ module.exports = {
    * - categories
    */
   update: function (req, res, next) {
-    req.sanitizeBody('title').trim()
-    req.checkBody('title', 'Invalid title').optional().isLength(2, 128)
+    let update
+    if (_.isObject(req.body)) {
+      req.sanitizeBody('title').trim()
+      req.checkBody(documentSchema)
+      update = _.pick(req.body, ['title', 'content', 'labels'])
+    } else {
+      req.sanitizeQuery('title').trim()
+      req.checkQuery(documentSchema)
+      update = _.pick(req.query, ['title', 'labels'])
+      if (req.body !== '') {
+        update.content = req.body
+      }
+    }
+
     const validationErrors = req.validationErrors(true)
     if (validationErrors) {
       return next(new errors.BadRequest(null, validationErrors))
     }
 
+    if (_.isEmpty(update)) {
+      return next(new errors.BadRequest('Nothing to update'))
+    }
+
     const doc = req.requestData.document
 
-    const update = {
-      title: req.body.title,
-      labels: req.body.labels,
-      content: req.body.content
-    }
     documentService.update(doc, update)
     .then(function (result) {
       return decorator.decorate(

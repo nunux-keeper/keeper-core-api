@@ -1,7 +1,7 @@
 ### TODOs
 | Filename | line # | TODO
 |:------|:------:|:------
-| controller/document.ctrl.js | 43 | add HAL data
+| controller/document.ctrl.js | 64 | add HAL data
 | service/document.service.js | 95 | check labels
 | storage/local.storage.js | 116 | remove zero length files
 | storage/s3.storage.js | 186 | remove zero length files

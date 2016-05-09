@@ -30,7 +30,7 @@
     "compression": "^1.6.0",
     "elasticsearch": "^10.0.1",
     "express": "^4.13.3",
-    "express-validator": "^2.18.0",
+    "express-validator": "^2.20.4",
     "fs-extra": "^0.26.3",
     "gm": "^1.21.1",
     "hal": "^0.1.0",

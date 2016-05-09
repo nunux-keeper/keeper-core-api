@@ -17,7 +17,6 @@ make start
 
 ## Roadmap
 
-- Make create and update API curl friendly
 - Add revision to documents
 - Manage document attachments
 - Refactore storage component (see: https://github.com/AbstractFS/node-abstractfs)
