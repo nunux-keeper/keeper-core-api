@@ -3,10 +3,9 @@
 const _ = require('lodash')
 const crypto = require('crypto')
 const logger = require('../helper').logger
+const globals = require('../helper').globals
+const validators = require('../helper').validators
 const userDao = require('../dao').user
-
-const autoGrantAccess = process.env.APP_AUTO_GRANT_ACCESS !== 'false'
-const admins = process.env.APP_ADMIN ? process.env.APP_ADMIN.split(/[\s,]+/) : []
 
 /**
  * User services.
@@ -36,19 +35,20 @@ UserService.update = function (user, update) {
  * @return {Object} the logged user
  */
 UserService.login = function (user) {
-  const logged = userDao.get(user.id).then(function (_user) {
+  const logged = userDao.findByUid(user.uid).then(function (res) {
+    const _user = res.length ? res[0] : null
     if (_user) {
       // Return the user.
-      logger.debug('User %s authorized.', _user.id)
+      logger.debug('User %s authorized.', _user.uid)
       return Promise.resolve(_user)
-    } else if (autoGrantAccess || _.contains(admins, user.id)) {
+    } else if (globals.AUTO_PROVISIONING_USERS || validators.isAdmin(user.uid)) {
       // Create the user.
-      logger.info('User %s authorized. Will be created.', user.id)
-      user.publicAlias = crypto.createHash('md5').update(user.id).digest('hex')
+      logger.info('User %s authorized. Auto-provisioning...', user.uid)
+      user.publicAlias = crypto.createHash('md5').update(user.uid).digest('hex')
       return userDao.create(user)
     } else {
       // User not found and auto grant access is disabled.
-      logger.warn('User %s not authorized.', user.id)
+      logger.warn('User %s not authorized.', user.uid)
       return Promise.reject('ENOTAUTHORIZED')
     }
   })

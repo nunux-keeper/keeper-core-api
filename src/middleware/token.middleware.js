@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken')
 const errors = require('../helper').errors
 const globals = require('../helper').globals
 const validators = require('../helper').validators
+const userService = require('../service').user
 
 let key = globals.TOKEN_SECRET
 let algorithm = 'HS256'
@@ -20,25 +21,26 @@ module.exports = function () {
   return function (req, res, next) {
     const token = req.get('X-Api-Token')
     if (!token) {
+      console.error('NO TOKEN')
       return next(new errors.Unauthorized())
     }
     jwt.verify(token, key, {algorithm: algorithm}, function (err, decoded) {
       if (err) {
+        console.error('BAD TOKEN')
         return next(new errors.Unauthorized(err))
       }
-      /*
-      const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-      userService.update({
-        uid: decoded.uid,
-        lastAccessDate: new Date(),
-        lastAccessIp: ip
-      });
-      */
-      req.user = {
-        id: decoded.sub,
-        admin: validators.isAdmin(decoded.sub)
-      }
-      next()
+      userService.login({
+        uid: decoded.sub,
+        date: new Date(),
+        ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress
+      }).then((user) => {
+        req.user = user
+        req.user.admin = validators.isAdmin(user.uid)
+        next()
+      }).catch((e) => {
+        console.error('UNABLE TO LOGIN', e)
+        return next(new errors.Unauthorized(e))
+      })
     })
   }
 }

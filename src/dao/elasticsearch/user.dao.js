@@ -19,6 +19,15 @@ class UserDao extends AbstractMongodbDao {
       }
     }
   }
+
+  /**
+   * Find user by its UID.
+   * @param {String} uid UID.
+   * @return {Object} the user
+   */
+  findByUid (uid) {
+    return this.find({uid: uid}, {size: 1})
+  }
 }
 
 module.exports = UserDao

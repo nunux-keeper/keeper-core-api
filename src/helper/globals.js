@@ -14,6 +14,8 @@ module.exports = {
   // Secret use to encypt token
   TOKEN_SECRET: process.env.APP_TOKEN_SECRET || new Chance().hash({length: 16}),
   // Secret use to encypt token
-  TOKEN_PUB_KEY: process.env.APP_TOKEN_PUB_KEY
+  TOKEN_PUB_KEY: process.env.APP_TOKEN_PUB_KEY,
+  // Auto-provisioning users
+  AUTO_PROVISIONING_USERS: process.env.APP_AUTO_PROVISIONING_USERS !== false
 }
 
