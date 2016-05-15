@@ -49,4 +49,12 @@ AttachementCtrl.get = function (req, res, next) {
     })
 }
 
+AttachementCtrl.del = function (req, res, next) {
+  return next(new errors.BadRequest('Not yet implemented.'))
+}
+
+AttachementCtrl.post = function (req, res, next) {
+  return next(new errors.BadRequest('Not yet implemented.'))
+}
+
 module.exports = AttachementCtrl

@@ -22,9 +22,6 @@ make start
 - Refactore storage component (see: https://github.com/AbstractFS/node-abstractfs)
 - Sharing system
 - Hook system
-- Create plugin system:
-  - OAuth2
-  - Datasources: (twitter, pocket, etc.)
 - Monitoring
 - Data migration (Import/Export)
 - Create temporary documents (ttl)

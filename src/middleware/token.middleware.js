@@ -5,6 +5,14 @@ const errors = require('../helper').errors
 const globals = require('../helper').globals
 const validators = require('../helper').validators
 
+let key = globals.TOKEN_SECRET
+let algorithm = 'HS256'
+if (globals.TOKEN_PUB_KEY) {
+  const fs = require('fs')
+  key = fs.readFileSync(globals.TOKEN_PUB_KEY)
+  algorithm = 'RS256'
+}
+
 /**
  * Middleware to handle Token.
  */
@@ -14,7 +22,7 @@ module.exports = function () {
     if (!token) {
       return next(new errors.Unauthorized())
     }
-    jwt.verify(token, globals.TOKEN_SECRET, function (err, decoded) {
+    jwt.verify(token, key, {algorithm: algorithm}, function (err, decoded) {
       if (err) {
         return next(new errors.Unauthorized(err))
       }

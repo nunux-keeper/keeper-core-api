@@ -27,4 +27,36 @@ module.exports = function (router) {
    *     HTTP/1.1 200 OK
    */
   router.get('/document/:id/files/:key', middleware.document, controller.attachment.get)
+
+  /**
+   * @api {delete} /document/:id/files/:key Delete document attachment
+   *
+   * @apiVersion 0.0.1
+   * @apiName DeleteDocumentAttachment
+   * @apiGroup document
+   * @apiPermission user
+   *
+   * @apiParam {String} id  Id of the document
+   * @apiParam {String} key Key of the attachment.
+   *
+   * @apiSuccessExample Success-Response:
+   *     HTTP/1.1 204 OK
+   */
+  router.delete('/document/:id/files/:key', middleware.document, controller.attachment.del)
+
+  /**
+   * @api {post} /document/:id/files Add document attachment
+   *
+   * @apiVersion 0.0.1
+   * @apiName AddDocumentAttachment
+   * @apiGroup document
+   * @apiPermission user
+   *
+   * @apiParam {String} id  Id of the document
+   * @apiParam {File[]} [files] Attachment files.
+   *
+   * @apiSuccessExample Success-Response:
+   *     HTTP/1.1 201 OK
+   */
+  router.post('/document/:id/files', middleware.document, controller.attachment.post)
 }

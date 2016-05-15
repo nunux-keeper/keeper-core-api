@@ -34,9 +34,6 @@ app.set('info', {
 // Disable some properties
 app.disable('x-powered-by')
 
-// app.engine('html', require('ejs').renderFile)
-// app.set('views', path.join(__dirname, '..', 'var', 'views'))
-
 // Use middlewares
 app.use(middleware.logger())
 app.use(middleware.cors())
@@ -49,10 +46,7 @@ app.use(methodOverride())
 app.use('/doc', express.static(path.join(__dirname, '..', 'documentation')))
 app.use('/', require('./api/info')(app))
 
-// Register auth API...
-require('./api/auth')(app)
-
-// Use token API.
+// Protect API with access token.
 app.use(middleware.token())
 
 // Register API...

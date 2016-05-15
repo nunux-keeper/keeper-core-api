@@ -12,6 +12,8 @@ module.exports = {
   // Search engine URI
   SEARCH_ENGINE_URI: process.env.APP_SEARCH_ENGINE_URI || 'elasticsearch://elasticsearch/keeper',
   // Secret use to encypt token
-  TOKEN_SECRET: process.env.APP_TOKEN_SECRET || new Chance().hash({length: 16})
+  TOKEN_SECRET: process.env.APP_TOKEN_SECRET || new Chance().hash({length: 16}),
+  // Secret use to encypt token
+  TOKEN_PUB_KEY: process.env.APP_TOKEN_PUB_KEY
 }
 
