@@ -3,5 +3,7 @@
 APPNAME:=elasticsearch
 IMAGE:=elasticsearch:latest
 
-include $(PWD)/../common/_Makefile
+ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+
+include $(ROOT_DIR)/../common/_Makefile
 

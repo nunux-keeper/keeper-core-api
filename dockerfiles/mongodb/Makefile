@@ -12,8 +12,9 @@ endef
 
 SHELL_CUSTOM_FLAGS:=-P
 
+ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
-include $(PWD)/../common/_Makefile
+include $(ROOT_DIR)/../common/_Makefile
 
 ## Run the container in client mode
 client:
