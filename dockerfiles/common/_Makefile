@@ -1,11 +1,11 @@
 .SILENT :
-.PHONY : help volume mount build clean cleanup start stop rm shell logs
+.PHONY : help volume mount update build clean cleanup start stop rm shell logs
 
 # Docker configuartion regarding the system architecture
 DOCKER=docker
 DOCKERFILE=Dockerfile
 BASEIMAGE?=debian:jessie
-BASEIMAGE_?=debian:jessie
+BASEIMAGE_?=$(BASEIMAGE)
 VOLUME_IMAGE?=busybox
 UNAME_M := $(shell uname -m)
 ifeq ($(UNAME_M),armv7l)
@@ -39,9 +39,9 @@ SHELL_FLAGS?=--rm -it -h $(APPNAME) --entrypoint="/bin/bash" $(SHELL_CUSTOM_FLAG
 SHELL_CMD?=-c /bin/bash
 
 # Volume base directory on the host
-VOLUME_HOST_BASE?=~/var
+VOLUME_HOST_PATH?=$(PWD)
 # Volume base directory into the container
-VOLUME_CONTAINER_BASE?=/var/opt
+VOLUME_CONTAINER_PATH?=/usr/src/app
 # Volume flags
 VOLUME_FLAGS:=
 
@@ -70,7 +70,7 @@ endif
 ## Build the volume image
 volume:
 	echo "Building volumes: $(VOLUME_HOST_BASE)/$(APPNAME) -> $(VOLUME_CONTAINER_BASE)/$(APPNAME) ..."
-	$(DOCKER) run -v $(VOLUME_HOST_BASE)/$(APPNAME):$(VOLUME_CONTAINER_BASE)/$(APPNAME) --name $(APPNAME)_volumes $(VOLUME_IMAGE) true
+	$(DOCKER) run -v $(VOLUME_HOST_PATH):$(VOLUME_CONTAINER_PATH) --name $(APPNAME)_volumes $(VOLUME_IMAGE) true
 
 ## Mount volume
 mount:
