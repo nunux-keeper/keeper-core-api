@@ -149,6 +149,7 @@ module.exports = function () {
             expect(res.text).to.equals(this.myDocument.content)
           } else {
             expectDocument(res.body, this.myDocument)
+            this.myDocument = res.body
           }
         } else {
           expect(res.status).to.be.within(401, 404)

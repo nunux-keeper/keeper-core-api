@@ -47,4 +47,5 @@ module.exports = function (documentEventHandler) {
   documentEventHandler.on('create', downloadAttachments)
   documentEventHandler.on('update', synchronizeAttachments)
   // documentEventHandler.on('remove', removeAttachments)
+  // Let's the action to the ghostbuster
 }

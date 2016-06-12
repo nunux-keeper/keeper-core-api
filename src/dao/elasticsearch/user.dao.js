@@ -14,6 +14,8 @@ class UserDao extends AbstractMongodbDao {
   getMapping () {
     return {
       properties: {
+        ip:       {type: 'string', store: 'yes', index: 'not_analyzed'},
+        uid:      {type: 'string', store: 'yes', index: 'not_analyzed'},
         username: {type: 'string', store: 'yes', index: 'not_analyzed'},
         date    : {type: 'date', store: 'yes', format: 'dateOptionalTime'}
       }

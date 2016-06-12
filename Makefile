@@ -27,7 +27,7 @@ include $(ROOT_DIR)/dockerfiles/common/_Makefile
 ## Run the container in test mode
 test:
 	echo "Running tests..."
-	$(DOCKER) run $(RUN_FLAGS) $(VOLUME_FLAGS) $(IMAGE) test
+	$(DOCKER) run --rm -it $(RUN_CUSTOM_FLAGS) $(VOLUME_FLAGS) $(IMAGE) test
 
 ## Start a complete infrastucture
 up:

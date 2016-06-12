@@ -14,6 +14,7 @@ gulp.task('lint', function () {
 })
 
 gulp.task('test', function () {
+  // return gulp.src('features/document-attachments.feature')
   return gulp.src('features/*.feature')
   .pipe(cucumber({
     steps: 'features/step_definitions/*_step_definition.js',

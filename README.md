@@ -18,14 +18,13 @@ make start
 ## Roadmap
 
 - Add revision to documents
-- Manage document attachments
 - Refactore storage component (see: https://github.com/AbstractFS/node-abstractfs)
 - Sharing system
 - Hook system
 - Monitoring
 - Data migration (Import/Export)
 - Create temporary documents (ttl)
-- Study gRPC
+- Improve HATOAS
 
 ----------------------------------------------------------------------
 

@@ -1,8 +1,10 @@
 'use strict'
 
 const _ = require('lodash')
+const hal = require('hal')
 const errors = require('../helper').errors
-const attachmentservice = require('../service').attachment
+const attachmentService = require('../service').attachment
+const documentService = require('../service').document
 
 /**
  * Controller to manage document attachments.
@@ -19,7 +21,7 @@ AttachementCtrl.get = function (req, res, next) {
   if (!attachment) {
     return next(new errors.NotFound('Attachment not found in the document.'))
   }
-  attachmentservice.available(doc, attachment)
+  attachmentService.available(doc, attachment)
     .then(function (available) {
       if (!available) {
         if (attachment.origin) {
@@ -31,12 +33,12 @@ AttachementCtrl.get = function (req, res, next) {
       }
       if (req.query.size && /^image\//.test(attachment.contentType)) {
         // If conten-type is an image and the parameter size is defined, then get the thumbnail
-        attachmentservice.getThumbnail(doc, attachment, req.query.size)
+        attachmentService.getThumbnail(doc, attachment, req.query.size)
           .then(function (thumbPath) {
             res.sendfile(thumbPath, {maxAge: 86400000})
           }).catch(next)
       } else {
-        attachmentservice.stream(doc, attachment)
+        attachmentService.stream(doc, attachment)
           .then(function (metas) {
             // Send the attachment file content...
             res.append('Content-Length', metas.contentLenght)
@@ -50,11 +52,24 @@ AttachementCtrl.get = function (req, res, next) {
 }
 
 AttachementCtrl.del = function (req, res, next) {
-  return next(new errors.BadRequest('Not yet implemented.'))
+  const doc = req.requestData.document
+  const attachment = _.findWhere(doc.attachments, {key: req.params.key})
+  if (!attachment) {
+    return next(new errors.NotFound('Attachment not found in the document.'))
+  }
+  documentService.removeAttachment(doc, attachment)
+  .then(function (result) {
+    res.status(204).json()
+  }, next)
 }
 
 AttachementCtrl.post = function (req, res, next) {
-  return next(new errors.BadRequest('Not yet implemented.'))
+  const doc = req.requestData.document
+  documentService.addAttachment(doc, req.files)
+  .then(function (result) {
+    const resource = new hal.Resource(result, req.url + '/' + result.id)
+    res.status(201).json(resource)
+  }, next)
 }
 
 module.exports = AttachementCtrl

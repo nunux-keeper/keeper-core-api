@@ -8,6 +8,10 @@ const documentDao = require('../dao').document
 const eventHandler = require('../event')
 const documentGraveyardDao = require('../dao').document_graveyard
 
+function getDocumentContainerName (doc) {
+  return storage.getContainerName(doc.owner, 'documents', doc.id, 'files')
+}
+
 /**
  * Process document attachments.
  * @param {Object} doc The document
@@ -17,7 +21,7 @@ const processAttachments = function (doc) {
   let tasks = []
   doc.attachments.forEach(function (attachment) {
     if (attachment.stream !== undefined) {
-      const container = storage.getContainerName(doc.owner, 'documents', doc.id, 'files')
+      const container = getDocumentContainerName(doc)
       tasks.push(storage.store(container, attachment.key, attachment.stream)
         .then(function () {
           delete attachment.stream
@@ -183,6 +187,59 @@ DocumentService.restore = function (ghost) {
       eventHandler.document.emit('restore', doc)
       return Promise.resolve(doc)
     })
+}
+
+/**
+ * Remove attachment from document.
+ * @param {Object}  doc Document
+ * @param {Object}  att Attachment
+ * @return {Object} the Document
+ */
+DocumentService.removeAttachment = function (doc, att) {
+  // Remove attachment file from doc
+  const update = {
+    attachments: doc.attachments.reduce((acc, item) => {
+      if (item.key !== att.key) {
+        acc.push(item)
+      }
+      return acc
+    }, [])
+  }
+  return documentDao.update(doc, update)
+  .then(function (_doc) {
+    logger.info('Attachement will be removed from document %s : %j', _doc.id, att)
+    // Broadcast document update event (to apply attachment deletion).
+    eventHandler.document.emit('update', _doc)
+    return Promise.resolve(_doc)
+  })
+}
+
+/**
+ * Add attachment(s) to a document.
+ * @param {Object}  doc Document
+ * @param {Object}  files Attachment files
+ * @return {Object} the Document
+ */
+DocumentService.addAttachment = function (doc, files) {
+  doc.files = files
+  return extractor.file.extract(doc)
+  .then(processAttachments)
+  .then(function (_doc) {
+    // Merge attachments into the doc
+    const update = {
+      attachments: _doc.attachments.reduce((acc, item) => {
+        acc.push(_.pick(item, ['key', 'contentType', 'contentLength', 'origin']))
+        return acc
+      }, [])
+    }
+    // Update the document attachments
+    return documentDao.update(doc, update)
+  })
+  .then(function (_doc) {
+    logger.info('Attachement added to document: %j', _doc.id)
+    eventHandler.document.emit('update', _doc)
+    return Promise.resolve(_doc)
+  })
 }
 
 module.exports = DocumentService
