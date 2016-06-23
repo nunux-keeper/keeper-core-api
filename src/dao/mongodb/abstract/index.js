@@ -57,6 +57,18 @@ class AbstractMongodbDao {
   }
 
   /**
+   * Stream documents.
+   * @param {Object} query Find query.
+   * @return {Stream} the documents stream
+   */
+  stream (query) {
+    return this.getCollection().then((collection) => {
+      const s = collection.find(query).stream({transform: this.objectMapper})
+      return Promise.resolve(s)
+    })
+  }
+
+  /**
    * Create a document.
    * @param {Object} doc doc to create
    * @return {Object} the created doc

@@ -116,6 +116,16 @@ class AbstractElasticsearchDao {
   }
 
   /**
+   * Stream documents.
+   * NOT SUPPORTED
+   * @param {Object} query Find query.
+   * @return {Stream} the documents stream
+   */
+  stream (query) {
+    return Promise.reject('Sorry, stream function is not (yet) suppported by the ElasticSearch driver.')
+  }
+
+  /**
    * Create a document.
    * @param {Object} doc doc to create
    * @return {Object} the created doc

@@ -81,7 +81,8 @@ module.exports = function (router) {
    * @apiGroup document
    * @apiPermission user
    *
-   * @apiParam {String} id ID of the document
+   * @apiParam {String} id    ID of the document
+   * @apiParam {String} [raw] Get RAW document if set
    *
    * @apiSuccessStructure Document
    */

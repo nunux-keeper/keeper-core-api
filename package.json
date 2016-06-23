@@ -23,6 +23,7 @@
     "postinstall": "gulp install"
   },
   "dependencies": {
+    "archiver": "^1.0.0",
     "body-parser": "^1.14.2",
     "bunyan": "^1.5.1",
     "chance": "^0.8.0",
