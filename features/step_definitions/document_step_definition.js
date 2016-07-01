@@ -52,7 +52,7 @@ module.exports = function () {
     } else {
       req.send(doc).set('Content-Type', 'application/json')
     }
-    req.set('X-Api-Token', this.token)
+    req.set('Authorization', this.token)
       .expect('Content-Type', /json/)
       .expect(function (res) {
         expect(res.status).to.equals(201)
@@ -73,7 +73,7 @@ module.exports = function () {
         contentType: 'text/html'
       })
       .set('Content-Type', 'application/json')
-      .set('X-Api-Token', this.token)
+      .set('Authorization', this.token)
       .expect('Content-Type', /json/)
       .expect(function (res) {
         expect(res.status).to.equals(201)
@@ -97,7 +97,7 @@ module.exports = function () {
       .put('/v2/document/' + this.myDocument.id)
       .send(update)
       .set('Content-Type', 'application/json')
-      .set('X-Api-Token', this.token)
+      .set('Authorization', this.token)
       .expect('Content-Type', /json/)
       .expect(function (res) {
         expect(res.status).to.equals(200)
@@ -114,7 +114,7 @@ module.exports = function () {
     request(app)
       .delete('/v2/document/' + this.myDocument.id)
       .set('Content-Type', 'application/json')
-      .set('X-Api-Token', this.token)
+      .set('Authorization', this.token)
       .expect(204, callback)
   })
 
@@ -123,7 +123,7 @@ module.exports = function () {
     request(app)
       .post('/v2/document/' + this.myDocument.id + '/restore')
       .set('Content-Type', 'application/json')
-      .set('X-Api-Token', this.token)
+      .set('Authorization', this.token)
       .expect(function (res) {
         expect(res.status).to.equals(200)
         const restoredDoc = res.body
@@ -140,7 +140,7 @@ module.exports = function () {
     const suffix = shoulBeRaw ? '?raw' : ''
     request(app)
       .get('/v2/document/' + this.myDocument.id + suffix)
-      .set('X-Api-Token', this.token)
+      .set('Authorization', this.token)
       .expect('Content-Type', shoulBeRaw ? this.myDocument.contentType : /json/)
       .expect(function (res) {
         if (shoulBeRetrieve) {

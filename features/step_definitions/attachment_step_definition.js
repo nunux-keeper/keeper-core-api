@@ -13,7 +13,7 @@ module.exports = function () {
 
     request(app)
     .head('/v2/document/' + this.myDocument.id + '/files/' + attachment.key)
-    .set('X-Api-Token', this.token)
+    .set('Authorization', this.token)
     .expect('Content-Type', attachment.contentType)
     .expect(200, callback)
   })
@@ -36,7 +36,7 @@ module.exports = function () {
 
     request(app)
     .delete('/v2/document/' + this.myDocument.id + '/files/' + attachment.key)
-    .set('X-Api-Token', this.token)
+    .set('Authorization', this.token)
     .expect(204, callback)
   })
 
@@ -49,7 +49,7 @@ module.exports = function () {
       req.attach('files', file)
     })
 
-    req.set('X-Api-Token', this.token)
+    req.set('Authorization', this.token)
     .expect('Content-Type', /json/)
     .expect(201, callback)
   })

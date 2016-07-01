@@ -14,7 +14,7 @@ module.exports = function () {
         color: color
       })
       .set('Content-Type', 'application/json')
-      .set('X-Api-Token', this.token)
+      .set('Authorization', this.token)
       .expect('Content-Type', /json/)
       .expect(function (res) {
         expect(res.status).to.equals(201)
@@ -32,7 +32,7 @@ module.exports = function () {
     request(app)
       .get('/v2/label')
       .set('Content-Type', 'application/json')
-      .set('X-Api-Token', this.token)
+      .set('Authorization', this.token)
       .expect('Content-Type', /json/)
       .expect(function (res) {
         expect(res.body).to.contain.keys('labels', '_links')
@@ -73,7 +73,7 @@ module.exports = function () {
         color: color
       })
       .set('Content-Type', 'application/json')
-      .set('X-Api-Token', this.token)
+      .set('Authorization', this.token)
       .expect('Content-Type', /json/)
       .expect(function (res) {
         const newLabel = res.body
@@ -93,7 +93,7 @@ module.exports = function () {
     request(app)
       .delete('/v2/label/' + this.myLabel.id)
       .set('Content-Type', 'application/json')
-      .set('X-Api-Token', this.token)
+      .set('Authorization', this.token)
       .expect(204, callback)
   })
 
@@ -102,7 +102,7 @@ module.exports = function () {
     request(app)
       .post('/v2/label/' + this.myLabel.id + '/restore')
       .set('Content-Type', 'application/json')
-      .set('X-Api-Token', this.token)
+      .set('Authorization', this.token)
       .expect(function (res) {
         const newLabel = res.body
         expect(newLabel).to.contain.keys(

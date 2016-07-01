@@ -19,14 +19,12 @@ if (globals.TOKEN_PUB_KEY) {
  */
 module.exports = function () {
   return function (req, res, next) {
-    const token = req.get('X-Api-Token')
+    const token = req.get('Authorization')
     if (!token) {
-      console.error('NO TOKEN')
       return next(new errors.Unauthorized())
     }
     jwt.verify(token, key, {algorithm: algorithm}, function (err, decoded) {
       if (err) {
-        console.error('BAD TOKEN')
         return next(new errors.Unauthorized(err))
       }
       userService.login({
