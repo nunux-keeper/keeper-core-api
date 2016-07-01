@@ -20,7 +20,7 @@ const UserService = {}
  * @return {Object} the updated user
  */
 UserService.update = function (user, update) {
-  update = _.pick(update, 'username')
+  update = _.pick(update, 'name')
   update.date = new Date()
   return userDao.update(user, update)
     .then(function (u) {

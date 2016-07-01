@@ -28,7 +28,8 @@ module.exports = function () {
         return next(new errors.Unauthorized(err))
       }
       userService.login({
-        uid: decoded.sub,
+        uid: decoded.email || decoded.sub,
+        name: decoded.name,
         date: new Date(),
         ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress
       }).then((user) => {
