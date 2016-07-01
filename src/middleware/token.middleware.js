@@ -19,9 +19,12 @@ if (globals.TOKEN_PUB_KEY) {
  */
 module.exports = function () {
   return function (req, res, next) {
-    const token = req.get('Authorization')
+    let token = req.get('Authorization')
     if (!token) {
       return next(new errors.Unauthorized())
+    }
+    if (token.startsWith('Bearer ')) {
+      token = token.substr(7)
     }
     jwt.verify(token, key, {algorithm: algorithm}, function (err, decoded) {
       if (err) {
