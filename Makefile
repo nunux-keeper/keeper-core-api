@@ -1,6 +1,7 @@
 .SILENT :
 .PHONY : test up down install
 
+USERNAME:=ncarlier
 APPNAME:=keeper-core-api
 env?=dev
 
