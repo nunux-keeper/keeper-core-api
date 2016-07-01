@@ -3,6 +3,8 @@
 
 KEY_LENGHT:=1024
 
+DAYS:=1460
+
 all: help
 
 ## This help screen
@@ -23,10 +25,17 @@ clean:
 	@echo "Deleting all generated files..."
 	rm *.pem
 
-## Generate key and certificate
+## Generate keys
 %.pem:
-	@echo "Generating $@ key and certificate"
+	@echo "Generating $@ private key"
 	openssl genrsa -out $*.pem $(KEY_LENGHT)
-	@echo "Generating $@ certificate"
+	@echo "Extracting $@ public key"
 	openssl rsa -in $*.pem -pubout -out $*-pub.pem
+
+## Generate certificate
+%.crt:
+	@echo "Generating $@ certificate"
+	openssl req -new -key $*.pem -out $*.csr -subj '/CN=$*/'
+	openssl req -x509 -sha256 -days $(DAYS) -key $*.pem -in $*.csr -out $*.crt
+	rm $*.csr
 
