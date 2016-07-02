@@ -52,7 +52,7 @@ module.exports = {
    */
   search: function (req, res, next) {
     req.checkQuery('from', 'Invalid from param').optional().isAlphanumeric()
-    req.checkQuery('size', 'Invalid size param').optional().isInt({ min: 5, max: 100 })
+    req.checkQuery('size', 'Invalid size param').optional().isInt({ min: 1, max: 100 })
     req.checkQuery('order', 'Invalid order param').optional().isIn(['asc', 'desc'])
     const validationErrors = req.validationErrors(true)
     if (validationErrors) {

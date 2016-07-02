@@ -30,8 +30,6 @@ class DocumentDao extends AbstractMongodbDao {
 
   buildSearchQuery (query) {
     const result = {
-      fields: ['title', 'contentType', 'labels', 'attachments', 'origin'],
-      from: query.from,
       size: query.size,
       query: {
         filtered: {
@@ -39,6 +37,10 @@ class DocumentDao extends AbstractMongodbDao {
           filter : { term : { owner : query.owner } }
         }
       }
+    }
+
+    if (query.from) {
+      result.from = query.from
     }
 
     if (query.order) {
@@ -57,6 +59,7 @@ class DocumentDao extends AbstractMongodbDao {
       }
     }
 
+    // console.log(JSON.stringify(result, null, 2))
     return result
   }
 
@@ -71,12 +74,13 @@ class DocumentDao extends AbstractMongodbDao {
       type: this.type,
       body: this.buildSearchQuery(query)
     }).then((data) => {
+      // console.log(JSON.stringify(data, null, 2))
       const result = {}
       result.total = data.hits.total
-      result.hits = []
-      data.hits.hits.forEach(function (hit) {
-        result.hits.push(_.assign({id: hit._id}, hit.fields))
-      })
+      result.hits = _.reduce(data.hits.hits, (acc, item) => {
+        acc.push(item._source)
+        return acc
+      }, [])
       return Promise.resolve(result)
     })
   }
