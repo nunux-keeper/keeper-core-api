@@ -6,14 +6,14 @@ const userService = require('../service').user
 
 module.exports = {
   /**
-   * Get current user data.
+   * Get current profile data.
    */
   get: function (req, res/*, next*/) {
     return res.json(req.user)
   },
 
   /**
-   * Update current user data (public alias).
+   * Update current profile data (public alias).
    */
   update: function (req, res, next) {
     req.sanitizeBody('publicAlias').trim()
