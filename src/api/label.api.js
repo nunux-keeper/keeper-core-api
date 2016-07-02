@@ -33,15 +33,37 @@ module.exports = function (router) {
    *
    * @apiSuccessExample Success-Response:
    *     HTTP/1.1 200 OK
-   *     [{
-   *        "id": "xxxxx"
-   *        "label": "Foo",
-   *        "color": "#FE2EC8"
-   *     },
-   *     {...}
-   *     ]
+   *     {
+   *       labels: [
+   *         {
+   *           "id": "xxxxx"
+   *           "label": "Foo",
+   *           "color": "#FE2EC8"
+   *         },
+   *         {...}
+   *       ]
+   *     }
    */
   router.get('/label', controller.label.all)
+
+  /**
+   * @api {get} /label/:id Request label details
+   * @apiVersion 0.0.1
+   * @apiName GetAllLabel
+   * @apiGroup label
+   * @apiPermission user
+   *
+   * @apiSuccessStructure Label
+   *
+   * @apiSuccessExample Success-Response:
+   *     HTTP/1.1 200 OK
+   *     {
+   *       "id": "xxxxx"
+   *       "label": "Foo",
+   *       "color": "#FE2EC8"
+   *     }
+   */
+  router.get('/label/:id', middleware.label, controller.label.get)
 
   /**
    * @api {put} /label/:id Update label details

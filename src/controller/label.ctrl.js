@@ -21,6 +21,15 @@ module.exports = {
   },
 
   /**
+   * Get label details.
+   */
+  get: function (req, res, next) {
+    const label = req.requestData.label
+    const resource = new hal.Resource(label, req.url)
+    res.json(resource)
+  },
+
+  /**
    * Create new label.
    */
   create: function (req, res, next) {
