@@ -2,6 +2,7 @@
 
 const hal = require('hal')
 const errors = require('../helper').errors
+const decorator = require('../decorator')
 const userService = require('../service').user
 
 module.exports = {
@@ -9,6 +10,15 @@ module.exports = {
    * Get current profile data.
    */
   get: function (req, res/*, next*/) {
+    decorator.decorate(
+      req.user,
+      decorator.profile.privacy(),
+      decorator.profile.hash()
+    )
+    .then((profile) => {
+      const resource = new hal.Resource(profile, req.url)
+      res.json(resource)
+    })
     return res.json(req.user)
   },
 
@@ -27,8 +37,15 @@ module.exports = {
     }
 
     userService.update(req.user, update)
-    .then(function (user) {
-      const resource = new hal.Resource(user, req.url)
+    .then((user) => {
+      return decorator.decorate(
+        req.user,
+        decorator.profile.privacy(),
+        decorator.profile.hash()
+      )
+    })
+    .then(function (profile) {
+      const resource = new hal.Resource(profile, req.url)
       res.json(resource)
     }, next)
   }
