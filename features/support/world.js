@@ -12,8 +12,14 @@ if (process.env.APP_TOKEN_PRIV_KEY) {
 }
 
 function World (/* callback */) {
-  this.getToken = function (uid) {
-    return jwt.sign({sub: uid}, key, {algorithm})
+  this.setAuthorizationHeader = function (uid) {
+    const token = uid ? jwt.sign({sub: uid}, key, {algorithm}) : null
+    return function (request) {
+      if (token) {
+        request.set('Authorization', `Bearer ${token}`)
+      }
+      return request
+    }
   }
 
   // callback(); // tell Cucumber we're finished and to use 'this' as the world instance

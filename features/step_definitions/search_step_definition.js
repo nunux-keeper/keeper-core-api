@@ -17,7 +17,7 @@ module.exports = function () {
     request(app)
     .get('/v2/document')
     .query(query)
-    .set('Authorization', this.token)
+    .use(this.setAuthorizationHeader(this.uid))
     .expect('Content-Type', /json/)
     .expect((res) => {
       expect(res.status).to.equals(200)

@@ -8,8 +8,8 @@ const request = require('supertest')
 const expectDocument = function (doc, expected) {
   // console.log('ACTUAL', doc)
   expect(doc).to.contain.keys(
-      'id', 'title', 'content', 'contentType', 'date', 'labels', '_links'
-      )
+    'id', 'title', 'content', 'contentType', 'date', 'labels', '_links'
+  )
   if (expected) {
     const doNotCompare = ['_links', 'date', 'attachments', 'labels', 'origin']
     // console.log('EXPECTED', expected)
@@ -52,36 +52,36 @@ module.exports = function () {
     } else {
       req.send(doc).set('Content-Type', 'application/json')
     }
-    req.set('Authorization', this.token)
-      .expect('Content-Type', /json/)
-      .expect(function (res) {
-        expect(res.status).to.equals(201)
-        const newDoc = res.body
-        expectDocument(newDoc, doc)
-        expect(newDoc.date).not.to.be.null
-        this.myDocument = newDoc
-      }.bind(this))
+    req.use(this.setAuthorizationHeader(this.uid))
+    .expect('Content-Type', /json/)
+    .expect(function (res) {
+      expect(res.status).to.equals(201)
+      const newDoc = res.body
+      expectDocument(newDoc, doc)
+      expect(newDoc.date).not.to.be.null
+      this.myDocument = newDoc
+    }.bind(this))
     .end(callback)
   })
 
   this.When(/^I create the following html document$/, function (content, callback) {
     request(app)
-      .post('/v2/document')
-      .send({
-        title: chance.sentence({words: 3}),
-        content: content,
-        contentType: 'text/html'
-      })
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this.token)
-      .expect('Content-Type', /json/)
-      .expect(function (res) {
-        expect(res.status).to.equals(201)
-        const newDoc = res.body
-        expectDocument(newDoc)
-        expect(newDoc.date).not.to.be.null
-        this.myDocument = newDoc
-      }.bind(this))
+    .post('/v2/document')
+    .send({
+      title: chance.sentence({words: 3}),
+      content: content,
+      contentType: 'text/html'
+    })
+    .set('Content-Type', 'application/json')
+    .use(this.setAuthorizationHeader(this.uid))
+    .expect('Content-Type', /json/)
+    .expect(function (res) {
+      expect(res.status).to.equals(201)
+      const newDoc = res.body
+      expectDocument(newDoc)
+      expect(newDoc.date).not.to.be.null
+      this.myDocument = newDoc
+    }.bind(this))
     .end(callback)
   })
 
@@ -94,42 +94,42 @@ module.exports = function () {
       update[prop] = value
     })
     request(app)
-      .put('/v2/document/' + this.myDocument.id)
-      .send(update)
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this.token)
-      .expect('Content-Type', /json/)
-      .expect(function (res) {
-        expect(res.status).to.equals(200)
-        const updatedDoc = res.body
-        expectDocument(updatedDoc)
-        expect(updatedDoc.date).not.to.be.null
-        this.myDocument = updatedDoc
-      }.bind(this))
+    .put('/v2/document/' + this.myDocument.id)
+    .send(update)
+    .set('Content-Type', 'application/json')
+    .use(this.setAuthorizationHeader(this.uid))
+    .expect('Content-Type', /json/)
+    .expect(function (res) {
+      expect(res.status).to.equals(200)
+      const updatedDoc = res.body
+      expectDocument(updatedDoc)
+      expect(updatedDoc.date).not.to.be.null
+      this.myDocument = updatedDoc
+    }.bind(this))
     .end(callback)
   })
 
   this.When(/^I delete the document$/, function (callback) {
     expect(this.myDocument).to.not.be.undefined
     request(app)
-      .delete('/v2/document/' + this.myDocument.id)
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this.token)
-      .expect(204, callback)
+    .delete('/v2/document/' + this.myDocument.id)
+    .set('Content-Type', 'application/json')
+    .use(this.setAuthorizationHeader(this.uid))
+    .expect(204, callback)
   })
 
   this.When(/^I restore the document$/, function (callback) {
     expect(this.myDocument).to.not.be.undefined
     request(app)
-      .post('/v2/document/' + this.myDocument.id + '/restore')
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this.token)
-      .expect(function (res) {
-        expect(res.status).to.equals(200)
-        const restoredDoc = res.body
-        expectDocument(restoredDoc, this.myDocument)
-        expect(restoredDoc.date).not.to.be.null
-      }.bind(this))
+    .post('/v2/document/' + this.myDocument.id + '/restore')
+    .set('Content-Type', 'application/json')
+    .use(this.setAuthorizationHeader(this.uid))
+    .expect(function (res) {
+      expect(res.status).to.equals(200)
+      const restoredDoc = res.body
+      expectDocument(restoredDoc, this.myDocument)
+      expect(restoredDoc.date).not.to.be.null
+    }.bind(this))
     .end(callback)
   })
 
@@ -139,22 +139,22 @@ module.exports = function () {
     const shoulBeRaw = raw === 'raw document'
     const suffix = shoulBeRaw ? '?raw' : ''
     request(app)
-      .get('/v2/document/' + this.myDocument.id + suffix)
-      .set('Authorization', this.token)
-      .expect('Content-Type', shoulBeRaw ? this.myDocument.contentType : /json/)
-      .expect(function (res) {
-        if (shoulBeRetrieve) {
-          expect(res.status).to.equals(200)
-          if (shoulBeRaw) {
-            expect(res.text).to.equals(this.myDocument.content)
-          } else {
-            expectDocument(res.body, this.myDocument)
-            this.myDocument = res.body
-          }
+    .get('/v2/document/' + this.myDocument.id + suffix)
+    .use(this.setAuthorizationHeader(this.uid))
+    .expect('Content-Type', shoulBeRaw ? this.myDocument.contentType : /json/)
+    .expect(function (res) {
+      if (shoulBeRetrieve) {
+        expect(res.status).to.equals(200)
+        if (shoulBeRaw) {
+          expect(res.text).to.equals(this.myDocument.content)
         } else {
-          expect(res.status).to.be.within(401, 404)
+          expectDocument(res.body, this.myDocument)
+          this.myDocument = res.body
         }
-      }.bind(this))
+      } else {
+        expect(res.status).to.be.within(401, 404)
+      }
+    }.bind(this))
     .end(callback)
   })
 

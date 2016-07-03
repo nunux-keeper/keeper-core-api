@@ -9,7 +9,7 @@ module.exports = function () {
     request(app)
     .get(uri)
     .set('Content-Type', 'application/json')
-    .set(this.token ? 'Authorization' : 'X-Null', this.token)
+    .use(this.setAuthorizationHeader(this.uid))
     .expect('Content-Type', /json/)
     .expect(function (res) {
       this.httpBody = res.body

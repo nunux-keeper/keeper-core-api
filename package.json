@@ -29,6 +29,7 @@
     "chance": "^0.8.0",
     "commander": "^2.9.0",
     "compression": "^1.6.0",
+    "cookies": "^0.6.1",
     "elasticsearch": "^10.0.1",
     "express": "^4.13.3",
     "express-validator": "^2.20.4",
