@@ -1,5 +1,6 @@
 'use strict'
 
+const url = require('url')
 const jwt = require('jsonwebtoken')
 const Cookies = require('cookies')
 const errors = require('../helper').errors
@@ -18,7 +19,7 @@ if (globals.TOKEN_PUB_KEY) {
 /**
  * Middleware to handle Token.
  */
-module.exports = function (domain) {
+module.exports = function (realm) {
   return function (req, res, next) {
     let token = null
     let setCookie = false
@@ -49,10 +50,12 @@ module.exports = function (domain) {
         req.user = user
         req.user.admin = validators.isAdmin(user.uid)
         if (setCookie) {
+          const u = url.parse(realm)
           cookies.set('access_token', token, {
-            domain: domain,
-            httpOnly: true
-            // secure: true
+            domain: u.hostname,
+            path: u.path,
+            httpOnly: true,
+            secure: u.protocol === 'https:'
           })
         }
         next()

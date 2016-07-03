@@ -1,6 +1,5 @@
 'use strict'
 
-const url = require('url')
 const Chance = require('chance')
 const pkg = require('../../package.json')
 
@@ -32,6 +31,5 @@ const globals = {
 }
 
 globals.REALM = process.env.APP_REALM || 'http://localhost:' + globals.PORT
-globals.DOMAIN = url.parse(globals.REALM).host
 
 module.exports = globals
