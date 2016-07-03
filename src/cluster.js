@@ -12,10 +12,9 @@ process.title = 'keeper-core-api'
 
 const cluster = require('cluster')
 const logger = require('./helper').logger
+const globals = require('./helper').globals
 
-const env = process.env.NODE_ENV || 'development'
-
-if (env === 'production' && cluster.isMaster) {
+if (globals.ENV === 'production' && cluster.isMaster) {
   const numWorkers = require('os').cpus().length
 
   logger.debug(`Master cluster setting up ${numWorkers}  workers...`)
@@ -36,10 +35,12 @@ if (env === 'production' && cluster.isMaster) {
 } else {
   const app = require('./app')
   app.listen(app.get('port'), function () {
-    logger.info('%s web server listening on port %s (%s mode)',
-        app.get('info').name,
-        app.get('port'),
-        app.get('env'))
+    logger.info(
+      '%s web server listening on port %s (%s mode)',
+      globals.NAME,
+      app.get('port'),
+      globals.ENV
+    )
   })
 }
 
