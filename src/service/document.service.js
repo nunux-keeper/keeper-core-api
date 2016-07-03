@@ -97,6 +97,10 @@ DocumentService.create = function (doc) {
         newDoc.attachments.push(_.pick(attachment, ['key', 'contentType', 'contentLength', 'origin']))
       })
       // TODO check labels
+      // Set title if not set
+      if (!newDoc.title) {
+        newDoc.title = 'Untitled'
+      }
       return documentDao.create(newDoc)
     }).then(function (_doc) {
       _doc.attachments = attachments

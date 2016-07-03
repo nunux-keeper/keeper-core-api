@@ -78,13 +78,11 @@ module.exports = {
     if (_.isObject(req.body)) {
       req.sanitizeBody('title').trim()
       req.checkBody(documentSchema)
-      req.checkBody('title', 'Title is required').notEmpty()
       doc = _.pick(req.body, ['title', 'content', 'contentType', 'origin', 'labels'])
       doc.contentType = doc.contentType || 'text/html'
     } else {
       req.sanitizeQuery('title').trim()
       req.checkQuery(documentSchema)
-      req.checkQuery('title', 'Title is required').notEmpty()
       doc = _.pick(req.query, ['title', 'origin', 'labels'])
       doc.content = req.body
       doc.contentType = req.get('Content-Type')
