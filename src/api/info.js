@@ -6,7 +6,7 @@ const controller = require('../controller')
 /**
  * Info API.
  */
-module.exports = function (app) {
+module.exports = function () {
   const router = express.Router()
 
   /**
@@ -28,10 +28,7 @@ module.exports = function (app) {
    *        "version": "1.0"
    *     }
    */
-  router.get('/', function (req, res, next) {
-    req.appInfo = app.get('info')
-    next()
-  }, controller.monitoring.get)
+  router.get('/', controller.monitoring.get)
 
   return router
 }

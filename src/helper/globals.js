@@ -1,12 +1,24 @@
 'use strict'
 
+const url = require('url')
 const Chance = require('chance')
+const pkg = require('../../package.json')
 
 /**
  * Globals variables.
  * @module globals
  */
-module.exports = {
+const globals = {
+  // App name
+  NAME: pkg.name,
+  // App description
+  DESCRIPTION: pkg.description,
+  // App version
+  VERSION: pkg.version,
+  // App env
+  ENV: process.env.NODE_ENV || 'development',
+  // Server port
+  PORT: process.env.APP_PORT || 3000,
   // Database URI
   DATABASE_URI: process.env.APP_DATABASE_URI || 'mongodb://mongodb/keeper',
   // Search engine URI
@@ -19,3 +31,7 @@ module.exports = {
   AUTO_PROVISIONING_USERS: process.env.APP_AUTO_PROVISIONING_USERS !== false
 }
 
+globals.REALM = process.env.APP_REALM || 'http://localhost:' + globals.PORT
+globals.DOMAIN = url.parse(globals.REALM).host
+
+module.exports = globals

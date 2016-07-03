@@ -8,28 +8,18 @@ const methodOverride = require('method-override')
 const expressValidator = require('express-validator')
 const customValidators = require('./helper').validators
 const logger = require('./helper').logger
+const globals = require('./helper').globals
 const middleware = require('./middleware')
-const appInfo = require('../package.json')
 
 // APM
 if (process.env.NEW_RELIC_LICENSE_KEY) {
   require('newrelic')
 }
 
-const env = process.env.NODE_ENV || 'development'
-
 const app = express()
 
 // Set properties
-app.set('port', process.env.APP_PORT || 3000)
-app.set('realm', process.env.APP_REALM || 'http://localhost:' + app.get('port'))
-app.set('info', {
-  name: appInfo.name,
-  description: appInfo.description,
-  version: appInfo.version,
-  realm: app.get('realm'),
-  env: env
-})
+app.set('port', globals.port)
 
 // Disable some properties
 app.disable('x-powered-by')
@@ -44,10 +34,10 @@ app.use(middleware.multipart())
 app.use(expressValidator({customValidators: customValidators}))
 app.use(methodOverride())
 app.use('/doc', express.static(path.join(__dirname, '..', 'documentation')))
-app.use('/', require('./api/info')(app))
+app.use('/', require('./api/info')())
 
 // Protect API with access token.
-app.use(middleware.token())
+app.use(middleware.token(globals.DOMAIN))
 
 // Register API...
 app.use('/v2', require('./api'))

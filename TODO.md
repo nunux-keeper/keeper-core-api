@@ -1,11 +1,11 @@
 ### TODOs
 | Filename | line # | TODO
 |:------|:------:|:------
-| controller/document.ctrl.js | 64 | add HAL data
 | job/import.js | 104 | Extract document labels (v1: categories; v2: labels)
 | service/document.service.js | 99 | check labels
 | storage/local.storage.js | 116 | remove zero length files
 | storage/s3.storage.js | 186 | remove zero length files
+| controller/document.ctrl.js | 64 | add HAL data
 
 ### FIXMEs
 | Filename | line # | FIXME

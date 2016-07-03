@@ -18,7 +18,7 @@ if (globals.TOKEN_PUB_KEY) {
 /**
  * Middleware to handle Token.
  */
-module.exports = function () {
+module.exports = function (domain) {
   return function (req, res, next) {
     let token = null
     let setCookie = false
@@ -50,6 +50,7 @@ module.exports = function () {
         req.user.admin = validators.isAdmin(user.uid)
         if (setCookie) {
           cookies.set('access_token', token, {
+            domain: domain,
             httpOnly: true
             // secure: true
           })
