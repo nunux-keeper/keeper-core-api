@@ -19,7 +19,6 @@ module.exports = {
       const resource = new hal.Resource(profile, req.url)
       res.json(resource)
     })
-    return res.json(req.user)
   },
 
   /**
