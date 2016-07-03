@@ -19,7 +19,7 @@ if (process.env.NEW_RELIC_LICENSE_KEY) {
 const app = express()
 
 // Set properties
-app.set('port', globals.port)
+app.set('port', globals.PORT)
 
 // Disable some properties
 app.disable('x-powered-by')
