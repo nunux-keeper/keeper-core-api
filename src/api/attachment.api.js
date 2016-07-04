@@ -8,11 +8,11 @@ const middleware = require('../middleware')
  */
 module.exports = function (router) {
   /**
-   * @api {get} /document/:id/files/:key Get document attachment
+   * @api {get} /document/:id/files/:key Download document attachment file.
    *
-   * @apiVersion 0.0.1
+   * @apiVersion 2.0.0
    * @apiName GetDocumentAttachment
-   * @apiGroup document
+   * @apiGroup attachment
    * @apiPermission user
    *
    * @apiParam {String} id  Id of the document
@@ -29,11 +29,11 @@ module.exports = function (router) {
   router.get('/document/:id/files/:key', middleware.document, controller.attachment.get)
 
   /**
-   * @api {delete} /document/:id/files/:key Delete document attachment
+   * @api {delete} /document/:id/files/:key Remove document attachment file.
    *
-   * @apiVersion 0.0.1
+   * @apiVersion 2.0.0
    * @apiName DeleteDocumentAttachment
-   * @apiGroup document
+   * @apiGroup attachment
    * @apiPermission user
    *
    * @apiParam {String} id  Id of the document
@@ -45,15 +45,15 @@ module.exports = function (router) {
   router.delete('/document/:id/files/:key', middleware.document, controller.attachment.del)
 
   /**
-   * @api {post} /document/:id/files Add document attachment
+   * @api {post} /document/:id/files Upload document attachment file(s).
    *
-   * @apiVersion 0.0.1
+   * @apiVersion 2.0.0
    * @apiName AddDocumentAttachment
-   * @apiGroup document
+   * @apiGroup attachment
    * @apiPermission user
    *
-   * @apiParam {String} id  Id of the document
-   * @apiParam {File[]} [files] Attachment files.
+   * @apiParam {String} id    Id of the document
+   * @apiParam {File[]} files Attachment files.
    *
    * @apiSuccessExample Success-Response:
    *     HTTP/1.1 201 OK

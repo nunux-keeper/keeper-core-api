@@ -10,8 +10,8 @@ module.exports = function () {
   const router = express.Router()
 
   /**
-   * @api {get} / get API infos
-   * @apiVersion 1.0.0
+   * @api {get} / Get API informations.
+   * @apiVersion 2.0.0
    * @apiName GetInfos
    * @apiGroup api
    * @apiPermission none
@@ -23,9 +23,9 @@ module.exports = function () {
    * @apiSuccessExample Success-Response:
    *     HTTP/1.1 200 OK
    *     {
-   *        "name": "sample",
-   *        "description": "sample description",
-   *        "version": "1.0"
+   *        "name": "keeper-core-api",
+   *        "description": "Nunux Keeper core API",
+   *        "version": "2.0"
    *     }
    */
   router.get('/', controller.monitoring.get)

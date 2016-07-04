@@ -23,13 +23,13 @@ module.exports = function (router) {
    */
 
   /**
-   * @api {get} /label Request all user's labels
-   * @apiVersion 0.0.1
+   * @api {get} /label Get all user's labels.
+   * @apiVersion 2.0.0
    * @apiName GetAllLabels
    * @apiGroup label
    * @apiPermission user
    *
-   * @apiSuccessStructure Label
+   * @apiSuccess {Label[]} labels List of labels.
    *
    * @apiSuccessExample Success-Response:
    *     HTTP/1.1 200 OK
@@ -47,8 +47,8 @@ module.exports = function (router) {
   router.get('/label', controller.label.all)
 
   /**
-   * @api {get} /label/:id Request label details
-   * @apiVersion 0.0.1
+   * @api {get} /label/:id Get label details.
+   * @apiVersion 2.0.0
    * @apiName GetAllLabel
    * @apiGroup label
    * @apiPermission user
@@ -66,8 +66,8 @@ module.exports = function (router) {
   router.get('/label/:id', middleware.label, controller.label.get)
 
   /**
-   * @api {put} /label/:id Update label details
-   * @apiVersion 0.0.1
+   * @api {put} /label/:id Update label details.
+   * @apiVersion 2.0.0
    * @apiName UpdateLabel
    * @apiGroup label
    * @apiPermission user
@@ -82,8 +82,8 @@ module.exports = function (router) {
   router.put('/label/:id', middleware.label, controller.label.update)
 
   /**
-   * @api {post} /label Create label
-   * @apiVersion 0.0.1
+   * @api {post} /label Create new label.
+   * @apiVersion 2.0.0
    * @apiName CreateLabel
    * @apiGroup label
    * @apiPermission user
@@ -97,8 +97,8 @@ module.exports = function (router) {
   router.post('/label', controller.label.create)
 
   /**
-   * @api {delete} /label/:id Delete label
-   * @apiVersion 0.0.1
+   * @api {delete} /label/:id Delete a label.
+   * @apiVersion 2.0.0
    * @apiName DeleteLabel
    * @apiGroup label
    * @apiPermission user
@@ -111,8 +111,8 @@ module.exports = function (router) {
   router.delete('/label/:id', middleware.label, controller.label.del)
 
   /**
-   * @api {post} /label/:id/restore Restore deleted label
-   * @apiVersion 0.0.1
+   * @api {post} /label/:id/restore Restore a deleted label.
+   * @apiVersion 2.0.0
    * @apiName RestoreDeletedLabel
    * @apiGroup label
    * @apiPermission user

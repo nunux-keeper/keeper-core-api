@@ -30,7 +30,7 @@ module.exports = function (router) {
    *        "contentType": "text/html",
    *        "date": "2014-04-08T08:32:28.308Z",
    *        "origin": "http://foo.bar",
-   *        "labels": ["system-public", "user-foo"],
+   *        "labels": ["123456789", "987654321"],
    *        "attachments": [{
    *          "key": "1234567890",
    *          "contentType": "image/png",
@@ -40,8 +40,8 @@ module.exports = function (router) {
    */
 
   /**
-   * @api {get} /document Search user's documents
-   * @apiVersion 0.0.1
+   * @api {get} /document Search documents.
+   * @apiVersion 2.0.0
    * @apiName SearchDocument
    * @apiGroup document
    * @apiPermission user
@@ -55,7 +55,6 @@ module.exports = function (router) {
    * @apiSuccess {Object[]} hits              Documents found.
    * @apiSuccess {String}   hits._id          ID of the document.
    * @apiSuccess {String}   hits.title        Title of the document.
-   * @apiSuccess {String}   hits.illustration Illustration of the document.
    * @apiSuccess {String[]} hits.labels       Labels of the document.
    *
    * @apiSuccessExample Success-Response:
@@ -65,8 +64,7 @@ module.exports = function (router) {
    *        hits: [{
    *          "_id": "544272014c7473672f95d849",
    *          "title": "Foo",
-   *          "illustration": "1234567890",
-   *          "labels": ["system-public", "user-foo"]
+   *          "labels": ["123456789", "987654321"]
    *        },
    *        {...}
    *        ]
@@ -75,8 +73,8 @@ module.exports = function (router) {
   router.get('/document', controller.document.search)
 
   /**
-   * @api {get} /document Get document
-   * @apiVersion 0.0.1
+   * @api {get} /document Get a document.
+   * @apiVersion 2.0.0
    * @apiName GetDocument
    * @apiGroup document
    * @apiPermission user
@@ -89,8 +87,8 @@ module.exports = function (router) {
   router.get('/document/:id', middleware.document, controller.document.get)
 
   /**
-   * @api {put} /document/:id Update document
-   * @apiVersion 0.0.1
+   * @api {put} /document/:id Update a document.
+   * @apiVersion 2.0.0
    * @apiName UpdateDocument
    * @apiGroup document
    * @apiPermission user
@@ -106,9 +104,9 @@ module.exports = function (router) {
   router.put('/document/:id', middleware.document, controller.document.update)
 
   /**
-   * @api {post} /document Create document
+   * @api {post} /document Create a document.
    *
-   * @apiVersion 0.0.1
+   * @apiVersion 2.0.0
    * @apiName CreateDocument
    * @apiGroup document
    * @apiPermission user
@@ -119,15 +117,15 @@ module.exports = function (router) {
    * @apiParam {String}   [document.content]     Content of the document.
    * @apiParam {String}   [document.contentType] Content type of the document (text/*).
    * @apiParam {String[]} [document.labels]      Labels of the document.
-   * @apiParam {File[]}   [files] Upload files.
+   * @apiParam {File[]}   [files]                Attachments file(s).
    *
    * @apiSuccessStructure Document
    */
   router.post('/document', controller.document.create)
 
   /**
-   * @api {delete} /document/:id Delete a document
-   * @apiVersion 0.0.1
+   * @api {delete} /document/:id Delete a document.
+   * @apiVersion 2.0.0
    * @apiName DeleteDocument
    * @apiGroup document
    * @apiPermission user
@@ -140,15 +138,15 @@ module.exports = function (router) {
   router.delete('/document/:id', middleware.document, controller.document.del)
 
   /**
-   * @api {post} /document/:id/restore Restore deleted document
-   * @apiVersion 0.0.1
+   * @api {post} /document/:id/restore Restore a deleted document.
+   * @apiVersion 2.0.0
    * @apiName RestoreDeletedDocument
    * @apiGroup document
    * @apiPermission user
    *
    * @apiParam {String} id Id of the deleted document.
    *
-   * @apiSuccessStructure Dcoument
+   * @apiSuccessStructure Document
    */
   router.post('/document/:id/restore', controller.document.restore)
 }
