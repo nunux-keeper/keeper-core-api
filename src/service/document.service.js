@@ -202,7 +202,7 @@ DocumentService.restore = function (ghost) {
 DocumentService.removeAttachment = function (doc, att) {
   // Remove attachment file from doc
   const update = {
-    attachments: doc.attachments.reduce((acc, item) => {
+    attachments: _.reduce(doc.attachments, (acc, item) => {
       if (item.key !== att.key) {
         acc.push(item)
       }
@@ -231,7 +231,7 @@ DocumentService.addAttachment = function (doc, files) {
   .then(function (_doc) {
     // Merge attachments into the doc
     const update = {
-      attachments: _doc.attachments.reduce((acc, item) => {
+      attachments: _.reduce(_doc.attachments, (acc, item) => {
         acc.push(_.pick(item, ['key', 'contentType', 'contentLength', 'origin']))
         return acc
       }, [])
