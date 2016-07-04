@@ -17,8 +17,8 @@ module.exports = {
   all: function (req, res, next) {
     labelService.all(req.user.id)
     .then(function (labels) {
-      const resource = new hal.Resource({labels}, globals.REALM + req.path)
-      resource.link('find', {href: globals.REALM + req.path + '/{id}', templated: true})
+      const resource = new hal.Resource({labels}, globals.BASE_URL + req.path)
+      resource.link('find', {href: globals.BASE_URL + req.path + '/{id}', templated: true})
       res.json(resource)
     }, next)
   },

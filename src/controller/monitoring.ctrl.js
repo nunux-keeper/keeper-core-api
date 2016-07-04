@@ -16,7 +16,7 @@ module.exports = {
         description: globals.DESCRIPTION,
         version: globals.VERSION,
         env: globals.ENV
-      }, globals.REALM + req.path)
+      }, globals.BASE_URL + req.path)
       resource.link('documentation', globals.REALM + '/doc/')
       res.status(ok ? 200 : 503).json(resource)
     }, next)

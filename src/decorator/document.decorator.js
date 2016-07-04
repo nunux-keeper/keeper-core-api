@@ -21,10 +21,10 @@ const decorateWithoutPrivateData = function (doc) {
  */
 const decorateWithHalData = function (url, extra) {
   return function (doc) {
-    const resource = new hal.Resource(doc, globals.REALM + url)
+    const resource = new hal.Resource(doc, globals.BASE_URL + url)
     if (extra) {
-      resource.link('search', globals.REALM + '/v2/document')
-      resource.link('raw', globals.REALM + url + '?raw')
+      resource.link('search', globals.BASE_URL + '/document')
+      resource.link('raw', globals.BASE_URL + url + '?raw')
     }
     return Promise.resolve(resource)
   }

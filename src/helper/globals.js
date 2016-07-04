@@ -31,5 +31,6 @@ const globals = {
 }
 
 globals.REALM = process.env.APP_REALM || 'http://localhost:' + globals.PORT
+globals.BASE_URL = globals.REALM + '/v2'
 
 module.exports = globals

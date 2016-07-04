@@ -3,6 +3,7 @@
 const _ = require('lodash')
 const hal = require('hal')
 const errors = require('../helper').errors
+const globals = require('../helper').globals
 const attachmentService = require('../service').attachment
 const documentService = require('../service').document
 
@@ -67,7 +68,7 @@ AttachementCtrl.post = function (req, res, next) {
   const doc = req.requestData.document
   documentService.addAttachment(doc, req.files)
   .then(function (result) {
-    const resource = new hal.Resource(result, req.url + '/' + result.id)
+    const resource = new hal.Resource(result, globals.BASE_URL + req.path + '/' + result.id)
     res.status(201).json(resource)
   }, next)
 }

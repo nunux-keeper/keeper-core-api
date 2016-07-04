@@ -64,13 +64,13 @@ module.exports = {
     const query = _.defaults(req.query, {order: 'asc', from:0, size: 50})
     documentService.search(req.user.id, query)
     .then(function (result) {
-      const resource = new hal.Resource(result, globals.REALM + req.url)
+      const resource = new hal.Resource(result, globals.BASE_URL + req.url)
       query.from = query.form + 1
       if (result.total > query.from * query.size) {
         const qs = querystring.stringify(query)
-        resource.link('next', globals.REALM + req.path + '?' + qs)
+        resource.link('next', globals.BASE_URL + req.path + '?' + qs)
       }
-      resource.link('find', {href: globals.REALM + req.path + '/{id}', templated: true})
+      resource.link('find', {href: globals.BASE_URL + req.path + '/{id}', templated: true})
       res.json(resource)
     }, next)
   },

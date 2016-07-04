@@ -31,7 +31,7 @@ const decorateWithHash = function (profile) {
  */
 const decorateWithHalData = function (url) {
   return function (profile) {
-    const resource = new hal.Resource(profile, globals.REALM + url)
+    const resource = new hal.Resource(profile, globals.BASE_URL + url)
     return Promise.resolve(resource)
   }
 }

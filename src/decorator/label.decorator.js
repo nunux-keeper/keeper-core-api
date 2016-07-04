@@ -11,9 +11,9 @@ const globals = require('../helper').globals
  */
 const decorateWithHalData = function (url, extra) {
   return function (label) {
-    const resource = new hal.Resource(label, globals.REALM + url)
+    const resource = new hal.Resource(label, globals.BASE_URL + url)
     if (extra) {
-      resource.link('list', globals.REALM + '/v2/label')
+      resource.link('list', globals.BASE_URL + '/label')
     }
     return Promise.resolve(resource)
   }
