@@ -1,7 +1,9 @@
 'use strict'
 
 const _ = require('lodash')
+const hal = require('hal')
 const hash = require('../helper/hash').hash
+const globals = require('../helper').globals
 
 /**
  * Remove private data from profile.
@@ -22,6 +24,18 @@ const decorateWithHash = function (profile) {
   return Promise.resolve(profile)
 }
 
+/**
+ * Add HAL data into the profile.
+ * @param {String} url Path URL
+ * @return {Function} the decorator function
+ */
+const decorateWithHalData = function (url) {
+  return function (profile) {
+    const resource = new hal.Resource(profile, globals.REALM + url)
+    return Promise.resolve(resource)
+  }
+}
+
 module.exports = {
   /**
    * Decorate profile DTO by removing private datas.
@@ -36,5 +50,14 @@ module.exports = {
    */
   hash: function () {
     return decorateWithHash
+  },
+
+  /**
+   * Decorate profile DTO with HAL data.
+   * @param {String} url Path URL
+   * @return {Function} decorator function
+   */
+  hal: function (url) {
+    return decorateWithHalData(url)
   }
 }

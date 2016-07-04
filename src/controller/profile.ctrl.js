@@ -1,6 +1,5 @@
 'use strict'
 
-const hal = require('hal')
 const errors = require('../helper').errors
 const decorator = require('../decorator')
 const userService = require('../service').user
@@ -13,10 +12,10 @@ module.exports = {
     decorator.decorate(
       req.user,
       decorator.profile.privacy(),
-      decorator.profile.hash()
+      decorator.profile.hash(),
+      decorator.profile.hal(req.path)
     )
-    .then((profile) => {
-      const resource = new hal.Resource(profile, req.url)
+    .then((resource) => {
       res.json(resource)
     })
   },
@@ -25,14 +24,14 @@ module.exports = {
    * Update current profile data (public alias).
    */
   update: function (req, res, next) {
-    req.sanitizeBody('publicAlias').trim()
-    req.checkBody('publicAlias', 'Invalid alias').optional().isLength(4, 64)
+    req.sanitizeBody('alias').trim()
+    req.checkBody('alias', 'Invalid alias').optional().isLength(4, 64)
     const validationErrors = req.validationErrors(true)
     if (validationErrors) {
       return next(new errors.BadRequest(null, validationErrors))
     }
     const update = {
-      publicAlias: req.body.publicAlias
+      alias: req.body.alias
     }
 
     userService.update(req.user, update)
@@ -40,11 +39,11 @@ module.exports = {
       return decorator.decorate(
         req.user,
         decorator.profile.privacy(),
-        decorator.profile.hash()
+        decorator.profile.hash(),
+        decorator.profile.hal(req.path)
       )
     })
-    .then(function (profile) {
-      const resource = new hal.Resource(profile, req.url)
+    .then(function (resource) {
       res.json(resource)
     }, next)
   }

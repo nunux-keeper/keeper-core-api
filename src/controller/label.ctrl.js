@@ -2,7 +2,9 @@
 
 const hal = require('hal')
 const errors = require('../helper').errors
+const globals = require('../helper').globals
 const labelService = require('../service').label
+const decorator = require('../decorator')
 
 /**
  * Controller to manage labels.
@@ -15,7 +17,8 @@ module.exports = {
   all: function (req, res, next) {
     labelService.all(req.user.id)
     .then(function (labels) {
-      const resource = new hal.Resource({labels: labels}, req.url)
+      const resource = new hal.Resource({labels}, globals.REALM + req.path)
+      resource.link('find', {href: globals.REALM + req.path + '/{id}', templated: true})
       res.json(resource)
     }, next)
   },
@@ -24,9 +27,13 @@ module.exports = {
    * Get label details.
    */
   get: function (req, res, next) {
-    const label = req.requestData.label
-    const resource = new hal.Resource(label, req.url)
-    res.json(resource)
+    decorator.decorate(
+      req.requestData.label,
+      decorator.label.hal(req.path, true)
+    )
+    .then(function (resource) {
+      res.json(resource)
+    }, next)
   },
 
   /**
@@ -48,7 +55,12 @@ module.exports = {
     }
     labelService.create(newLabel)
     .then(function (label) {
-      const resource = new hal.Resource(label, req.url)
+      return decorator.decorate(
+        label,
+        decorator.label.hal(`${req.path}/${label.id}`, false)
+      )
+    })
+    .then(function (resource) {
       res.status(201).json(resource)
     }, next)
   },
@@ -71,7 +83,12 @@ module.exports = {
     }
     labelService.update(req.requestData.label, update)
     .then(function (label) {
-      const resource = new hal.Resource(label, req.url)
+      return decorator.decorate(
+        label,
+        decorator.label.hal(req.path, false)
+      )
+    })
+    .then(function (resource) {
       res.status(200).json(resource)
     }, next)
   },
@@ -92,18 +109,24 @@ module.exports = {
    */
   restore: function (req, res, next) {
     labelService.get(req.params.id, true)
-      .then(function (ghost) {
-        if (!ghost) {
-          return Promise.reject(new errors.NotFound('Label ghost not found.'))
-        }
-        // Only allow to see own label.
-        if (ghost.owner !== req.user.id) {
-          return Promise.reject(new errors.Forbidden())
-        }
-        return labelService.restore(ghost)
-      }).then(function (label) {
-        const resource = new hal.Resource(label, req.url)
-        res.status(200).json(resource)
-      }, next)
+    .then(function (ghost) {
+      if (!ghost) {
+        return Promise.reject(new errors.NotFound('Label ghost not found.'))
+      }
+      // Only allow to see own label.
+      if (ghost.owner !== req.user.id) {
+        return Promise.reject(new errors.Forbidden())
+      }
+      return labelService.restore(ghost)
+    })
+    .then(function (label) {
+      return decorator.decorate(
+        label,
+        decorator.label.hal(req.path, false)
+      )
+    })
+    .then(function (resource) {
+      res.status(200).json(resource)
+    }, next)
   }
 }

@@ -1,6 +1,5 @@
 'use strict'
 
-const hal = require('hal')
 const errors = require('../helper').errors
 const decorator = require('../decorator')
 const userService = require('../service').user
@@ -25,8 +24,7 @@ module.exports = {
       return decorator.decorate(user, decorator.user.stats())
     })
     .then(function (user) {
-      const resource = new hal.Resource(user, req.url)
-      res.json(resource)
+      res.json(user)
     }, next)
   },
 
@@ -36,8 +34,7 @@ module.exports = {
   createUser: function (req, res, next) {
     userService.create(req.params.id)
     .then(function (user) {
-      const resource = new hal.Resource(user, req.url)
-      res.status(201).json(resource)
+      res.status(201).json(user)
     }, next)
   },
 

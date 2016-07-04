@@ -25,7 +25,6 @@ make start
 - Hook system
 - Monitoring
 - Create temporary documents (ttl)
-- Improve HATOAS
 
 ----------------------------------------------------------------------
 

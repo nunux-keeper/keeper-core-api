@@ -2,7 +2,9 @@
 
 const _ = require('lodash')
 const hal = require('hal')
+const querystring = require('querystring')
 const errors = require('../helper').errors
+const globals = require('../helper').globals
 const decorator = require('../decorator')
 const documentService = require('../service').document
 
@@ -37,13 +39,13 @@ module.exports = {
     } else {
       // Enrich status with computed properties...
       decorator.decorate(
-          req.requestData.document,
-          decorator.document.privacy()
-          )
-        .then(function (document) {
-          const resource = new hal.Resource(document, req.url)
-          res.json(resource)
-        }, next)
+        req.requestData.document,
+        decorator.document.privacy(),
+        decorator.document.hal(req.path, true)
+      )
+      .then(function (resource) {
+        res.json(resource)
+      }, next)
     }
   },
 
@@ -59,10 +61,17 @@ module.exports = {
       return next(new errors.BadRequest(null, validationErrors))
     }
 
-    documentService.search(req.user.id, req.query)
+    const query = _.defaults(req.query, {order: 'asc', from:0, size: 50})
+    documentService.search(req.user.id, query)
     .then(function (result) {
-      // TODO add HAL data
-      res.json(result)
+      const resource = new hal.Resource(result, globals.REALM + req.url)
+      query.from = query.form + 1
+      if (result.total > query.from * query.size) {
+        const qs = querystring.stringify(query)
+        resource.link('next', globals.REALM + req.path + '?' + qs)
+      }
+      resource.link('find', {href: globals.REALM + req.path + '/{id}', templated: true})
+      res.json(resource)
     }, next)
   },
 
@@ -103,12 +112,12 @@ module.exports = {
     documentService.create(doc)
     .then(function (result) {
       return decorator.decorate(
-          result,
-          decorator.document.privacy()
-          )
+        result,
+        decorator.document.privacy(),
+        decorator.document.hal(`${req.path}/${result.id}`, false)
+      )
     })
-    .then(function (result) {
-      const resource = new hal.Resource(result, req.url + '/' + result.id)
+    .then(function (resource) {
       res.status(201).json(resource)
     }, next)
   },
@@ -149,12 +158,12 @@ module.exports = {
     documentService.update(doc, update)
     .then(function (result) {
       return decorator.decorate(
-          result,
-          decorator.document.privacy()
-          )
+        result,
+        decorator.document.privacy(),
+        decorator.document.hal(req.path, false)
+      )
     })
-    .then(function (result) {
-      const resource = new hal.Resource(result, req.url)
+    .then(function (resource) {
       res.status(200).json(resource)
     }, next)
   },
@@ -165,9 +174,9 @@ module.exports = {
   del: function (req, res, next) {
     const doc = req.requestData.document
     documentService.remove(doc)
-      .then(function () {
-        res.status(204).json()
-      }, next)
+    .then(function () {
+      res.status(204).json()
+    }, next)
   },
 
   /**
@@ -175,19 +184,26 @@ module.exports = {
    */
   restore: function (req, res, next) {
     documentService.get(req.params.id, true)
-      .then(function (ghost) {
-        if (!ghost) {
-          return Promise.reject(new errors.NotFound('Document ghost not found.'))
-        }
-        // Only allow to see own document.
-        if (ghost.owner !== req.user.id) {
-          return Promise.reject(new errors.Forbidden())
-        }
-        return documentService.restore(ghost)
-      }).then(function (doc) {
-        const resource = new hal.Resource(doc, req.url)
-        res.status(200).json(resource)
-      }, next)
+    .then(function (ghost) {
+      if (!ghost) {
+        return Promise.reject(new errors.NotFound('Document ghost not found.'))
+      }
+      // Only allow to see own document.
+      if (ghost.owner !== req.user.id) {
+        return Promise.reject(new errors.Forbidden())
+      }
+      return documentService.restore(ghost)
+    })
+    .then(function (result) {
+      return decorator.decorate(
+        result,
+        decorator.document.privacy(),
+        decorator.document.hal(req.path, false)
+      )
+    })
+    .then(function (resource) {
+      res.status(200).json(resource)
+    }, next)
   }
 
 }
