@@ -31,6 +31,9 @@ class DocumentDao extends AbstractMongodbDao {
   buildSearchQuery (query) {
     const result = {
       size: query.size,
+      _source: {
+        exclude: ['*.content', '*.contentType', '*.owner', '*.date']
+      },
       query: {
         filtered: {
           query: { match_all: {} },
