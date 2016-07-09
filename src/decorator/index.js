@@ -20,8 +20,10 @@ require('fs').readdirSync(__dirname).forEach((file) => {
  * @param {Function[]} ... Decorator functions
  * @return {Promise} promise of the decoration
  */
-decorators.decorate = function (obj) {
-  const decorators = Array.prototype.slice.call(arguments, 1)
+decorators.decorate = function (obj, ...decorators) {
+  if (!decorators || decorators.length === 0) {
+    return Promise.resolve(obj)
+  }
   return pipeline(decorators, obj)
 }
 
