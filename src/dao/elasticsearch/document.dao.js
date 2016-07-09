@@ -1,6 +1,5 @@
 'use strict'
 
-const _ = require('lodash')
 const AbstractMongodbDao = require('./abstract')
 
 /**
@@ -30,7 +29,6 @@ class DocumentDao extends AbstractMongodbDao {
 
   buildSearchQuery (query) {
     const result = {
-      size: query.size,
       _source: {
         exclude: ['*.content', '*.contentType', '*.owner', '*.date']
       },
@@ -40,6 +38,10 @@ class DocumentDao extends AbstractMongodbDao {
           filter : { term : { owner : query.owner } }
         }
       }
+    }
+
+    if (query.size) {
+      result.size = query.size
     }
 
     if (query.from) {
@@ -80,10 +82,8 @@ class DocumentDao extends AbstractMongodbDao {
       // console.log(JSON.stringify(data, null, 2))
       const result = {}
       result.total = data.hits.total
-      result.hits = _.reduce(data.hits.hits, (acc, item) => {
-        acc.push(item._source)
-        return acc
-      }, [])
+      result.hits = this._decodeSearchResult(data)
+      // console.log(JSON.stringify(result, null, 2))
       return Promise.resolve(result)
     })
   }

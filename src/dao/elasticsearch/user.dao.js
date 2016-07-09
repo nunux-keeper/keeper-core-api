@@ -28,7 +28,10 @@ class UserDao extends AbstractMongodbDao {
    * @return {Object} the user
    */
   findByUid (uid) {
-    return this.find({uid: uid}, {size: 1})
+    return this.find({uid: uid}, {size: 1}).then((users) => {
+      const user = users.length ? users[0] : null
+      return Promise.resolve(user)
+    })
   }
 }
 

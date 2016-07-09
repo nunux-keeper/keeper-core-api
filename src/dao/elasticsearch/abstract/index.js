@@ -2,6 +2,7 @@
 
 const _ = require('lodash')
 const logger = require('../../../helper').logger
+const ReadableSearch = require('elasticsearch-streams').ReadableSearch
 
 const buildTerm = function (name, value) {
   const result = {term: {}}
@@ -36,6 +37,31 @@ class AbstractElasticsearchDao {
     })
   }
 
+  _decodeSearchHit (hit) {
+    const result = Object.assign(
+      {id: hit._id},
+      hit._source
+    )
+    if (!hit._source) {
+      for (const field in hit.fields) {
+        if (hit.fields.hasOwnProperty(field)) {
+          result[field] = _.isArray(hit.fields[field]) ? hit.fields[field][0] : hit.fields[field]
+        }
+      }
+    }
+    // console.log('_decodeSearchHit::result', result)
+    return result
+  }
+
+  _decodeSearchResult (r) {
+    const result = r.hits.hits.reduce((acc, hit) => {
+      acc.push(this._decodeSearchHit(hit))
+      return acc
+    }, [])
+    // console.log('_decodeSearchResult::result', result)
+    return result
+  }
+
   /**
    * Build elasticsearch query.
    * @param {Object} query query
@@ -46,10 +72,12 @@ class AbstractElasticsearchDao {
     const fields = Object.keys(this.getMapping().properties)
     const result = {
       fields: fields,
-      size: params.size,
       query: {}
     }
-    const termCount = Object.keys(query).length
+    if (params && params.size) {
+      result.size = params.size
+    }
+    const termCount = query ? Object.keys(query).length : 0
     if (termCount === 1) {
       const prop = Object.keys(query)[0]
       result.query.term = buildTerm(prop, query[prop]).term
@@ -63,6 +91,8 @@ class AbstractElasticsearchDao {
           result.query.bool.must.push(buildTerm(prop, value))
         }
       }
+    } else {
+      result.query['match_all'] = {}
     }
     logger.debug('Builded search query:', result)
     return result
@@ -101,17 +131,22 @@ class AbstractElasticsearchDao {
       type: this.type,
       body: this.buildFindQuery(query, p)
     }).then((r) => {
-      const result = []
-      r.hits.hits.forEach(function (hit) {
-        const doc = {id: hit._id}
-        for (const field in hit.fields) {
-          if (hit.fields.hasOwnProperty(field)) {
-            doc[field] = _.isArray(hit.fields[field]) ? hit.fields[field][0] : hit.fields[field]
-          }
-        }
-        result.push(doc)
-      })
-      return Promise.resolve(result)
+      return Promise.resolve(this._decodeSearchResult(r))
+    })
+  }
+
+  /**
+   * Count documents.
+   * @param {Object} query Count query.
+   * @return {Array} the documents
+   */
+  count (query, params) {
+    return this.client.count({
+      index: this.index,
+      type: this.type,
+      body: this.buildFindQuery(query)
+    }).then((r) => {
+      return Promise.resolve(r.count)
     })
   }
 
@@ -122,7 +157,18 @@ class AbstractElasticsearchDao {
    * @return {Stream} the documents stream
    */
   stream (query) {
-    return Promise.reject('Sorry, stream function is not (yet) suppported by the ElasticSearch driver.')
+    const searchExec = (from, callback) => {
+      this.client.search({
+        index: this.index,
+        type: this.type,
+        from: from,
+        size: 100,
+        body: this.buildFindQuery(query)
+      }, callback)
+    }
+
+    const rs = new ReadableSearch(searchExec, this._decodeSearchHit)
+    return Promise.resolve(rs)
   }
 
   /**
