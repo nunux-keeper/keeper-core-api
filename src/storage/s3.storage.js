@@ -49,6 +49,16 @@ var info = function (container, entry) {
 }
 
 /**
+ * Get container usage.
+ * @param {String} container Container name
+ * @return {Promise} Promise of the container usage
+ */
+var usage = function (container) {
+  // TODO Implement S3 storage usage
+  return Promise.resolve(0)
+}
+
+/**
  * Get resource stream.
  * @param {String} container Container name
  * @param {String} entry Resource name
@@ -242,6 +252,7 @@ var localRemove = function (container, entry) {
  */
 module.exports = {
   info: info,
+  usage: usage,
   stream: stream,
   store: store,
   move: move,

@@ -46,6 +46,18 @@ var info = function (container, entry) {
 }
 
 /**
+ * Get container usage.
+ * @param {String} container Container name
+ * @return {Promise} Promise of the container usage
+ */
+var usage = function (container) {
+  return files.chdu(container).catch((err) => {
+    logger.warn('Unable to get storage usage of the container: ' + container, err)
+    return Promise.resolve(-1)
+  })
+}
+
+/**
  * Store resource into a container.
  * @param {String} container Container name
  * @param {String} entry Resource name
@@ -156,6 +168,7 @@ var localRemove = function (container, entry) {
  */
 module.exports = {
   info: info,
+  usage: usage,
   stream: stream,
   store: store,
   move: move,
