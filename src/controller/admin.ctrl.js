@@ -3,15 +3,22 @@
 const errors = require('../helper').errors
 const decorator = require('../decorator')
 const userService = require('../service').user
+const JSONStream = require('JSONStream')
 
 module.exports = {
   /**
-   * Get usersstatistics.
+   * Get all users with statistics.
    */
-  getStatistics: function (req, res, next) {
-    userService.getStatistics()
-    .then(function (stats) {
-      res.json(stats)
+  getUsers: function (req, res, next) {
+    const decorators = [
+      decorator.user.stats(),
+      decorator.user.gravatar(),
+      decorator.user.hal(req.path)
+    ]
+    userService.stream(decorators)
+    .then(function (s) {
+      res.append('Content-Type', 'application/json')
+      s.pipe(JSONStream.stringify()).pipe(res)
     }, next)
   },
 
@@ -19,10 +26,12 @@ module.exports = {
    * Get user.
    */
   getUser: function (req, res, next) {
-    userService.get(req.params.id)
-    .then(function (user) {
-      return decorator.decorate(user, decorator.user.stats())
-    })
+    const decorators = [
+      decorator.user.stats(),
+      decorator.user.gravatar(),
+      decorator.user.hal(req.path)
+    ]
+    userService.get(req.params.id, decorators)
     .then(function (user) {
       res.json(user)
     }, next)

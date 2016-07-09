@@ -41,7 +41,7 @@ module.exports = {
    */
   create: function (req, res, next) {
     req.sanitizeBody('label').escape()
-    req.checkBody('label', 'Invalid label value').notEmpty().isLength(4, 64)
+    req.checkBody('label', 'Invalid label value').notEmpty().isLength(2, 64)
     req.checkBody('color', 'Invalid color value').optional().isHexColor()
     const validationErrors = req.validationErrors(true)
     if (validationErrors) {
@@ -70,7 +70,7 @@ module.exports = {
    */
   update: function (req, res, next) {
     req.sanitizeBody('label').escape()
-    req.checkBody('label', 'Invalid label value').notEmpty().isLength(4, 64)
+    req.checkBody('label', 'Invalid label value').notEmpty().isLength(2, 64)
     req.checkBody('color', 'Invalid color value').optional().isHexColor()
     const validationErrors = req.validationErrors(true)
     if (validationErrors) {

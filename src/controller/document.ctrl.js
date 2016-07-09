@@ -183,7 +183,7 @@ module.exports = {
    * Restore deleted document.
    */
   restore: function (req, res, next) {
-    documentService.get(req.params.id, true)
+    documentService.getGhost(req.params.id)
     .then(function (ghost) {
       if (!ghost) {
         return Promise.reject(new errors.NotFound('Document ghost not found.'))

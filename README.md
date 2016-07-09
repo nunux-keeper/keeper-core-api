@@ -24,6 +24,7 @@ make start
 - Sharing system
 - Hook system
 - Monitoring
+- Admin features (user managment, ...)
 - Create temporary documents (ttl)
 
 ----------------------------------------------------------------------

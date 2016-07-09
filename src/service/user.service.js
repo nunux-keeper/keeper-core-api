@@ -5,6 +5,8 @@ const crypto = require('crypto')
 const logger = require('../helper').logger
 const globals = require('../helper').globals
 const validators = require('../helper').validators
+const decorator = require('../decorator')
+const DecoratorStream = require('../decorator/decorator.stream')
 const userDao = require('../dao').user
 
 /**
@@ -12,6 +14,31 @@ const userDao = require('../dao').user
  * @module user.service
  */
 const UserService = {}
+
+/**
+ * Get user's details.
+ * @param {String} uid User ID
+ * @param {Function[]} decorators Decorators to apply
+ * @return {Object} the user
+ */
+UserService.get = function (uid, decorators) {
+  return userDao.findByUid(uid)
+  .then(function (user) {
+    return decorator.decorate(user, ...decorators)
+  })
+}
+
+/**
+ * Get all users (as a stream).
+ * @param {Function[]} decorators Decorators to apply to each user
+ * @return {Pomise} the promise of the stream
+ */
+UserService.stream = function (decorators) {
+  return userDao.stream().then((s) => {
+    const ds = new DecoratorStream(decorators)
+    return Promise.resolve(s.pipe(ds))
+  })
+}
 
 /**
  * Update user's data.
@@ -35,8 +62,7 @@ UserService.update = function (user, update) {
  * @return {Object} the logged user
  */
 UserService.login = function (user) {
-  const logged = userDao.findByUid(user.uid).then(function (res) {
-    const _user = res.length ? res[0] : null
+  const logged = userDao.findByUid(user.uid).then(function (_user) {
     if (_user) {
       // Return the user.
       logger.debug('User %s authorized.', _user.uid)
@@ -44,7 +70,7 @@ UserService.login = function (user) {
     } else if (globals.AUTO_PROVISIONING_USERS || validators.isAdmin(user.uid)) {
       // Create the user.
       logger.info('User %s authorized. Auto-provisioning...', user.uid)
-      user.publicAlias = crypto.createHash('md5').update(user.uid).digest('hex')
+      user.alias = crypto.createHash('md5').update(user.uid).digest('hex')
       return userDao.create(user)
     } else {
       // User not found and auto grant access is disabled.

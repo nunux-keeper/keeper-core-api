@@ -6,6 +6,7 @@ const storage = require('../storage')
 const extractor = require('../extractor')
 const documentDao = require('../dao').document
 const eventHandler = require('../event')
+const decorator = require('../decorator')
 const documentGraveyardDao = require('../dao').document_graveyard
 
 function getDocumentContainerName (doc) {
@@ -45,13 +46,25 @@ const processAttachments = function (doc) {
 const DocumentService = {}
 
 /**
- * Get a document (or a ghost document).
+ * Get a document.
  * @param {String} docId Document ID
- * @param {Boolean} ghost Ghost flag
+ * @param {Function[]} decorators Decorators to apply
  * @return {Object} the document
  */
-DocumentService.get = function (docId, ghost) {
-  return ghost ? documentGraveyardDao.get(docId) : documentDao.get(docId)
+DocumentService.get = function (docId, decorators) {
+  return documentDao.get(docId)
+  .then(function (doc) {
+    return decorators ? decorator.decorate(doc, ...decorators) : doc
+  })
+}
+
+/**
+ * Get a ghost document.
+ * @param {String} docId Document ID
+ * @return {Object} the document
+ */
+DocumentService.getGhost = function (docId) {
+  return documentGraveyardDao.get(docId)
 }
 
 /**
