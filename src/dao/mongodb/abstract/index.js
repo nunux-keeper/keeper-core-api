@@ -57,6 +57,24 @@ class AbstractMongodbDao {
   }
 
   /**
+   * Count documents.
+   * @param {Object} query Count query.
+   * @return {Array} the documents
+   */
+  count (query) {
+    return this.getCollection().then((collection) => {
+      return new Promise((resolve, reject) => {
+        collection.count(query, function (err, count) {
+          if (err) {
+            return reject(err)
+          }
+          resolve(count)
+        })
+      })
+    })
+  }
+
+  /**
    * Stream documents.
    * @param {Object} query Find query.
    * @return {Stream} the documents stream
