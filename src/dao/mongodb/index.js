@@ -6,11 +6,7 @@ const MongoClient = require('mongodb').MongoClient
 
 module.exports = function (uri) {
   const daos = {}
-  const client = MongoClient.connect(uri, {
-    autoReconnect: true,
-    keepAlive: 1,
-    connectTimeoutMS: 30000
-  })
+  const client = MongoClient.connect(uri)
   .then((db) => {
     logger.info('MongodDB connection success')
     db.on('close', function () {
@@ -21,6 +17,7 @@ module.exports = function (uri) {
     })
     db.on('timeout', function (err) {
       logger.error('MongodDB timeout', err)
+      throw err
     })
 
     return Promise.resolve(db)
