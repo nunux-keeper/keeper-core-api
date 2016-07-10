@@ -121,10 +121,10 @@ class AbstractElasticsearchDao {
    * @param {Object} params Find parameters.
    * @return {Array} the documents
    */
-  find (query, params = {}) {
+  find (query, params) {
     const p = Object.assign({
       size: 100
-    }, params)
+    }, params || {})
 
     return this.client.search({
       index: this.index,
