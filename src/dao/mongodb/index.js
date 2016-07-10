@@ -6,7 +6,11 @@ const MongoClient = require('mongodb').MongoClient
 
 module.exports = function (uri) {
   const daos = {}
-  const client = MongoClient.connect(uri)
+  const client = MongoClient.connect(uri, {
+    autoReconnect: true,
+    keepAlive: 1,
+    connectTimeoutMS: 30000
+  })
   .then((db) => {
     logger.info('MongodDB connection success')
     db.on('close', function () {
