@@ -66,7 +66,7 @@ UserService.update = function (user, update) {
  * @return {Object} the logged user
  */
 UserService.login = function (user) {
-  logger.debug('Login attempt:', user)
+  logger.debug('Login attempt: %s', user.uid)
   return userDao.findByUid(user.uid).then(function (_user) {
     if (_user) {
       // Return the user.

@@ -1,6 +1,7 @@
 'use strict'
 
 const AbstractMongodbDao = require('./abstract')
+const logger = require('../../helper').logger
 
 /**
  * User DAO.
@@ -19,7 +20,9 @@ class UserDao extends AbstractMongodbDao {
   findByUid (uid) {
     return this.getCollection().then((collection) => {
       return collection.find({uid: uid}).limit(1).toArray().then((users) => {
+        logger.debug('findByUid::users', users)
         const user = users.length ? this.objectMapper(users[0]) : null
+        logger.debug('findByUid::user', user)
         return Promise.resolve(user)
       })
     })
