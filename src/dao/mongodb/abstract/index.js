@@ -11,7 +11,14 @@ class AbstractMongodbDao {
 
   getCollection () {
     return this.client.then((db) => {
-      return Promise.resolve(db.collection(this.collection))
+      return new Promise((resolve, reject) => {
+        db.collection(this.collection, (err, collection) => {
+          if (err) {
+            return reject(err)
+          }
+          return resolve(collection)
+        })
+      })
     })
   }
 

@@ -5,8 +5,20 @@ const logger = require('../../helper').logger
 const MongoClient = require('mongodb').MongoClient
 
 module.exports = function (uri) {
-  const client = MongoClient.connect(uri)
   const daos = {}
+  const client = MongoClient.connect(uri)
+  .then((db) => {
+    logger.info('MongodDB connection success')
+    db.on('close', function () {
+      logger.info('MongodDB connection close')
+    })
+    return Promise.resolve(db)
+  })
+  .catch((err) => {
+    logger.fatal('MongodDB connection error!')
+    throw err
+  })
+
   daos.shutdown = function () {
     return client.then((db) => db.close())
   }
