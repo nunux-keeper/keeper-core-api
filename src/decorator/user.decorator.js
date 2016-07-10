@@ -41,7 +41,7 @@ const decorateWithStatsData = function (user) {
  */
 const decorateWithHalData = function (url) {
   return function (user) {
-    const resource = new hal.Resource(user, globals.BASE_URL + url + '/' + user.id)
+    const resource = new hal.Resource(user, globals.BASE_URL + url + '/' + user.uid)
     return Promise.resolve(resource)
   }
 }

@@ -4,6 +4,7 @@ const _ = require('lodash')
 const crypto = require('crypto')
 const logger = require('../helper').logger
 const globals = require('../helper').globals
+const errors = require('../helper').errors
 const validators = require('../helper').validators
 const decorator = require('../decorator')
 const DecoratorStream = require('../decorator/decorator.stream')
@@ -24,6 +25,9 @@ const UserService = {}
 UserService.get = function (uid, decorators) {
   return userDao.findByUid(uid)
   .then(function (user) {
+    if (!user) {
+      return Promise.reject(new errors.NotFound('User not found: ' + uid))
+    }
     return decorator.decorate(user, ...decorators)
   })
 }
@@ -62,7 +66,7 @@ UserService.update = function (user, update) {
  * @return {Object} the logged user
  */
 UserService.login = function (user) {
-  const logged = userDao.findByUid(user.uid).then(function (_user) {
+  return userDao.findByUid(user.uid).then(function (_user) {
     if (_user) {
       // Return the user.
       logger.debug('User %s authorized.', _user.uid)
@@ -75,11 +79,9 @@ UserService.login = function (user) {
     } else {
       // User not found and auto grant access is disabled.
       logger.warn('User %s not authorized.', user.uid)
-      return Promise.reject('ENOTAUTHORIZED')
+      return Promise.reject(new errors.Unauthorized('Auto-provisioning disabled.'))
     }
   })
-
-  return logged
 }
 
 module.exports = UserService
