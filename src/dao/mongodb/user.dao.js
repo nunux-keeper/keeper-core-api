@@ -18,14 +18,10 @@ class UserDao extends AbstractMongodbDao {
    * @return {Object} the user
    */
   findByUid (uid) {
-    logger.debug('findByUid::uid', uid)
     return this.getCollection().then((collection) => {
-      logger.debug('findByUid::collection')
-      return collection.find({uid: uid}).limit(1).toArray().then((users) => {
-        logger.debug('findByUid::users', users)
-        const user = users.length ? this.objectMapper(users[0]) : null
+      return collection.findOne({uid: uid}).then((user) => {
         logger.debug('findByUid::user', user)
-        return Promise.resolve(user)
+        return Promise.resolve(this.objectMapper(user))
       })
     })
   }
