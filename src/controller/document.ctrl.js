@@ -61,7 +61,7 @@ module.exports = {
       return next(new errors.BadRequest(null, validationErrors))
     }
 
-    const query = _.defaults(req.query, {order: 'asc', from:0, size: 50})
+    const query = Object.assign({order: 'asc', from:0, size: 50}, req.query)
     documentService.search(req.user.id, query)
     .then(function (result) {
       const resource = new hal.Resource(result, globals.BASE_URL + req.url)

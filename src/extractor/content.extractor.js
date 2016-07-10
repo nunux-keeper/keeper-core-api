@@ -37,9 +37,7 @@ module.exports = {
    * @return {Promise} Promise of the document with extracted content.
    */
   extract: function (doc) {
-    const textAttachment = _.find(doc.attachments, function (att) {
-      return /^text\//.test(att.contentType)
-    })
+    const textAttachment = doc.attachments.find(att => /^text\//.test(att.contentType))
     if (textAttachment) {
       // The attachment is the doc
       logger.debug('Extracting content from the attachment...', textAttachment.key)

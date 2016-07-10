@@ -1,6 +1,5 @@
 'use strict'
 
-const _ = require('lodash')
 const hal = require('hal')
 const errors = require('../helper').errors
 const globals = require('../helper').globals
@@ -18,7 +17,7 @@ const AttachementCtrl = {}
  */
 AttachementCtrl.get = function (req, res, next) {
   const doc = req.requestData.document
-  const attachment = _.findWhere(doc.attachments, {key: req.params.key})
+  const attachment = doc.attachments.find(item => item.key === req.params.key)
   if (!attachment) {
     return next(new errors.NotFound('Attachment not found in the document.'))
   }
@@ -54,7 +53,7 @@ AttachementCtrl.get = function (req, res, next) {
 
 AttachementCtrl.del = function (req, res, next) {
   const doc = req.requestData.document
-  const attachment = _.findWhere(doc.attachments, {key: req.params.key})
+  const attachment = doc.attachments.find(item => item.key === req.params.key)
   if (!attachment) {
     return next(new errors.NotFound('Attachment not found in the document.'))
   }

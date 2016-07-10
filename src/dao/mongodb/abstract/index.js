@@ -45,10 +45,10 @@ class AbstractMongodbDao {
    * @param {Object} params Find parameters.
    * @return {Array} the documents
    */
-  find (query, params) {
-    const p = _.defaults(params || {}, {
+  find (query, params = {}) {
+    const p = Object.assign({
       size: 100
-    })
+    }, params)
     return this.getCollection().then((collection) => {
       return collection.find(query).limit(p.size).toArray().then((docs) => {
         return Promise.resolve(_.map(docs, this.objectMapper))

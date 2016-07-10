@@ -121,7 +121,7 @@ module.exports = {
     var nodes = document.getElementsByTagName('*')
     for (var i = 0; i < nodes.length; ++i) {
       var node = nodes[i]
-      var filterChain = _.compose(
+      var filterChain = _.flow(
         filterBlacklistedSites,
         filterAttributes
       )

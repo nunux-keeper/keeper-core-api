@@ -1,6 +1,5 @@
 'use strict'
 
-const _ = require('lodash')
 const logger = require('../../helper').logger
 const storage = require('../../storage')
 const download = require('../../downloader')
@@ -9,9 +8,7 @@ const download = require('../../downloader')
  * Download document's attachments.
  */
 const downloadAttachments = function (doc) {
-  const attachments = _.filter(doc.attachments, function (attachment) {
-    return attachment.origin
-  })
+  const attachments = doc.attachments.filter(attachment => attachment.origin)
   if (attachments && attachments.length) {
     logger.debug('Downloading document attachments...', doc.id)
     download(attachments, storage.getContainerName(doc.owner, 'documents', doc.id, 'files'))

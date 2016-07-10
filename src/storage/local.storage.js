@@ -123,7 +123,10 @@ var _listContainer = function (container) {
  * @retrun {Promise} Promise of the action
  */
 var cleanContainer = function (container, resources) {
-  var keys = _.pluck(resources, 'key')
+  const keys = resources.reduce((acc, res) => {
+    acc.push(res.key)
+    return acc
+  }, [])
 
   // TODO remove zero length files
 
