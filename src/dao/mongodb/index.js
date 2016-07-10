@@ -12,6 +12,13 @@ module.exports = function (uri) {
     db.on('close', function () {
       logger.info('MongodDB connection close')
     })
+    db.on('error', function (err) {
+      logger.error('MongodDB error', err)
+    })
+    db.on('timeout', function (err) {
+      logger.error('MongodDB timeout', err)
+    })
+
     return Promise.resolve(db)
   })
   .catch((err) => {
