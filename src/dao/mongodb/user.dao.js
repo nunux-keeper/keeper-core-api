@@ -1,7 +1,7 @@
 'use strict'
 
 const AbstractMongodbDao = require('./abstract')
-// const logger = require('../../helper').logger
+const logger = require('../../helper').logger
 
 /**
  * User DAO.
