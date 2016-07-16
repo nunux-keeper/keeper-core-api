@@ -1,15 +1,14 @@
 'use strict'
 
 const when = require('when')
-const _ = require('lodash')
 const gm = require('gm')
 const crypto = require('crypto')
 const webshot = require('webshot')
 const logger = require('./logger')
 const files = require('./files')
 
-const imageExtensions = ['png', 'jpg', 'jpeg', 'gif']
-const sizes = ['200x150']
+const imageExtensions = new Set(['png', 'jpg', 'jpeg', 'gif'])
+const sizes = new Set(['320x200'])
 
 /**
  * Make thumbnail of a file.
@@ -23,10 +22,10 @@ const thumbnailFile = function (file, size, group) {
   if (ext) {
     ext = ext.toLowerCase()
   }
-  if (!_.contains(imageExtensions, ext)) {
+  if (!imageExtensions.has(ext)) {
     return when.reject('Input file is not a supported image format.')
   }
-  if (!_.contains(sizes, size)) {
+  if (!sizes.has(size)) {
     return when.reject('Resizing size is not available.')
   }
 

@@ -21,7 +21,7 @@ module.exports = function (router) {
    * @apiParam {String} [size] Size of the image (if conten type of the attachment is an image).
    *
    * This is useful to get a thumbnail of the image attachment.
-   * Only the size "200x150" is supported.
+   * Only the size "320x200" is supported.
    *
    * @apiSuccessExample Success-Response:
    *     HTTP/1.1 200 OK
