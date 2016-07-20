@@ -59,25 +59,20 @@ DocumentService.get = function (docId, decorators) {
 }
 
 /**
- * Get a ghost document.
- * @param {String} docId Document ID
- * @return {Object} the document
- */
-DocumentService.getGhost = function (docId) {
-  return documentGraveyardDao.get(docId)
-}
-
-/**
  * Search documents.
  * @param {String} owner Owner of the document
  * @param {String} query Search query
  * @return {Object} the documents
  */
 DocumentService.search = function (owner, query) {
-  const _query = _.pick(query, ['from', 'order', 'size', 'q'])
+  const _params = _.defaults(
+    _.pick(query, ['from', 'order', 'size']),
+    {order: 'asc', size: 50}
+  )
+  const _query = _.omit(query, ['from', 'order', 'size'])
   _query.owner = owner
 
-  return documentDao.search(_.defaults(_query, {order: 'asc', size: 50}))
+  return documentDao.search(_query, _params)
 }
 
 /**

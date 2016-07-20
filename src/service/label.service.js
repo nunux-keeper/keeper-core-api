@@ -27,7 +27,7 @@ LabelService.get = function (id, ghost) {
  * @return {Array} the labels
  */
 LabelService.all = function (owner) {
-  return labelDao.find({owner: owner})
+  return labelDao.find({owner}, {order: 'asc', from: 0, size: 256})
 }
 
 /**

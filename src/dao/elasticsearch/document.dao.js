@@ -1,6 +1,7 @@
 'use strict'
 
 const AbstractMongodbDao = require('./abstract')
+const logger = require('../../helper').logger
 
 /**
  * Document DAO.
@@ -27,7 +28,8 @@ class DocumentDao extends AbstractMongodbDao {
     }
   }
 
-  buildSearchQuery (query) {
+  buildFindQuery (query, params) {
+    params = params || {}
     const result = {
       _source: {
         exclude: ['*.content', '*.contentType', '*.owner', '*.date']
@@ -40,18 +42,19 @@ class DocumentDao extends AbstractMongodbDao {
       }
     }
 
-    if (query.size) {
-      result.size = query.size
+    params |= {}
+    if (params.size) {
+      result.size = params.size
     }
 
-    if (query.from) {
-      result.from = query.from
+    if (params.from) {
+      result.from = params.from
     }
 
-    if (query.order) {
+    if (params.order) {
       result.sort = [
         '_score',
-        { date: {order: query.order} }
+        { date: {order: params.order} }
       ]
     }
 
@@ -64,20 +67,21 @@ class DocumentDao extends AbstractMongodbDao {
       }
     }
 
-    // console.log(JSON.stringify(result, null, 2))
+    logger.debug('DocumentDao.buildFindQuery:', JSON.stringify(result, null, 2))
     return result
   }
 
   /**
    * Search documents.
-   * @param {String} query Search query.
+   * @param {Object} query Search query.
+   * @param {Object} params Search params.
    * @return {Array} the documents
    */
-  search (query) {
+  search (query, params) {
     return this.client.search({
       index: this.index,
       type: this.type,
-      body: this.buildSearchQuery(query)
+      body: this.buildFindQuery(query, params)
     }).then((data) => {
       // console.log(JSON.stringify(data, null, 2))
       const result = {}

@@ -69,12 +69,13 @@ class AbstractElasticsearchDao {
    * @returns {Object} query DSL
    */
   buildFindQuery (query, params) {
+    params = params || {}
     const fields = Object.keys(this.getMapping().properties)
     const result = {
       fields: fields,
       query: {}
     }
-    if (params && params.size) {
+    if (params.size) {
       result.size = params.size
     }
     const termCount = query ? Object.keys(query).length : 0
@@ -94,7 +95,7 @@ class AbstractElasticsearchDao {
     } else {
       result.query['match_all'] = {}
     }
-    logger.debug('Builded search query:', result)
+    logger.debug('AbstractElasticsearchDao.buildFindQuery:', result)
     return result
   }
 
@@ -130,7 +131,8 @@ class AbstractElasticsearchDao {
       index: this.index,
       type: this.type,
       body: this.buildFindQuery(query, p)
-    }).then((r) => {
+    })
+    .then((r) => {
       return Promise.resolve(this._decodeSearchResult(r))
     })
   }
@@ -140,7 +142,7 @@ class AbstractElasticsearchDao {
    * @param {Object} query Count query.
    * @return {Array} the documents
    */
-  count (query, params) {
+  count (query) {
     return this.client.count({
       index: this.index,
       type: this.type,
