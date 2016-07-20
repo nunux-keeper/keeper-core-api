@@ -7,6 +7,7 @@ const errors = require('../helper').errors
 const globals = require('../helper').globals
 const decorator = require('../decorator')
 const documentService = require('../service').document
+const graveyardService = require('../service').graveyard
 
 const documentSchema = {
   'title': {
@@ -183,7 +184,7 @@ module.exports = {
    * Restore deleted document.
    */
   restore: function (req, res, next) {
-    documentService.getGhost(req.params.id)
+    graveyardService.get(req.params.id)
     .then(function (ghost) {
       if (!ghost) {
         return Promise.reject(new errors.NotFound('Document ghost not found.'))

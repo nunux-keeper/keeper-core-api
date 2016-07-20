@@ -3,7 +3,7 @@
 |:------|:------:|:------
 | job/import.js | 104 | Extract document labels (v1: categories; v2: labels)
 | middleware/cors.middleware.js | 8 | Use whitelisted origin
-| service/document.service.js | 112 | check labels
+| service/document.service.js | 107 | check labels
 | storage/local.storage.js | 131 | remove zero length files
 | storage/s3.storage.js | 57 | Implement S3 storage usage
 | storage/s3.storage.js | 196 | remove zero length files
