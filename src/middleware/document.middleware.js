@@ -16,6 +16,10 @@ module.exports = function (req, res, next) {
     if (doc.owner !== req.user.id) {
       return next(new errors.Forbidden())
     }
+    // Only allow to see a non ghost document.
+    if (doc.ghost) {
+      return next(new errors.NotFound('Document not existing anymore.'))
+    }
 
     if (!req.requestData) {
       req.requestData = {}

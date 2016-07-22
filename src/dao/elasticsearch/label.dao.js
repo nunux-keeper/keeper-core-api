@@ -1,6 +1,6 @@
 'use strict'
 
-const AbstractMongodbDao = require('./abstract')
+const AbstractMongodbDao = require('./common/abstract.dao')
 
 /**
  * Label DAO.
@@ -17,6 +17,7 @@ class LabelDao extends AbstractMongodbDao {
         label: {type: 'string', store: 'yes', index: 'not_analyzed'},
         color: {type: 'string', store: 'yes', index: 'not_analyzed'},
         owner: {type: 'string', store: 'yes', index: 'not_analyzed'},
+        ghost: {type: 'boolean', store: 'yes'},
         date : {type: 'date', store: 'yes', format: 'dateOptionalTime'}
       }
     }

@@ -52,7 +52,7 @@ require('./daemon').start()
 const shutdown = function (signal) {
   logger.info('Stopping server...')
   require('./daemon').shutdown()
-  require('./dao').shutdown()
+  require('./service').system.shutdown()
     .catch(function (err) {
       logger.error('Error while stopping server.', err)
       process.exit(1)
@@ -65,6 +65,18 @@ const shutdown = function (signal) {
     logger.error('Could not close connections in time, forcefully shutting down')
     process.exit()
   }, 10 * 1000)
+}
+
+app.isReady = function () {
+  return require('./service').system.isReady()
+  .then(() => {
+    logger.info('App is ready.')
+    return Promise.resolve()
+  })
+  .catch((err) => {
+    logger.error('App not ready.', err)
+    throw err
+  })
 }
 
 module.exports = app

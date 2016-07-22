@@ -11,6 +11,7 @@ Changelog
 * Search and visualize documents (also in raw mode)
 * Create labels (name, color)
 * Classify documents with labels
+* Remove and restore documents
 * Import and Export documents of an user
 * Store attachments on disk or on S3
 * Index documents into ElasticSearch

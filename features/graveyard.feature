@@ -10,7 +10,8 @@ Feature: Graveyard API
     Then I should retrieve the document
     When I delete the document
     Then I should not retrieve the document
-    When I get the graveyard
+    When I am waiting 2000 ms
+    And I get the graveyard
     Then I should retrieve the document into the graveyard
 
   Scenario: Empty the graveyard
@@ -23,6 +24,7 @@ Feature: Graveyard API
     When I delete the document
     Then I should not retrieve the document
     When I empty the graveyard
+    And  I am waiting 2000 ms
     And  I get the graveyard
     Then I should have no document into the graveyard
 

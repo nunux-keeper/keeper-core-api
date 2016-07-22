@@ -1,7 +1,8 @@
 'use strict'
 
-const AbstractMongodbDao = require('./abstract')
-const logger = require('../../helper').logger
+const _ = require('lodash')
+const AbstractMongodbDao = require('./common/abstract.dao')
+const QueryBuilder = require('./common/query-builder')
 
 /**
  * Document DAO.
@@ -23,6 +24,7 @@ class DocumentDao extends AbstractMongodbDao {
         labels     : {type: 'string', store: 'yes', index: 'not_analyzed'},
         attachments: {type: 'object'},
         origin     : {type: 'string', store: 'yes'},
+        ghost      : {type: 'boolean', store: 'yes'},
         date       : {type: 'date', store: 'yes', format: 'dateOptionalTime'}
       }
     }
@@ -30,45 +32,15 @@ class DocumentDao extends AbstractMongodbDao {
 
   buildFindQuery (query, params) {
     params = params || {}
-    const result = {
-      _source: {
-        exclude: ['*.content', '*.contentType', '*.owner', '*.date']
-      },
-      query: {
-        filtered: {
-          query: { match_all: {} },
-          filter : { term : { owner : query.owner } }
-        }
-      }
-    }
-
-    params |= {}
-    if (params.size) {
-      result.size = params.size
-    }
-
-    if (params.from) {
-      result.from = params.from
-    }
-
-    if (params.order) {
-      result.sort = [
-        '_score',
-        { date: {order: params.order} }
-      ]
-    }
-
-    if (query.q) {
-      result.query.filtered.query = {
-        query_string: {
-          fields: ['title^5', 'content'],
-          query: query.q
-        }
-      }
-    }
-
-    logger.debug('DocumentDao.buildFindQuery:', JSON.stringify(result, null, 2))
-    return result
+    return new QueryBuilder()
+    .exclude(['*.content', '*.contentType', '*.owner', '*.date'])
+    .filtered(_.pick(query, ['owner', 'ghost']))
+    .size(params.size)
+    .from(params.from)
+    .sort(params.order)
+    .fulltext(query.q, ['title^5', 'content'])
+    .debug()
+    .build()
   }
 
   /**

@@ -20,6 +20,22 @@ module.exports = function (uri) {
     return Promise.resolve()
   }
 
+  // Dynamic loading DAOs...
+  const daosToConfigure = require('fs').readdirSync(__dirname).reduce((acc, file) => {
+    if (/^[a-z_]+\.dao\.js$/.test(file)) {
+      const name = path.basename(file, '.dao.js')
+      if (!useAsMainDatabaseEngine && name !== 'document') {
+        // Skip other DAO if not use as main database engine
+        return
+      }
+      logger.debug('Loading %s ElasticSearch DAO..', name)
+      const Dao = require(path.join(__dirname, file))
+      daos[name] = new Dao(client, indexName, useAsMainDatabaseEngine)
+      acc.push(daos[name])
+    }
+    return acc
+  }, [])
+
   const configured = client.indices.exists({
     index: indexName
   }).then(function (exists) {
@@ -39,19 +55,12 @@ module.exports = function (uri) {
     return Promise.reject(err)
   })
 
-  // Dynamic loading DAOs...
-  require('fs').readdirSync(__dirname).forEach((file) => {
-    if (/^[a-z_]+\.dao\.js$/.test(file)) {
-      const name = path.basename(file, '.dao.js')
-      if (!useAsMainDatabaseEngine && name !== 'document') {
-        // Skip other DAO if not use as main database engine
-        return
-      }
-      logger.debug('Loading %s ElasticSearch DAO..', name)
-      const Dao = require(path.join(__dirname, file))
-      daos[name] = new Dao(client, indexName, useAsMainDatabaseEngine)
-      configured.then(() => daos[name].configure())
+  daos.isReady = () => configured.then(() => {
+    if (!daosToConfigure) {
+      return Promise.resolve()
     }
+    return Promise.all(daosToConfigure.map((dao) => dao.configure()))
   })
+
   return daos
 }

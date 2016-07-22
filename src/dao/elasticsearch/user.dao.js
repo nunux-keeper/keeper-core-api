@@ -1,6 +1,6 @@
 'use strict'
 
-const AbstractMongodbDao = require('./abstract')
+const AbstractMongodbDao = require('./common/abstract.dao')
 
 /**
  * User DAO.

@@ -20,7 +20,7 @@ class SearchEngine {
       return
     }
     const providerName = url.parse(globals.SEARCH_ENGINE_URI).protocol.slice(0, -1)
-    this._provider = require(`./${providerName}`)(globals.SEARCH_ENGINE_URI).document
+    this._provider = require(`./${providerName}`)(globals.SEARCH_ENGINE_URI)
   }
 
   /**
@@ -31,7 +31,18 @@ class SearchEngine {
     if (this.disabled) {
       return Promise.reject('Search engine disabled.')
     }
-    return Promise.resolve(this._provider)
+    return Promise.resolve(this._provider.document)
+  }
+
+  /**
+   * Wait until the search engine is ready.
+   * @return {Promise} Promise of the readyness
+   */
+  isReady () {
+    if (this.disabled) {
+      return Promise.resolve('Search engine disabled.')
+    }
+    return this._provider.isReady()
   }
 
   /**

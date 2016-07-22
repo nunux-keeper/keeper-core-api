@@ -3,12 +3,7 @@
 const _ = require('lodash')
 const logger = require('../../../helper').logger
 const ReadableSearch = require('elasticsearch-streams').ReadableSearch
-
-const buildTerm = function (name, value) {
-  const result = {term: {}}
-  result.term[name] = value
-  return result
-}
+const QueryBuilder = require('./query-builder')
 
 class AbstractElasticsearchDao {
   constructor (client, index, type) {
@@ -23,7 +18,7 @@ class AbstractElasticsearchDao {
   }
 
   configure () {
-    this.client.indices.putMapping({
+    return this.client.indices.putMapping({
       index: this.index,
       type: this.type,
       body: this.getMapping()
@@ -70,33 +65,14 @@ class AbstractElasticsearchDao {
    */
   buildFindQuery (query, params) {
     params = params || {}
-    const fields = Object.keys(this.getMapping().properties)
-    const result = {
-      fields: fields,
-      query: {}
-    }
-    if (params.size) {
-      result.size = params.size
-    }
-    const termCount = query ? Object.keys(query).length : 0
-    if (termCount === 1) {
-      const prop = Object.keys(query)[0]
-      result.query.term = buildTerm(prop, query[prop]).term
-    } else if (termCount > 1) {
-      result.query.bool = {
-        must: []
-      }
-      for (const prop in query) {
-        if (query.hasOwnProperty(prop)) {
-          const value = query[prop]
-          result.query.bool.must.push(buildTerm(prop, value))
-        }
-      }
-    } else {
-      result.query['match_all'] = {}
-    }
-    logger.debug('AbstractElasticsearchDao.buildFindQuery:', result)
-    return result
+    return new QueryBuilder()
+    .fields(Object.keys(this.getMapping().properties))
+    .terms(query)
+    .size(params.size)
+    .from(params.from)
+    .sort(params.order)
+    .debug()
+    .build()
   }
 
   /**

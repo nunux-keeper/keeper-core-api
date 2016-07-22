@@ -7,7 +7,6 @@ const extractor = require('../extractor')
 const documentDao = require('../dao').document
 const eventHandler = require('../event')
 const decorator = require('../decorator')
-const documentGraveyardDao = require('../dao').document_graveyard
 
 function getDocumentContainerName (doc) {
   return storage.getContainerName(doc.owner, 'documents', doc.id, 'files')
@@ -69,7 +68,10 @@ DocumentService.search = function (owner, query) {
     _.pick(query, ['from', 'order', 'size']),
     {order: 'asc', size: 50}
   )
-  const _query = _.omit(query, ['from', 'order', 'size'])
+  const _query = _.defaults(
+    _.omit(query, ['from', 'order', 'size']),
+    {ghost: false}
+  )
   _query.owner = owner
 
   return documentDao.search(_query, _params)
@@ -100,6 +102,7 @@ DocumentService.create = function (doc) {
       // logger.debug('Document extracted: %j', _doc)
       const newDoc = _.pick(_doc, ['title', 'content', 'contentType', 'origin', 'labels', 'owner'])
       newDoc.date = new Date()
+      newDoc.ghost = false
       newDoc.attachments = []
       attachments.forEach(function (attachment) {
         newDoc.attachments.push(_.pick(attachment, ['key', 'contentType', 'contentLength', 'origin']))
@@ -167,21 +170,18 @@ DocumentService.update = function (doc, update) {
 
 /**
  * Remove document.
- * @param {Object} doc     Document to delete
- * @return {Array} deleted document
+ * @param {Object} doc Document to delete
+ * @return {Array} deleted document (it's ghost)
  */
 DocumentService.remove = function (doc) {
   doc.date = new Date()
-  return documentGraveyardDao.create(doc)
-    .then(function () {
-      return documentDao.remove(doc)
-    })
-    .then(function () {
-      logger.info('Document deleted: %j', doc.id)
-      // Broadcast document remove event.
-      eventHandler.document.emit('remove', doc)
-      return Promise.resolve(doc)
-    })
+  return documentDao.update(doc, {ghost: true})
+  .then(function (ghost) {
+    logger.info('Document removed: %j', ghost.id)
+    // Broadcast document remove event.
+    eventHandler.document.emit('remove', _.pick(ghost, ['id', 'ghost']))
+    return Promise.resolve(ghost)
+  })
 }
 
 /**
@@ -190,15 +190,52 @@ DocumentService.remove = function (doc) {
  * @return {Object} the restored document
  */
 DocumentService.restore = function (ghost) {
-  return documentDao.create(ghost)
-    .then(function (doc) {
-      return documentGraveyardDao.remove(doc)
-    }).then(function (doc) {
-      logger.info('Document restored: %j', doc.id)
-      // Broadcast document restore event.
-      eventHandler.document.emit('restore', doc)
-      return Promise.resolve(doc)
+  return documentDao.update(ghost, {ghost: false})
+  .then(function (doc) {
+    logger.info('Document restored: %j', doc.id)
+    // Broadcast document restore event.
+    eventHandler.document.emit('restore', _.pick(doc, ['id', 'ghost']))
+    return Promise.resolve(doc)
+  })
+}
+
+/**
+ * Destroy a document.
+ * @param {Object} doc document to detroy
+ * @return {Object} the restored document
+ */
+DocumentService.destroy = function (doc) {
+  const container = getDocumentContainerName(doc)
+  return storage.remove(container)
+  .then(() => documentDao.remove(doc))
+  .then(function (_doc) {
+    logger.info('Document destroyed: %j', _doc.id)
+    // Broadcast document destroy event.
+    eventHandler.document.emit('destroy', _doc)
+    return Promise.resolve(_doc)
+  })
+}
+
+/**
+ * Remove all documents from the graveyard for an user.
+ * @param {String} owner Owner of the documents
+ * @return {Object} the deletion promise
+ */
+DocumentService.emptyGraveyard = function (owner) {
+  logger.debug('Removing all documents from the graveyard of %s ...', owner)
+  return documentDao.stream({owner, ghost: true})
+  .then((s) => {
+    return new Promise((resolve, reject) => {
+      s.on('err', reject)
+      s.on('end', resolve)
+      s.on('data', (ghost) => {
+        logger.debug('Removing ghost files #%s ...', ghost.id)
+        s.pause()
+        this.destroy(ghost)
+        .then(() => s.resume())
+      })
     })
+  })
 }
 
 /**

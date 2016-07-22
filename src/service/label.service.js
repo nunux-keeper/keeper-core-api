@@ -3,7 +3,6 @@
 const _ = require('lodash')
 const logger = require('../helper').logger
 const labelDao = require('../dao').label
-const labelGraveyardDao = require('../dao').label_graveyard
 
 /**
  * Label services.
@@ -12,13 +11,12 @@ const labelGraveyardDao = require('../dao').label_graveyard
 const LabelService = {}
 
 /**
- * Get a label (or a ghost label).
+ * Get a label.
  * @param {String} id ID of the label.
- * @param {Boolean} ghost Ghost flag
  * @return {Object} the label
  */
-LabelService.get = function (id, ghost) {
-  return ghost ? labelGraveyardDao.get(id) : labelDao.get(id)
+LabelService.get = function (id) {
+  return labelDao.get(id)
 }
 
 /**
@@ -27,7 +25,7 @@ LabelService.get = function (id, ghost) {
  * @return {Array} the labels
  */
 LabelService.all = function (owner) {
-  return labelDao.find({owner}, {order: 'asc', from: 0, size: 256})
+  return labelDao.find({owner, ghost: false}, {order: 'asc', from: 0, size: 256})
 }
 
 /**
@@ -38,11 +36,12 @@ LabelService.all = function (owner) {
 LabelService.create = function (label) {
   label = _.pick(label, ['label', 'color', 'owner'])
   label.date = new Date()
+  label.ghost = false
   return labelDao.create(label)
-    .then(function (_label) {
-      logger.info('Label created: %j', _label)
-      return Promise.resolve(_label)
-    })
+  .then(function (_label) {
+    logger.info('Label created: %j', _label)
+    return Promise.resolve(_label)
+  })
 }
 
 /**
@@ -55,27 +54,24 @@ LabelService.update = function (label, update) {
   update = _.pick(update, ['label', 'color'])
   update.date = new Date()
   return labelDao.update(label, update)
-    .then(function (_label) {
-      logger.info('Label updated: %j', _label)
-      return Promise.resolve(_label)
-    })
+  .then(function (_label) {
+    logger.info('Label updated: %j', _label)
+    return Promise.resolve(_label)
+  })
 }
 
 /**
- * Delete a label.
+ * Remove a label.
  * @param {Object} label label to delete
- * @return {Object} the deleted label
+ * @return {Object} the deleted label (it's ghost)
  */
 LabelService.remove = function (label) {
   label.date = new Date()
-  return labelGraveyardDao.create(label)
-    .then(function () {
-      return labelDao.remove(label)
-    })
-    .then(function () {
-      logger.info('Label deleted: %j', label)
-      return Promise.resolve(label)
-    })
+  return labelDao.update(label, {ghost: true})
+  .then(function (ghost) {
+    logger.info('Label removed: %j', ghost)
+    return Promise.resolve(ghost)
+  })
 }
 
 /**
@@ -84,13 +80,24 @@ LabelService.remove = function (label) {
  * @return {Object} the restored label
  */
 LabelService.restore = function (ghost) {
-  return labelDao.create(ghost)
-    .then(function (label) {
-      return labelGraveyardDao.remove(label)
-    }).then(function (label) {
-      logger.info('Label restored: %j', label)
-      return Promise.resolve(label)
-    })
+  return labelDao.update(ghost, {ghost: false})
+  .then(function (label) {
+    logger.info('Label restored: %j', label)
+    return Promise.resolve(label)
+  })
+}
+
+/**
+ * Destroy a label.
+ * @param {Object} label label to destroy
+ * @return {Object} the destroyed label
+ */
+LabelService.destroy = function (label) {
+  return labelDao.remove(label)
+  .then(function (_label) {
+    logger.info('Label destroyed: %j', _label)
+    return Promise.resolve(_label)
+  })
 }
 
 module.exports = LabelService

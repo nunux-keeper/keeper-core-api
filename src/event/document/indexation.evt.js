@@ -13,6 +13,7 @@ module.exports = function (documentEventHandler) {
 
   documentEventHandler.on('create', (doc) => searchengine.indexDocument(doc))
   documentEventHandler.on('update', (doc) => searchengine.reindexDocument(doc))
-  documentEventHandler.on('remove', (doc) => searchengine.unindexDocument(doc))
-  documentEventHandler.on('restore', (doc) => searchengine.indexDocument(doc))
+  documentEventHandler.on('remove', (doc) => searchengine.reindexDocument(doc))
+  documentEventHandler.on('restore', (doc) => searchengine.reindexDocument(doc))
+  documentEventHandler.on('destroy', (doc) => searchengine.unindexDocument(doc))
 }

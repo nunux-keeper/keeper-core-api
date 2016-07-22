@@ -1,6 +1,7 @@
 'use strict'
 
 const controller = require('../controller')
+const middleware = require('../middleware')
 
 /**
  * Gravatar API.
@@ -36,7 +37,7 @@ module.exports = function (router) {
    *        ]
    *     }
    */
-  router.get('/graveyard', controller.graveyard.find)
+  router.get('/graveyard', middleware.graveyard.ghost, controller.document.search)
 
   /**
    * @api {delete} /graveyard Remove permanently all documents of the graveyard.
@@ -48,5 +49,5 @@ module.exports = function (router) {
    * @apiSuccessExample Success-Response:
    *     HTTP/1.1 204 OK
    */
-  router.delete('/graveyard', controller.graveyard.empty)
+  router.delete('/graveyard', controller.document.emptyGraveyard)
 }

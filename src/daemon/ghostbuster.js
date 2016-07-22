@@ -7,7 +7,8 @@ const appInfo = require('../../package.json')
 const logger = require('../helper').logger
 const storage = require('../storage')
 const AbstractDaemon = require('./abstract')
-const documentGraveyardDao = require('../dao').document_graveyard
+const documentDao = require('../dao').document
+const searchengine = require('../dao/searchengine')
 
 /**
  * Ghostbuster daemon.
@@ -38,7 +39,8 @@ class GhostbusterDaemon extends AbstractDaemon {
    * @return {Promise} The promise of the deletion.
    */
   process () {
-    return documentGraveyardDao.find({
+    return documentDao.find({
+      ghost: true,
       date: {$lte: this.getExpirationDate()}
     }, {limit: this.limit}).then((ghosts) => {
       this.pending = ghosts.length >= this.limit
@@ -50,7 +52,8 @@ class GhostbusterDaemon extends AbstractDaemon {
       ghosts.forEach((ghost) => {
         const container = storage.getContainerName(ghost.owner, 'documents', ghost.id)
         const deleted = storage.remove(container)
-        deleted.then(() => documentGraveyardDao.remove(ghost))
+        deleted.then(() => searchengine.unindexDocument(ghost))
+        .then(() => documentDao.remove(ghost))
         tasks.push(deleted)
       })
       return Promise.all(tasks)

@@ -28,8 +28,11 @@ module.exports = function (uri) {
   })
 
   daos.shutdown = function () {
+    logger.debug('Closing MongodDB connections...')
     return client.then((db) => db.close())
   }
+
+  daos.isReady = () => client
 
   // Dynamic loading DAOs...
   require('fs').readdirSync(__dirname).forEach((file) => {
