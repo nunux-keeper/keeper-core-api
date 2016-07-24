@@ -11,8 +11,12 @@ Feature: Graveyard API
     When I delete the document
     Then I should not retrieve the document
     When I am waiting 2000 ms
-    And I get the graveyard
+    And  I get the graveyard
     Then I should retrieve the document into the graveyard
+    When I delete the document from the graveyard
+    And  I am waiting 1000 ms
+    And  I get the graveyard
+    Then I should not retrieve the document into the graveyard
 
   Scenario: Empty the graveyard
     Given I am a valid user with the uid "test"

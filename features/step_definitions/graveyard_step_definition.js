@@ -27,6 +27,14 @@ module.exports = function () {
     .end(callback)
   })
 
+  this.When(/^I delete the document from the graveyard$/, function (callback) {
+    expect(this.myDocument).to.not.be.undefined
+    request(app)
+    .delete('/v2/graveyard/' + this.myDocument.id)
+    .use(this.setAuthorizationHeader(this.uid))
+    .expect(204, callback)
+  })
+
   this.Then(/^I should (not retrieve|retrieve) the document into the graveyard$/, function (get, callback) {
     expect(this.myDocument).to.not.be.undefined
     expect(this.myGraveyard).to.not.be.undefined

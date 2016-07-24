@@ -207,6 +207,30 @@ module.exports = {
   },
 
   /**
+   * Remove a deleted document.
+   */
+  destroy: function (req, res, next) {
+    documentService.get(req.params.id)
+    .then(function (ghost) {
+      if (!ghost) {
+        return Promise.reject(new errors.NotFound('Document ghost not found.'))
+      }
+      // Only allow to see own document.
+      if (ghost.owner !== req.user.id) {
+        return Promise.reject(new errors.Forbidden())
+      }
+      // Only allow to delete a ghost.
+      if (!ghost.ghost) {
+        return Promise.reject(new errors.Forbidden('Document not a ghost'))
+      }
+      return documentService.destroy(ghost)
+    })
+    .then(function () {
+      res.status(204).json()
+    }, next)
+  },
+
+  /**
    * Delete all documents from the graveyard.
    */
   emptyGraveyard: function (req, res, next) {
@@ -215,4 +239,5 @@ module.exports = {
       res.status(204).json()
     }, next)
   }
+
 }

@@ -40,6 +40,20 @@ module.exports = function (router) {
   router.get('/graveyard', middleware.graveyard.ghost, controller.document.search)
 
   /**
+   * @api {delete} /graveyard/:id Remove a document from the graveyard.
+   * @apiVersion 2.0.0
+   * @apiName DeleteFromGraveyard
+   * @apiGroup graveyard
+   * @apiPermission user
+   *
+   * @apiParam {String} id ID of the document
+   *
+   * @apiSuccessExample Success-Response:
+   *     HTTP/1.1 204 OK
+   */
+  router.delete('/graveyard/:id', controller.document.destroy)
+
+  /**
    * @api {delete} /graveyard Remove permanently all documents of the graveyard.
    * @apiVersion 2.0.0
    * @apiName EmptyGraveyard
