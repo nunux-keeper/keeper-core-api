@@ -18,7 +18,7 @@ class LabelDao extends AbstractMongodbDao {
         color: {type: 'string', store: 'yes', index: 'not_analyzed'},
         owner: {type: 'string', store: 'yes', index: 'not_analyzed'},
         ghost: {type: 'boolean', store: 'yes'},
-        date : {type: 'date', store: 'yes', format: 'dateOptionalTime'}
+        date : {type: 'date', store: 'yes', format: 'date_optional_time'}
       }
     }
   }

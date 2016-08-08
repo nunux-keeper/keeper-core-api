@@ -17,7 +17,7 @@ class UserDao extends AbstractMongodbDao {
         ip:       {type: 'string', store: 'yes', index: 'not_analyzed'},
         uid:      {type: 'string', store: 'yes', index: 'not_analyzed'},
         username: {type: 'string', store: 'yes', index: 'not_analyzed'},
-        date    : {type: 'date', store: 'yes', format: 'dateOptionalTime'}
+        date    : {type: 'date', store: 'yes', format: 'date_optional_time'}
       }
     }
   }
