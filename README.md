@@ -14,19 +14,6 @@
 # Start the server
 make start
 ```
-
-## Roadmap
-
-- README
-- Documentation
-- Add revision to documents (for sync purpose)
-- Refactore storage component (see: https://github.com/AbstractFS/node-abstractfs)
-- Sharing system
-- Hook system
-- Monitoring
-- Admin features (user managment, ...)
-- Create temporary documents (ttl)
-
 ----------------------------------------------------------------------
 
 NUNUX Keeper
