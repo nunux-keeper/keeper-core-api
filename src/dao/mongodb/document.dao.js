@@ -14,12 +14,13 @@ class DocumentDao extends AbstractMongodbDao {
 
   /**
    * Search documents.
-   * @param {String} query Search query.
+   * @param {Object} query Search query.
+   * @param {Object} params Search params.
    * @return {Array} the documents
    */
-  search (query) {
+  search (query, params) {
     // Delegate search to the searchengine.
-    return SearchEngine.search(query)
+    return SearchEngine.search(query, params)
   }
 }
 

@@ -92,13 +92,14 @@ class SearchEngine {
 
   /**
    * Search documents.
-   * @param {Object} query the search query
+   * @param {Object} query Search query.
+   * @param {Object} params Search params.
    * @return {Promise} the search result.
    */
-  search (query) {
+  search (query, params) {
     return this.getProvider().then((provider) => {
-      logger.debug('Searching documents...', query)
-      return provider.search(query)
+      logger.debug('Searching documents...', query, params)
+      return provider.search(query, params)
     }).catch((err) => {
       logger.error('Unable to search documents:', query, err)
       return Promise.reject(err)
