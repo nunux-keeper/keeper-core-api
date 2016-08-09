@@ -1,5 +1,6 @@
 'use strict'
 
+const _ = require('lodash')
 const mime = require('mime')
 const cleaner = require('./html.cleaner')
 const logger = require('../../helper').logger
@@ -71,7 +72,11 @@ const extractHtml = function (doc) {
       if (!doc.title && read.title) {
         doc.title = read.title
       }
-      Array.prototype.push.apply(doc.attachments, extractResources(doc.content))
+      const resources = extractResources(doc.content)
+      doc.attachments = _.uniqWith(
+        doc.attachments.concat(resources),
+        _.isEqual
+      )
       resolve(doc)
     })
   })
