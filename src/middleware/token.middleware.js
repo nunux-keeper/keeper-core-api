@@ -55,7 +55,7 @@ module.exports = function (realm) {
             domain: u.hostname,
             path: u.path,
             httpOnly: true,
-            secure: u.protocol === 'https:'
+            secure: false // u.protocol === 'https:'
           })
         }
         next()
