@@ -6,7 +6,7 @@
   "license": "GPL-3.0",
   "apidoc": {
     "title": "Nunux Keeper core API documentation",
-    "url": "http://keeper.nunux.org/v2",
+    "url": "https://api.nunux.org/keeper/v2",
     "template": {
       "withCompare": false
     }
