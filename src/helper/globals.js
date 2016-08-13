@@ -18,6 +18,8 @@ const globals = {
   ENV: process.env.NODE_ENV || 'development',
   // Server port
   PORT: process.env.APP_PORT || 3000,
+  // Auth realm
+  AUTH_REALM: process.env.APP_AUTH_REALM,
   // Database URI
   DATABASE_URI: process.env.APP_DATABASE_URI || 'mongodb://mongodb/keeper',
   // Search engine URI
