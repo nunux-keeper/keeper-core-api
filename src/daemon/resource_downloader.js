@@ -15,7 +15,7 @@ const messaging = require('../messaging')
  */
 class ResourceDownloaderDaemon extends AbstractDaemon {
   constructor () {
-    super('keeper-resource-downloader', module.parent === null)
+    super('keeper-core-downloader', module.parent === null)
   }
 
   /**
@@ -46,7 +46,9 @@ if (daemon.standalone) {
     .option('-d, --debug', 'Debug flag')
     .parse(process.argv)
 
-  logger.level(program.debug ? 'debug' : program.verbose ? 'info' : 'error')
+  if (program.debug || program.verbose) {
+    logger.level(program.debug ? 'debug' : 'info')
+  }
 
   // Start the daemon
   daemon.start()

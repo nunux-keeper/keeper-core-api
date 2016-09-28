@@ -17,7 +17,7 @@ const searchengine = require('../dao/searchengine')
  */
 class GhostbusterDaemon extends AbstractDaemon {
   constructor () {
-    super('keeper-ghostbuster', module.parent === null)
+    super('keeper-core-ghostbuster', module.parent === null)
     this.pending = true
     this.limit = 100
     this.wait = 60
@@ -70,7 +70,9 @@ if (daemon.standalone) {
     .option('-d, --debug', 'Debug flag')
     .parse(process.argv)
 
-  logger.level(program.debug ? 'debug' : program.verbose ? 'info' : 'error')
+  if (program.debug || program.verbose) {
+    logger.level(program.debug ? 'debug' : 'info')
+  }
 
   // Start the daemon
   daemon.start()
