@@ -11,7 +11,7 @@ UNAME_M := $(shell uname -m)
 ifeq ($(UNAME_M),armv7l)
 	DOCKERFILE=Dockerfile.arm
 	APPNAME=$(APPNAME)-arm
-	BASEIMAGE=armbuild/debian:jessie
+	BASEIMAGE=armhfbuild/$(BASEIMAGE)
 	VOLUME_IMAGE=armbuild/busybox
 endif
 
