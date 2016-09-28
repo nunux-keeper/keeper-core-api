@@ -22,9 +22,12 @@ const synchronizeAttachments = function (doc) {
   logger.debug('Synchronizing document attachments...', doc.id)
   const container = storage.getContainerName(doc.owner, 'documents', doc.id, 'files')
   storage.cleanContainer(container, doc.attachments)
-    .then(function () {
-      downloadAttachments(doc)
-    })
+  .then(function () {
+    downloadAttachments(doc)
+  })
+  .catch(function (err) {
+    logger.error('Error while synchronizing attachments', doc.id, err)
+  })
 }
 
 /**
