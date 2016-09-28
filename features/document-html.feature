@@ -1,7 +1,7 @@
 Feature: Document API with HTML cleanup
     As a valid user I can use the document API
 
-    Scenario: Post a not wel formated HTML document
+    Scenario: Post a not well formated HTML document
         Given I am a valid user with the uid "test"
         When I create the following html document
         """
