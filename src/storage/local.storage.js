@@ -12,8 +12,8 @@ const logger = require('../helper').logger
  * @param {String} entry Resource name
  * @return {Promise} Promise of the resource stream
  */
-var stream = function (container, entry) {
-  var p = files.chpath(container, entry)
+const stream = function (container, entry) {
+  const p = files.chpath(container, entry)
   return files.chstream(p)
 }
 
@@ -23,16 +23,16 @@ var stream = function (container, entry) {
  * @param {String} entry Resource name
  * @return {Promise} Promise of the resource infos
  */
-var info = function (container, entry) {
-  var p = files.chpath(container, entry)
+const info = function (container, entry) {
+  const p = files.chpath(container, entry)
   return files.chexists(p)
   .then(function (exists) {
     if (!exists) {
-      return when.resolve(null)
+      return Promise.resolve(null)
     }
     return files.chstat(p)
     .then(function (stats) {
-      var infos = {
+      const infos = {
         driver: 'local',
         size: stats.size,
         mtime: stats.mtime,
@@ -40,7 +40,7 @@ var info = function (container, entry) {
         container: container,
         key: entry
       }
-      return when.resolve(infos)
+      return Promise.resolve(infos)
     })
   })
 }
@@ -50,7 +50,7 @@ var info = function (container, entry) {
  * @param {String} container Container name
  * @return {Promise} Promise of the container usage
  */
-var usage = function (container) {
+const usage = function (container) {
   return files.chdu(container).catch((err) => {
     logger.warn('Unable to get storage usage of the container: ' + container, err)
     return Promise.resolve(-1)
@@ -64,10 +64,10 @@ var usage = function (container) {
  * @param {String} s Resource stream
  * @return {Promise} Promise of the action
  */
-var store = function (container, entry, s) {
+const store = function (container, entry, s) {
   return files.chmkdir(container)
   .then(function () {
-    var p = files.chpath(container, entry)
+    const p = files.chpath(container, entry)
     return files.chwrite(s, p)
   })
 }
@@ -79,10 +79,10 @@ var store = function (container, entry, s) {
  * @param {String} containerDest Container dest name
  * @return {Promise} Promise of the action
  */
-var move = function (containerSource, entry, containerDest) {
+const move = function (containerSource, entry, containerDest) {
   return files.chmkdir(containerDest)
   .then(function () {
-    var src = files.chpath(containerSource, entry)
+    const src = files.chpath(containerSource, entry)
     return files.chmv(src, containerDest)
   })
 }
@@ -93,8 +93,8 @@ var move = function (containerSource, entry, containerDest) {
  * @param {String} entry Resource name
  * @return {Promise} Promise of the action
  */
-var remove = function (container, entry) {
-  var p = entry ? files.chpath(container, entry) : container
+const remove = function (container, entry) {
+  const p = entry ? files.chpath(container, entry) : container
   return files.chrm(p)
 }
 
@@ -103,7 +103,7 @@ var remove = function (container, entry) {
  * @param {String...} arguments name parts
  * @return {String} Container name
  */
-var getContainerName = function () {
+const getContainerName = function () {
   return path.normalize(path.join.apply(null, arguments))
 }
 
@@ -112,7 +112,7 @@ var getContainerName = function () {
  * @param {String} container container name
  * @return {Promise} Promise of the action
  */
-var _listContainer = function (container) {
+const _listContainer = function (container) {
   return files.chls(container)
 }
 
@@ -122,23 +122,35 @@ var _listContainer = function (container) {
  * @param {Object[]} resources Resource list
  * @retrun {Promise} Promise of the action
  */
-var cleanContainer = function (container, resources) {
+const cleanContainer = function (container, resources) {
   const keys = resources.reduce((acc, res) => {
     acc.push(res.key)
     return acc
   }, [])
 
-  // TODO remove zero length files
-
   // List directory content...
   return _listContainer(container)
   .then(function (entries) {
+    // Removing unused files...
     // Get delta between directory content and key list
-    var delta = _.difference(entries, keys)
+    const delta = _.difference(entries, keys)
     return when.map(delta, function (entry) {
       // Remove files delta.
       logger.debug('Removing unused resource: %s ...', entry)
       return remove(container, entry)
+    })
+    .then(function () {
+      // Removing empty files
+      const remaining = _.difference(entries, delta)
+      return when.map(remaining, function (entry) {
+        return info(container, entry)
+        .then(function (infos) {
+          if (infos && infos.size === 0) {
+            return remove(container, entry)
+          }
+          return Promise.resolve(null)
+        })
+      })
     })
   })
 }
@@ -150,8 +162,8 @@ var cleanContainer = function (container, resources) {
  * @param {String} entry Resource name
  * @return {Promise} Promise of the local file path
  */
-var localCopy = function (container, entry) {
-  return when.resolve(files.chpath(container, entry))
+const localCopy = function (container, entry) {
+  return Promise.resolve(files.chpath(container, entry))
 }
 
 /**
@@ -161,8 +173,8 @@ var localCopy = function (container, entry) {
  * @param {String} entry Resource name
  * @return {Promise} Promise of the local file path
  */
-var localRemove = function (container, entry) {
-  return when.resolve(files.chpath(container, entry))
+const localRemove = function (container, entry) {
+  return Promise.resolve(files.chpath(container, entry))
 }
 
 /**
