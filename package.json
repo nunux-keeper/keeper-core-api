@@ -19,7 +19,7 @@
     "start": "node --harmony src/cluster | bunyan",
     "debug": "node-inspector & node --harmony --debug src/cluster",
     "doc": "node --harmony `which gulp` doc",
-    "test": "node --harmony `which gulp`",
+    "test": "node --harmony `which gulp` | bunyan",
     "postinstall": "node --harmony `which gulp` install"
   },
   "dependencies": {
