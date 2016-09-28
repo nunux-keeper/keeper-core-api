@@ -24,7 +24,7 @@ AttachmentService.meta = function (doc, att) {
   return storage.info(container, att.key)
     .then(function (infos) {
       if (!infos) {
-        return Promise.reject(`Attachment ${att.key} file not found!`)
+        return Promise.resolve(null)
       }
       return Promise.resolve({
         path: infos.path,
@@ -40,18 +40,13 @@ AttachmentService.meta = function (doc, att) {
  * Get attachment meta.
  * @param {Object}  doc  Document
  * @param {Object}  att  Attachment
- * @return {Object} attachment meta
+ * @return {Boolean} attachment avaibility status
  */
 AttachmentService.available = function (doc, att) {
-  const container = getDocumentContainerName(doc)
-  return storage.info(container, att.key)
-    .then(function (infos) {
-      if (!infos) {
-        return Promise.resolve(false)
-      } else {
-        return Promise.resolve(true)
-      }
-    })
+  return this.meta(doc, att)
+  .then(function (metas) {
+    return Promise.resolve(metas && metas.contentLenght > 0)
+  })
 }
 
 /**
@@ -65,6 +60,9 @@ AttachmentService.getThumbnail = function (doc, att, size) {
   const container = getDocumentContainerName(doc)
   return this.meta(doc, att)
     .then(function (metas) {
+      if (!metas || metas.contentLenght === 0) {
+        return Promise.reject(`Attachment ${att.key} file not found!`)
+      }
       // Get a local copy of the file (it's a noop if the driver is 'local')
       return storage.localCopy(container, att.key)
         .then(function (localPath) {
@@ -89,6 +87,9 @@ AttachmentService.stream = function (doc, att) {
   const container = getDocumentContainerName(doc)
   return this.meta(doc, att)
     .then(function (metas) {
+      if (!metas || metas.contentLenght === 0) {
+        return Promise.reject(`Attachment ${att.key} file not found!`)
+      }
       return storage.stream(container, att.key)
         .then(function (s) {
           metas.stream = s
