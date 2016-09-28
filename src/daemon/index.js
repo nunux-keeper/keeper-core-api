@@ -5,9 +5,9 @@ const logger = require('../helper').logger
 
 const EMBEDDED_DAEMONS = process.env.APP_EMBEDDED_DAEMONS
 
-const embedded_daemons = EMBEDDED_DAEMONS ? EMBEDDED_DAEMONS.split(',') : []
+const embeddedDaemons = EMBEDDED_DAEMONS ? EMBEDDED_DAEMONS.split(',') : []
 
-const daemons_registry = new Map()
+const daemonsRegistry = new Map()
 
 /**
  * Embedded daemons.
@@ -15,16 +15,16 @@ const daemons_registry = new Map()
  */
 module.exports = {
   start: function () {
-    for (let name of embedded_daemons) {
+    for (let name of embeddedDaemons) {
       logger.debug('Starting %s embedded daemon...', name)
       const daemon = cp.fork(`${__dirname}/${name}.js`)
-      daemons_registry.set(name, daemon)
+      daemonsRegistry.set(name, daemon)
     }
   },
   shutdown: function () {
-    for (let name of daemons_registry.keys()) {
+    for (let name of daemonsRegistry.keys()) {
       logger.debug('Stoping  %s embedded daemon...', name)
-      daemons_registry.get(name).kill()
+      daemonsRegistry.get(name).kill()
     }
   }
 }
