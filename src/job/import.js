@@ -9,8 +9,10 @@ const logger = require('../helper/logger')
 const assert = require('assert')
 const stream = require('stream')
 const storage = require('../storage')
+const userDao = require('../dao').user
 const documentDao = require('../dao').document
 const searchengine = require('../dao/searchengine')
+const ObjectID = require('mongodb').ObjectID
 
 process.title = 'keeper-import-job'
 
@@ -28,11 +30,12 @@ function forEach (arr, iteratorFn) {
  * @module import
  */
 class ImportJob {
-  constructor (file, user) {
-    this.user = user
-    this.file = file
+  constructor (params) {
+    this.user = params.user
+    this.file = params.file
+    this.keepOriginalId = params.keepOriginalId
     this.counter = 0
-    this.zip = new AdmZip(file)
+    this.zip = new AdmZip(params.file)
   }
 
   halt () {
@@ -65,9 +68,10 @@ class ImportJob {
       action = this.importDocument(Object.assign({}, doc))
     }
     doc = {
-      id: zipEntry.entryName.slice(0, -1),
+      id: this.keepOriginalId ? zipEntry.entryName.slice(0, -1) : new ObjectID().toHexString(),
       owner: program.user,
-      attachments: []
+      attachments: [],
+      labels: []
     }
     return action.then(function () {
       return Promise.resolve(doc)
@@ -140,40 +144,46 @@ class ImportJob {
   }
 
   start () {
-    logger.info('Importing documents from file %s to user %s ...', this.file, this.user)
     let doc = {}
-    forEach(this.zip.getEntries(), (zipEntry) => {
-      const name = zipEntry.entryName
-      let action = Promise.resolve(doc)
-      switch (true) {
-        case /^[a-f0-9]+\/$/.test(name):
-          // Save previous document and create new one
-          action = this.processDocumentEntry(zipEntry, doc)
-          break
-        case /attachment$/.test(name):
-          // Extract document attachment (from v1 archives)
-          action = this.processAttachmentEntry(zipEntry, doc)
-          break
-        case /content$/.test(name):
-          // Extract document content
-          action = this.processContentEntry(zipEntry, doc)
-          break
-        case /meta.json$/.test(name):
-          // Extract document meta data
-          action = this.processMetaEntry(zipEntry, doc)
-          break
-        case /^[a-f0-9]+\/resources\/[a-f0-9]+/.test(name):
-        case /^[a-f0-9]+\/files\/[a-f0-9]+/.test(name):
-          // Extract resources
-          action = this.processResourceEntry(zipEntry, doc)
-          break
-        default:
-          logger.debug('Ignoring entry: %s', name)
-          break
+    return userDao.get(this.user)
+    .then((user) => {
+      if (!user) {
+        return Promise.reject('User not found!')
       }
-      return action.then(function (d) {
-        doc = d
-        return Promise.resolve()
+      logger.info('Importing documents from file %s to user %s ...', this.file, user.uid)
+      return forEach(this.zip.getEntries(), (zipEntry) => {
+        const name = zipEntry.entryName
+        let action = Promise.resolve(doc)
+        switch (true) {
+          case /^[a-f0-9]+\/$/.test(name):
+            // Save previous document and create new one
+            action = this.processDocumentEntry(zipEntry, doc)
+            break
+          case /attachment$/.test(name):
+            // Extract document attachment (from v1 archives)
+            action = this.processAttachmentEntry(zipEntry, doc)
+            break
+          case /content$/.test(name):
+            // Extract document content
+            action = this.processContentEntry(zipEntry, doc)
+            break
+          case /meta.json$/.test(name):
+            // Extract document meta data
+            action = this.processMetaEntry(zipEntry, doc)
+            break
+          case /^[a-f0-9]+\/resources\/[a-f0-9]+/.test(name):
+          case /^[a-f0-9]+\/files\/[a-f0-9]+/.test(name):
+            // Extract resources
+            action = this.processResourceEntry(zipEntry, doc)
+            break
+          default:
+            logger.debug('Ignoring entry: %s', name)
+            break
+        }
+        return action.then(function (d) {
+          doc = d
+          return Promise.resolve()
+        })
       })
     })
     .then(() => {
@@ -183,9 +193,6 @@ class ImportJob {
       } else {
         return Promise.resolve()
       }
-    })
-    .then(() => {
-      this.stop()
     })
   }
 
@@ -197,6 +204,7 @@ class ImportJob {
 
   importDocument (doc) {
     logger.debug('Importing document: %s', doc.id)
+    doc.ghost = false
     // Save and index the document
     return documentDao.create(doc)
     .then(function (_doc) {
@@ -228,6 +236,7 @@ program.version(appInfo.version)
 .option('-d, --debug', 'Debug flag')
 .option('-f, --file [file]', 'File to import')
 .option('-u, --user [user]', 'Target user')
+.option('-k, --keep-id', 'Keep original document ID')
 .parse(process.argv)
 
 logger.level(program.debug ? 'debug' : program.verbose ? 'info' : 'error')
@@ -235,8 +244,13 @@ logger.level(program.debug ? 'debug' : program.verbose ? 'info' : 'error')
 assert(program.file, 'File parameter not defined')
 assert(program.user, 'User parameter not defined')
 
-const job = new ImportJob(program.file, program.user)
-job.start()
+const job = new ImportJob({
+  file: program.file,
+  user: program.user,
+  keepOriginalId: program['keep-id']
+})
+
+job.start().then(() => job.stop()).catch(job.stop)
 
 ;['SIGINT', 'SIGTERM', 'SIGQUIT'].forEach((signal) => {
   process.on(signal, () => {
