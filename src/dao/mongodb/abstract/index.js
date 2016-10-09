@@ -9,6 +9,11 @@ class AbstractMongodbDao {
     this.collection = collection
   }
 
+  configure () {
+    // No default configuration.
+    return Promise.resolve()
+  }
+
   getCollection () {
     return this.client.then((db) => {
       return new Promise((resolve, reject) => {

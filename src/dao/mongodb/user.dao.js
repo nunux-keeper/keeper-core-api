@@ -1,7 +1,7 @@
 'use strict'
 
 const AbstractMongodbDao = require('./abstract')
-// const logger = require('../../helper').logger
+const logger = require('../../helper').logger
 
 /**
  * User DAO.
@@ -10,6 +10,14 @@ const AbstractMongodbDao = require('./abstract')
 class UserDao extends AbstractMongodbDao {
   constructor (client) {
     super(client, 'user')
+  }
+
+  configure () {
+    // Creating unique constraint for UID attribute...
+    return this.getCollection().then((collection) => {
+      logger.debug('Configuring collection: %s ...', this.collection)
+      return collection.createIndex({uid:1}, {unique: true})
+    })
   }
 
   /**

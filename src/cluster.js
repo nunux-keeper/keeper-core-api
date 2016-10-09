@@ -34,13 +34,15 @@ if (globals.ENV === 'production' && cluster.isMaster) {
   })
 } else {
   const app = require('./app')
-  app.listen(app.get('port'), function () {
-    logger.info(
-      '%s web server listening on port %s (%s mode)',
-      globals.NAME,
-      app.get('port'),
-      globals.ENV
-    )
+  app.isReady().then(() => {
+    app.listen(app.get('port'), function () {
+      logger.info(
+        '%s web server listening on port %s (%s mode)',
+        globals.NAME,
+        app.get('port'),
+        globals.ENV
+      )
+    })
   })
 }
 
