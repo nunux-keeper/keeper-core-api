@@ -16,7 +16,7 @@ ifeq ($(UNAME_M),armv7l)
 endif
 
 # Get IP of the running container
-IP:=`sudo docker inspect --format '{{ .NetworkSettings.IPAddress }}' $(APPNAME)`
+IP:=`docker inspect --format '{{ .NetworkSettings.IPAddress }}' $(APPNAME)`
 
 # Default username
 USERNAME?=ncarlier
