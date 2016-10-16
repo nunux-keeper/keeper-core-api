@@ -1,7 +1,6 @@
 'use strict'
 
 const path = require('path')
-const zlib = require('zlib')
 const hash = require('../helper').hash
 const logger = require('../helper').logger
 const request = require('../helper').request
@@ -24,19 +23,10 @@ const defaultExtractor = {
         if (err) {
           return reject(err)
         }
-        const encoding = res.headers['content-encoding']
-        let stream = null
-        if (encoding === 'gzip') {
-          stream = request.get(doc.origin).pipe(zlib.createGunzip())
-        } else if (encoding === 'deflate') {
-          stream = request.get(doc.origin).pipe(zlib.createInflate())
-        } else {
-          stream = request.get(doc.origin)
-        }
 
         doc.attachments.push({
           key: hash.hashUrl(doc.origin),
-          stream: stream.pipe(require('stream').PassThrough()),
+          stream: request.get(doc.origin),
           contentType: res.headers['content-type'],
           contentLength: res.headers['content-length'],
           origin: doc.origin
