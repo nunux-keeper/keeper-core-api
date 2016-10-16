@@ -12,7 +12,7 @@ const documentSchema = {
   'title': {
     optional: true,
     isLength: {
-      options: [{ min: 2, max: 128 }],
+      options: [{ min: 2 }],
       errorMessage: 'Invalid title'
     }
   },
