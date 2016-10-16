@@ -63,6 +63,7 @@ const filterImages = function (document, options) {
     var image = images[i]
 
     if (image.hasAttribute('app-src')) {
+      // Already filtered. Nothing to do.
       image.removeAttribute('src')
     } else {
       // Remove 1px images
@@ -76,7 +77,8 @@ const filterImages = function (document, options) {
         }
       }
       var src = image.getAttribute('src') || image.getAttribute('data-src')
-      if (src) {
+      // Ignore data url.
+      if (src && !/^data:/i.test(src)) {
         // Create absolute URL if possible
         if (options && options.baseUrl && !/^https?:\/\//i.test(src)) {
           src = url.resolve(options.baseUrl, src)
