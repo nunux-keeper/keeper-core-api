@@ -33,7 +33,7 @@ class DocumentDao extends AbstractMongodbDao {
   buildFindQuery (query, params) {
     params = params || {}
     return new QueryBuilder()
-    .exclude(['*.content', '*.contentType', '*.owner', '*.date'])
+    .exclude(['content', 'contentType', 'owner', 'date'])
     .filtered(_.pick(query, ['owner', 'ghost']))
     .size(params.size)
     .from(params.from)
