@@ -38,7 +38,7 @@ module.exports = {
           .then(function (thumbnailFile) {
             logger.debug('Page thumbnailed: ' + thumbnailFile)
             if (!doc.title) {
-              doc.title = doc.doc.origin.replace(/.*?:\/\//g, '')
+              doc.title = doc.origin.replace(/.*?:\/\//g, '')
             }
             doc.contentType = 'text/html'
             doc.attachments.push({
