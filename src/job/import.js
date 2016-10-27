@@ -3,6 +3,7 @@
 'use strict'
 
 const appInfo = require('../../package.json')
+const _ = require('lodash')
 const program = require('commander')
 const AdmZip = require('adm-zip')
 const logger = require('../helper/logger')
@@ -11,7 +12,9 @@ const stream = require('stream')
 const storage = require('../storage')
 const userDao = require('../dao').user
 const documentDao = require('../dao').document
+const extractor = require('../extractor')
 const searchengine = require('../dao/searchengine')
+const LabelService = require('../service').label
 const ObjectID = require('mongodb').ObjectID
 
 process.title = 'keeper-import-job'
@@ -31,9 +34,10 @@ function forEach (arr, iteratorFn) {
  */
 class ImportJob {
   constructor (params) {
-    this.user = params.user
+    this.uid = params.uid
     this.file = params.file
     this.keepOriginalId = params.keepOriginalId
+    this.cache = {}
     this.counter = 0
     this.zip = new AdmZip(params.file)
   }
@@ -69,7 +73,7 @@ class ImportJob {
     }
     doc = {
       id: this.keepOriginalId ? zipEntry.entryName.slice(0, -1) : new ObjectID().toHexString(),
-      owner: program.user,
+      owner: this.user.id,
       attachments: [],
       labels: []
     }
@@ -105,26 +109,28 @@ class ImportJob {
     doc.date = meta.date
     // Extract document origin (v1: link; v2: origin)
     doc.origin = meta.link || meta.origin
-    // TODO Extract document labels (v1: categories; v2: labels)
-    // Extract resources (v1)
+
+    // Extract attachments (v1: resources; v2: attachments)
     if (meta.resources || meta.attachments) {
       const list = meta.resources || meta.attachments
       list.reduce(function (acc, res) {
         acc.push({
           key: res.key,
-          contentType: res.type,
-          origin: res.url
+          contentType: res.type || res.contentType, // Content-Type (v1: type; v2: contentType)
+          contentLenght: res.contentLength,
+          origin: res.url || res.origin // Origin (v1: url; v2: origin)
         })
         return acc
       }, doc.attachments)
     }
-    return Promise.resolve(doc)
+
+    // Extract document labels
+    return this.processLabels(doc, meta)
   }
 
   processResourceEntry (zipEntry, doc) {
     const name = zipEntry.entryName
     const key = name.substr(name.lastIndexOf('/') + 1)
-    console.log('attachment', key)
     const index = doc.attachments.findIndex(function (item) {
       return item.key === key
     })
@@ -143,14 +149,84 @@ class ImportJob {
     }
   }
 
+  processLabels (doc, meta) {
+    doc.labels = []
+    const tasks = []
+
+    const createAndSetLabel = (label) => {
+      return LabelService.create({
+        label: label.label,
+        color: label.color || '#4285f4',
+        owner: this.user.id
+      })
+      .then((l) => {
+        // Add new label to the cache and the document
+        this.cache.labels[l.label.toUpperCase()] = l
+        doc.labels.push(l.id)
+        return Promise.resolve()
+      })
+    }
+
+    // Process labels (v1: categories; v2: labels)
+    if (meta.categories) {
+      for (let category of meta.categories) {
+        // Check if the label already exists.
+        const label = this._resolveLabel(category)
+        if (label) {
+          doc.labels.push(label.id)
+        } else {
+          // Create and add the label to the doc
+          tasks.push(createAndSetLabel({label: category}))
+        }
+      }
+    } else if (meta.labels) {
+      for (let l of meta.labels) {
+        // Check if the label already exists.
+        const label = this._resolveLabel(l.label)
+        if (label) {
+          doc.labels.push(label.id)
+        } else {
+          // Create and add the label to the doc
+          tasks.push(createAndSetLabel(l))
+        }
+      }
+    }
+    return Promise.all(tasks).then(() => {
+      return Promise.resolve(doc)
+    })
+  }
+
+  _cacheUserLabels () {
+    // Load user's labels
+    return LabelService.all(this.user.id)
+    .then((labels) => {
+      this.cache.labels = labels.reduce((acc, label) => {
+        acc[label.label.toUpperCase()] = label
+        return acc
+      }, {})
+      return Promise.resolve(this.cache.labels)
+    })
+  }
+
+  _resolveLabel (label) {
+    const l = label.toUpperCase()
+    return this.cache.labels.hasOwnProperty(l) ? this.cache.label[l] : null
+  }
+
   start () {
     let doc = {}
-    return userDao.get(this.user)
+    // Load user data
+    return userDao.findByUid(this.uid)
     .then((user) => {
       if (!user) {
-        return Promise.reject('User not found!')
+        return Promise.reject(`User ${this.uid} not found!`)
       }
-      logger.info('Importing documents from file %s to user %s ...', this.file, user.uid)
+      this.user = user
+      // Cache user's labels
+      return this._cacheUserLabels()
+    })
+    .then(() => {
+      logger.info('Importing documents from file %s to user %s (#%s) ...', this.file, this.user.uid, this.user.id)
       return forEach(this.zip.getEntries(), (zipEntry) => {
         const name = zipEntry.entryName
         let action = Promise.resolve(doc)
@@ -205,8 +281,15 @@ class ImportJob {
   importDocument (doc) {
     logger.debug('Importing document: %s', doc.id)
     doc.ghost = false
-    // Save and index the document
-    return documentDao.create(doc)
+    // Extract/Filter content
+    return extractor.content.extract(doc)
+    .then(function (_doc) {
+      doc.content = _doc.content
+      // Merge attachments of the content with declared attachments
+      doc.attachments = _.unionWith(doc.attachments, _doc.attachments, (a, b) => a.key === b.key)
+      // Save and index the document
+      return documentDao.create(doc)
+    })
     .then(function (_doc) {
       // logger.debug('Document created:', _doc.id)
       if (!searchengine.disabled) {
@@ -235,7 +318,7 @@ program.version(appInfo.version)
 .option('-v, --verbose', 'Verbose flag')
 .option('-d, --debug', 'Debug flag')
 .option('-f, --file [file]', 'File to import')
-.option('-u, --user [user]', 'Target user')
+.option('-u, --user [user]', 'Target user (UID)')
 .option('-k, --keep-id', 'Keep original document ID')
 .parse(process.argv)
 
@@ -246,11 +329,11 @@ assert(program.user, 'User parameter not defined')
 
 const job = new ImportJob({
   file: program.file,
-  user: program.user,
+  uid: program.user,
   keepOriginalId: program['keep-id']
 })
 
-job.start().then(() => job.stop()).catch(job.stop)
+job.start().then(() => job.stop()).catch(job.stop.bind(job))
 
 ;['SIGINT', 'SIGTERM', 'SIGQUIT'].forEach((signal) => {
   process.on(signal, () => {
