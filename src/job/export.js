@@ -9,7 +9,9 @@ const archiver = require('archiver')
 const logger = require('../helper/logger')
 const assert = require('assert')
 const storage = require('../storage')
+const userDao = require('../dao').user
 const documentDao = require('../dao').document
+const LabelService = require('../service').label
 
 process.title = 'keeper-export-job'
 
@@ -19,11 +21,12 @@ process.title = 'keeper-export-job'
  * @module export
  */
 class ExportJob {
-  constructor (file, user) {
-    this.file = file
-    this.user = user
+  constructor (params) {
+    this.uid = params.uid
+    this.file = params.file
+    this.cache = {}
     this.counter = 0
-    this.output = fs.createWriteStream(file)
+    this.output = fs.createWriteStream(this.file)
     this.output.on('close', this.halt.bind(this))
     this.archive = archiver.create('zip', {})
     this.archive.on('error', (err) => {
@@ -59,10 +62,22 @@ class ExportJob {
   }
 
   start () {
-    logger.info('Exporting documents of %s ...', this.user)
-    // Process all user documents...
     let stoppable = false
-    documentDao.stream({ owner: this.user })
+    // Load user data
+    return userDao.findByUid(this.uid)
+    .then((user) => {
+      if (!user) {
+        return Promise.reject(`User ${this.uid} not found!`)
+      }
+      this.user = user
+      // Load user's labels into the cache
+      return this._cacheUserLabels()
+    })
+    .then(() => {
+      logger.info('Exporting documents of %s (#%s) ...', this.user.uid, this.user.id)
+      // Process all user documents...
+      return documentDao.stream({ owner: this.user.id })
+    })
     .then((s) => {
       this.stream = s
       this.stream.on('err', (err) => this.stop(err))
@@ -76,7 +91,7 @@ class ExportJob {
         const meta = new Buffer(JSON.stringify({
           title: doc.title,
           contentType: doc.contentType,
-          categories: doc.categories,
+          labels: this._resolveLabels(doc.labels),
           attachments: doc.attachments,
           date: doc.date,
           origin: doc.origin
@@ -136,6 +151,32 @@ class ExportJob {
       Promise.all(tasks).then(resolve, reject)
     })
   }
+
+  _cacheUserLabels () {
+    // Load user's labels
+    logger.debug('Caching user\'s labels...')
+    return LabelService.all(this.user.id)
+    .then((labels) => {
+      this.cache.labels = labels.reduce((acc, label) => {
+        acc[label.id.toUpperCase()] = label
+        return acc
+      }, {})
+      return Promise.resolve(this.cache.labels)
+    })
+  }
+
+  _resolveLabels (labels) {
+    return labels.reduce((acc, label) => {
+      const l = label.toUpperCase()
+      if (this.cache.labels.hasOwnProperty(l)) {
+        acc.push({
+          label: this.cache.labels[l].label,
+          color: this.cache.labels[l].color
+        })
+      }
+      return acc
+    }, [])
+  }
 }
 
 program.version(appInfo.version)
@@ -143,7 +184,7 @@ program.version(appInfo.version)
 .option('-v, --verbose', 'Verbose flag')
 .option('-d, --debug', 'Debug flag')
 .option('-f, --file [file]', 'File to create')
-.option('-u, --user [user]', 'User to export')
+.option('-u, --user [user]', 'User to export (UID)')
 .parse(process.argv)
 
 logger.level(program.debug ? 'debug' : program.verbose ? 'info' : 'error')
@@ -151,8 +192,12 @@ logger.level(program.debug ? 'debug' : program.verbose ? 'info' : 'error')
 assert(program.file, 'File parameter not defined')
 assert(program.user, 'User parameter not defined')
 
-const job = new ExportJob(program.file, program.user)
-job.start()
+const job = new ExportJob({
+  file: program.file,
+  uid: program.user
+})
+
+job.start().catch(job.stop.bind(job))
 
 ;['SIGINT', 'SIGTERM', 'SIGQUIT'].forEach((signal) => {
   process.on(signal, () => {
