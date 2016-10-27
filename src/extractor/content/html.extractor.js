@@ -6,6 +6,7 @@ const cleaner = require('./html.cleaner')
 const logger = require('../../helper').logger
 const hash = require('../../helper').hash
 const readability = require('node-readability')
+const jsdom = require('jsdom')
 
 /**
  * Extract base URL from the document head.
@@ -32,22 +33,37 @@ const extractBaseUrl = function (document) {
 /**
  * Extract resources from document content.
  * For now, only images are extracted.
- * @param {String} content HTML content
- * @return {Object} resources
+ * @param {Object} doc Document
+ * @param {Object} document DOM
+ * @return {Object} the document
  */
-const extractResources = function (content) {
-  let m
+const extractResources = function (doc, document) {
+  // Extract resources from the DOM and remove src attribute
+  // from the DOM in order to prevent direct reference.
   const resources = []
-  const rex = /<img[^>]+app-src="?([^"\s]+)"?/g
-  while ((m = rex.exec(content)) !== null) {
-    const url = m[1]
-    resources.push({
-      key: hash.hashUrl(url),
-      contentType: mime.lookup(url.replace(/\?.*$/, '')),
-      origin: url
-    })
+  const images = document.getElementsByTagName('img')
+  for (let img of images) {
+    if (img.hasAttribute('src')) {
+      const src = img.getAttribute('src')
+      if (src && !/^data:/i.test(src)) {
+        const resource = {
+          key: hash.hashUrl(src),
+          contentType: mime.lookup(src.replace(/\?.*$/, '')),
+          origin: src
+        }
+        img.removeAttribute('src')
+        img.setAttribute('data-ref', resource.key)
+        resources.push(resource)
+        logger.debug('Resource registered:', resource)
+      }
+    }
   }
-  return resources
+  doc.content = document.body.innerHTML
+  doc.attachments = _.uniqWith(
+    doc.attachments.concat(resources),
+    _.isEqual
+  )
+  return doc
 }
 
 /**
@@ -61,24 +77,41 @@ const extractHtml = function (doc) {
       if (err) {
         return reject(err)
       }
-      const baseUrl = extractBaseUrl(read.document) || doc.origin
-      cleaner.cleanup(read.document, {baseUrl: baseUrl})
-      // Try to get page main content...
-      doc.content = read.document.body.innerHTML
-      const articleContent = read.content
-      if (articleContent) {
-        doc.content = articleContent
-      }
-      if (!doc.title && read.title) {
-        doc.title = read.title
-      }
-      const resources = extractResources(doc.content)
-      doc.attachments = _.uniqWith(
-        doc.attachments.concat(resources),
-        _.isEqual
-      )
-      resolve(doc)
+      return resolve(read)
     })
+  })
+  .then((read) => {
+    // Step 1: Clean up the DOM
+    const baseUrl = extractBaseUrl(read.document) || doc.origin
+    cleaner.cleanup(read.document, {baseUrl: baseUrl})
+    // Step 2: Ask to Readability to extract the main content
+    // But before save the whole content in case of Readability fails
+    doc.content = read.document.body.innerHTML
+    if (read.content) {
+      // Readability founds the main content.
+      doc.content = read.content
+    }
+    // We have to put back this content to a DOM for further manipulations...
+    // This is not very clean but we don't have the possibility to get the DOM
+    // of the content from Readability. DOM is mutated :(
+    const dom = new Promise(function (resolve, reject) {
+      jsdom.env(doc.content, function (err, window) {
+        if (err) {
+          window.close()
+          return reject(err)
+        }
+        return resolve(window.document)
+      })
+    })
+    // Step 3: Setup the title
+    if (!doc.title && read.title) {
+      doc.title = read.title
+    }
+    return dom
+  })
+  .then((dom) => {
+    // Final Step: Extract resources from the content
+    return Promise.resolve(extractResources(doc, dom))
   })
 }
 

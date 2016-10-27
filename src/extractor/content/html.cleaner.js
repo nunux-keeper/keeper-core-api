@@ -19,8 +19,7 @@ const filterBlacklistedSites = function (node) {
     return null
   }
   const src = node.getAttribute('src') ||
-    node.getAttribute('href') ||
-    node.getAttribute('data-src')
+    node.getAttribute('href')
   if (src && validators.isBlacklisted(src)) {
     logger.debug('Removing blacklisted source: %s', src)
     node.parentNode.removeChild(node)
@@ -52,41 +51,29 @@ const filterAttributes = function (node) {
 
 /**
  * Filter images src.
- * - Change src attribute into 'app-src' attribute.
  * - Remove 1px images.
  * - Fix relative URL into absolute.
  * @param {Object} document DOM
  */
 const filterImages = function (document, options) {
-  var images = document.getElementsByTagName('img')
-  for (var i = 0; i < images.length; ++i) {
-    var image = images[i]
-
-    if (image.hasAttribute('app-src')) {
-      // Already filtered. Nothing to do.
-      image.removeAttribute('src')
-    } else {
-      // Remove 1px images
-      if (image.hasAttribute('height') || image.hasAttribute('width')) {
-        const height = image.getAttribute('height')
-        const width = image.getAttribute('width')
-        if (height === 1 && width === 1) {
-          logger.debug('Removeing 1px image: %s', image.getAttribute('src'))
-          image.parentNode.removeChild(image)
-          return
-        }
+  const images = document.getElementsByTagName('img')
+  for (let img of images) {
+    // Remove 1px images
+    if (img.hasAttribute('height') || img.hasAttribute('width')) {
+      const height = img.getAttribute('height')
+      const width = img.getAttribute('width')
+      if (height === '1' && width === '1') {
+        logger.debug('Removeing 1px image: %s', img.getAttribute('src'))
+        img.parentNode.removeChild(img)
+        return
       }
-      var src = image.getAttribute('src') || image.getAttribute('data-src')
-      // Ignore data url.
-      if (src && !/^data:/i.test(src)) {
-        // Create absolute URL if possible
-        if (options && options.baseUrl && !/^https?:\/\//i.test(src)) {
-          src = url.resolve(options.baseUrl, src)
-        }
-        // Swapping src and app-src attributes.
-        image.removeAttribute('src')
-        image.removeAttribute('data-src')
-        image.setAttribute('app-src', src)
+    }
+    const src = img.getAttribute('src')
+    // Ignore data url.
+    if (src && !/^data:/i.test(src)) {
+      // Create absolute URL if possible
+      if (options && options.baseUrl && !/^https?:\/\//i.test(src)) {
+        img.setAttribute('src', url.resolve(options.baseUrl, src))
       }
     }
   }
@@ -98,9 +85,8 @@ const filterImages = function (document, options) {
  * @param {Object} document DOM
  */
 const filterLinks = function (document /*, options*/) {
-  var links = document.getElementsByTagName('a')
-  for (var i = 0; i < links.length; ++i) {
-    var link = links[i]
+  const links = document.getElementsByTagName('a')
+  for (let link of links) {
     if (link.hasAttribute('href')) {
       link.setAttribute('target', '_blank')
     }
@@ -120,9 +106,8 @@ module.exports = {
    */
   cleanup: function (document, options) {
     // Filter all nodes...
-    var nodes = document.getElementsByTagName('*')
-    for (var i = 0; i < nodes.length; ++i) {
-      var node = nodes[i]
+    const nodes = document.getElementsByTagName('*')
+    for (let node of nodes) {
       var filterChain = _.flow(
         filterBlacklistedSites,
         filterAttributes

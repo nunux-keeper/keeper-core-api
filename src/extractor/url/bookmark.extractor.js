@@ -41,11 +41,13 @@ module.exports = {
               doc.title = doc.origin.replace(/.*?:\/\//g, '')
             }
             doc.contentType = 'text/html'
-            doc.attachments.push({
-              key: hash.hashUrl(doc.origin),
+            const attachment = {
+              key: hash.hashUrl(doc.origin, 'png'),
               stream: fs.createReadStream(thumbnailFile),
               contentType: 'image/png'
-            })
+            }
+            doc.attachments.push(attachment)
+            doc.content = `<img data-ref="${attachment.key}" title="Screenshot" />`
             return Promise.resolve(doc)
           })
         .then(resolve, reject)

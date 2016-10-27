@@ -14,16 +14,20 @@ const getHash = function (value) {
 /**
  * Get a hashed name.
  * The name can be a file name or an url.
- * @param {String} name
+ * @param {String} name Name to has
+ * @param {String} forcedExt Forced extension to set
  * @returns {String} hash
  */
-const getHashName = function (name) {
+const getHashName = function (name, forcedExt) {
   // Clean query if URL
   const cleanName = name.replace(/\?.*$/, '')
-  // Extract extension
-  let ext = cleanName.split('.').pop()
-  if (ext) {
-    ext = ext.match(/^[a-zA-Z0-9]+/)[0]
+  let ext = forcedExt
+  if (!ext) {
+    // Try to extract extension
+    ext = cleanName.split('.').pop()
+    if (ext) {
+      ext = ext.match(/^[a-zA-Z0-9]+/)[0]
+    }
   }
   // Return hash
   return getHash(cleanName) + (ext ? '.' + ext : '')
