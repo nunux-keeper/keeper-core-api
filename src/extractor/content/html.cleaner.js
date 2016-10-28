@@ -2,6 +2,7 @@
 
 const _ = require('lodash')
 const url = require('url')
+const globals = require('../../helper').globals
 const logger = require('../../helper').logger
 const validators = require('../../helper').validators
 
@@ -69,11 +70,15 @@ const filterImages = function (document, options) {
       }
     }
     const src = img.getAttribute('src')
-    // Ignore data url.
-    if (src && !/^data:/i.test(src)) {
-      // Create absolute URL if possible
-      if (options && options.baseUrl && !/^https?:\/\//i.test(src)) {
-        img.setAttribute('src', url.resolve(options.baseUrl, src))
+    if (src) {
+      if (src.startsWith(globals.REALM)) {
+        // Remove src pointing to the Realm
+        img.removeAttribute('src')
+      } else if (!/^data:/i.test(src)) {
+        // Create absolute URL if possible
+        if (options && options.baseUrl && !/^https?:\/\//i.test(src)) {
+          img.setAttribute('src', url.resolve(options.baseUrl, src))
+        }
       }
     }
   }
