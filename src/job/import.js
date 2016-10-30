@@ -16,6 +16,7 @@ const extractor = require('../extractor')
 const searchengine = require('../dao/searchengine')
 const LabelService = require('../service').label
 const ObjectID = require('mongodb').ObjectID
+const chance = require('chance').Chance()
 
 process.title = 'keeper-import-job'
 
@@ -156,7 +157,7 @@ class ImportJob {
     const createAndSetLabel = (label) => {
       return LabelService.create({
         label: label.label,
-        color: label.color || '#4285f4',
+        color: label.color || chance.color(),
         owner: this.user.id
       })
       .then((l) => {
