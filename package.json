@@ -20,7 +20,9 @@
     "debug": "node-inspector & node --harmony --debug src/cluster",
     "doc": "node --harmony `which gulp` doc",
     "test": "node --harmony `which gulp` | bunyan",
-    "postinstall": "node --harmony `which gulp` install"
+    "postinstall": "node --harmony `which gulp` install",
+    "export": "node --harmony src/job/export",
+    "import": "node --harmony src/job/import"
   },
   "dependencies": {
     "JSONStream": "^1.1.3",
