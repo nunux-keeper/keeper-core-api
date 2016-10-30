@@ -14,7 +14,7 @@ OnFailure=unit-status-mail@%n.service
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm %p
 ExecStart=/usr/bin/docker run --rm --name %p \
-    --volume=/var/opt/%p:/var/opt/keeper \
+    --volume=/var/opt/%p:/var/opt/app \
     --env-file /etc/environment \
     --env-file /etc/default/%p \
     --env-file /etc/default/%p_custom \
