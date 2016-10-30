@@ -1,5 +1,5 @@
 {
-  "author": "Nicolas Carlier <@ncarlier>",
+  "author": "Nicolas Carlier <https://github.com/ncarlier>",
   "name": "keeper-core-api",
   "version": "2.0.0",
   "description": "Keeper core API",
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://gitlab.com/ncarlier/keeper-core-api"
+    "url": "gitlab.com:nunux-keeper/keeper-core-api.git"
   },
   "scripts": {
     "start": "node --harmony src/cluster | bunyan",
@@ -22,7 +22,9 @@
     "test": "node --harmony `which gulp` | bunyan",
     "postinstall": "node --harmony `which gulp` install",
     "export": "node --harmony src/job/export",
-    "import": "node --harmony src/job/import"
+    "import": "node --harmony src/job/import",
+    "downloader": "node --harmony src/daemon/downloader",
+    "ghostbuster": "node --harmony src/daemon/ghostbuster"
   },
   "dependencies": {
     "JSONStream": "^1.1.3",

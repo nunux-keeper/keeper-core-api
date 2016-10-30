@@ -11,7 +11,7 @@ const messaging = require('../messaging')
 
 /**
  * Resource downloader daemon.
- * @module resource_downloader
+ * @module downloader
  */
 class ResourceDownloaderDaemon extends AbstractDaemon {
   constructor () {
