@@ -49,11 +49,15 @@ now.
 
 ### Start the server
 
+> *Warning:* This is useful for testing or have a development server.
+> If you want to operate the service and don't lost your data please refer
+> below.
+
 ```bash
 # Start required backends (ElasticSearch, MongoDB, Redis)
 make up
 # Start the server (default configuration: etc/default/dev.env)
-make start
+make start logs
 ```
 
 If you want to start the server with another configuration (for instance:
@@ -67,7 +71,23 @@ Configuration files are located into the `etc/default` directory.
 See [etc/default/dev.env](etc/default/dev.env) for development configuration
 details.
 
+Finally you can remove everything like this:
+
+```bash
+# Stop and destroy the server
+make stop rm
+# Stop and destroy backends (ElasticSearch, MongoDB, Redis)
+make down
+```
+
 ### Install the server as a service
+
+You need to have all backend services up and running with following Docker
+names:
+
+- mongodb
+- elasticSearch
+- redis
 
 ```bash
 # Install systemd configuration (for staging env)

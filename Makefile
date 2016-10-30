@@ -1,5 +1,5 @@
 .SILENT :
-.PHONY : test up down install
+.PHONY : test up down install uninstall export import
 
 USERNAME:=ncarlier
 APPNAME:=keeper-core-api
@@ -12,13 +12,16 @@ LINK_FLAGS?=--link mongodb:mongodb --link elasticsearch:elasticsearch --link red
 ENV_FLAGS?=--env-file="./etc/default/$(env).env"
 
 # Custom run flags
-RUN_CUSTOM_FLAGS?=-P $(ENV_FLAGS) $(LINK_FLAGS)
+RUN_CUSTOM_FLAGS?=-p 8080:3000 $(ENV_FLAGS) $(LINK_FLAGS)
+
+# Custom run flags
+SHELL_CUSTOM_FLAGS?=-P $(ENV_FLAGS) $(LINK_FLAGS)
 
 # Docker configuartion regarding the system architecture
 BASEIMAGE=node:5-onbuild
 UNAME_M := $(shell uname -m)
 ifeq ($(UNAME_M),armv7l)
-	BASEIMAGE=ncarlier/nodejs-arm
+	BASEIMAGE=armhfbuild/node:5
 endif
 
 ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
@@ -32,7 +35,7 @@ test:
 
 ## Start a complete infrastucture
 up:
-	echo "Starting MongoDB ..."
+	echo "Starting MongoDB..."
 	make -C $(ROOT_DIR)/dockerfiles/mongodb stop rm start
 	echo "Starting Elasticsearch ..."
 	make -C $(ROOT_DIR)/dockerfiles/elasticsearch stop rm start
@@ -41,7 +44,7 @@ up:
 
 ## Stop the infrastucture
 down:
-	echo "Stoping MongoDB ..."
+	echo "Stoping MongoDB..."
 	make -C $(ROOT_DIR)/dockerfiles/mongodb stop rm
 	echo "Stoping Elasticsearch ..."
 	make -C $(ROOT_DIR)/dockerfiles/elasticsearch stop rm
@@ -51,9 +54,46 @@ down:
 ## Install as a service (needs root privileges)
 install: build
 	echo "Install as a service..."
+	mkdir -p /var/opt/$(APPNAME)/storage/{upload,exports}
 	cp etc/systemd/system/* /etc/systemd/system/
 	cp etc/default/$(env).env /etc/default/$(APPNAME)
 	systemctl daemon-reload
+	systemctl enable $(APPNAME)
 	systemctl restart $(APPNAME)
+	systemctl enable keeper-core-downloader
+	systemctl restart keeper-core-downloader
+	systemctl enable keeper-core-ghostbuster
+	systemctl restart keeper-core-ghostbuster
 	$(MAKE) cleanup
 
+## Un-install service (needs root privileges)
+uninstall:
+	echo "Un-install service..."
+	systemctl stop keeper-core-downloader
+	systemctl disable keeper-core-downloader
+	systemctl stop keeper-core-ghostbuster
+	systemctl disable keeper-core-ghostbuster
+	systemctl stop $(APPNAME)
+	systemctl disable $(APPNAME)
+	rm /etc/systemd/system/keeper-core-*
+	rm /etc/default/$(APPNAME)
+	systemctl daemon-reload
+	$(MAKE) rm clean
+
+## Export all documents of an user (defined by $uid)
+export:
+ifndef uid
+	$(error User not defined. You should set "uid" variable.)
+else
+	echo "Exporting $(uid) documents..."
+	$(DOCKER) exec $(APPNAME) npm run export -- -d --user $(uid) --file /var/opt/app/storage/exports/$(uid).zip
+endif
+
+## Import documents from an archive to an user (defined by $uid)
+import:
+ifndef uid
+	$(error User not defined. You should set "uid" variable.)
+else
+	echo "Exporting $(uid) documents..."
+	$(DOCKER) exec $(APPNAME) npm run import -- -d --user $(uid) --file /var/opt/app/storage/exports/$(uid).zip
+endif
