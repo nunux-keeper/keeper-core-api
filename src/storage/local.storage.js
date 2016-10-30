@@ -108,15 +108,6 @@ const getContainerName = function () {
 }
 
 /**
- * List resources in the container.
- * @param {String} container container name
- * @return {Promise} Promise of the action
- */
-const _listContainer = function (container) {
-  return files.chls(container)
-}
-
-/**
  * Clean container by removing all entries no present in the resource list.
  * @param {String} container Container name
  * @param {Object[]} resources Resource list
@@ -129,7 +120,8 @@ const cleanContainer = function (container, resources) {
   }, [])
 
   // List directory content...
-  return _listContainer(container)
+  return files.chmkdir(container)
+  .then(() => files.chls(container))
   .then(function (entries) {
     // Removing unused files...
     // Get delta between directory content and key list
