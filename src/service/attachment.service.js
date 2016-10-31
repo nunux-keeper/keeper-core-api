@@ -1,6 +1,7 @@
 'use strict'
 
 const storage = require('../storage')
+const logger = require('../helper').logger
 const thumbnail = require('../helper').thumbnail
 
 function getDocumentContainerName (doc) {
@@ -67,6 +68,10 @@ AttachmentService.getThumbnail = function (doc, att, size) {
       return storage.localCopy(container, att.key)
         .then(function (localPath) {
           return thumbnail.file(localPath, size, doc.id)
+          .catch((err) => {
+            logger.error('Error during thumbnail creation.', err)
+            return Promise.resolve(localPath)
+          })
         }).then(function (thumbPath) {
           // Remove copied file only if driver is not 'local'
           if (metas.driver !== 'local') {
