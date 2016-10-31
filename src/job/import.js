@@ -38,6 +38,7 @@ class ImportJob {
     this.uid = params.uid
     this.file = params.file
     this.keepOriginalId = params.keepOriginalId
+    this.skipExtractor = params.skipExtractor
     this.cache = {}
     this.counter = 0
     this.zip = new AdmZip(params.file)
@@ -211,7 +212,7 @@ class ImportJob {
 
   _resolveLabel (label) {
     const l = label.toUpperCase()
-    return this.cache.labels.hasOwnProperty(l) ? this.cache.label[l] : null
+    return this.cache.labels.hasOwnProperty(l) ? this.cache.labels[l] : null
   }
 
   start () {
@@ -282,16 +283,24 @@ class ImportJob {
   importDocument (doc) {
     logger.debug('Importing document: %s', doc.id)
     doc.ghost = false
-    // Extract/Filter content
-    return extractor.content.extract(doc)
-    .then(function (_doc) {
-      doc.content = _doc.content
-      // Merge attachments of the content with declared attachments
-      doc.attachments = _.unionWith(doc.attachments, _doc.attachments, (a, b) => a.key === b.key)
+    return new Promise((resolve, reject) => {
+      if (this.skipExtractor) {
+        return resolve()
+      }
+      // Extract/Filter content
+      extractor.content.extract(doc)
+      .then((_doc) => {
+        doc.content = _doc.content
+        // Merge attachments of the content with declared attachments
+        doc.attachments = _.unionWith(doc.attachments, _doc.attachments, (a, b) => a.key === b.key)
+        resolve()
+      }, reject)
+    })
+    .then(() => {
       // Save and index the document
       return documentDao.create(doc)
     })
-    .then(function (_doc) {
+    .then((_doc) => {
       // logger.debug('Document created:', _doc.id)
       if (!searchengine.disabled) {
         // logger.debug('Indexing document:', _doc.id)
@@ -321,6 +330,7 @@ program.version(appInfo.version)
 .option('-f, --file [file]', 'File to import')
 .option('-u, --user [user]', 'Target user (UID)')
 .option('-k, --keep-id', 'Keep original document ID')
+.option('-s, --skip-extractor', 'Skip usage of the content extractor')
 .parse(process.argv)
 
 logger.level(program.debug ? 'debug' : program.verbose ? 'info' : 'error')
@@ -331,7 +341,8 @@ assert(program.user, 'User parameter not defined')
 const job = new ImportJob({
   file: program.file,
   uid: program.user,
-  keepOriginalId: program['keep-id']
+  keepOriginalId: program['keep-id'],
+  skipExtractor: program['skip-extractor']
 })
 
 job.start().then(() => job.stop()).catch(job.stop.bind(job))
