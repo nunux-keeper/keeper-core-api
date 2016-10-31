@@ -152,7 +152,7 @@ DocumentService.update = function (doc, update) {
         // Process attachments (streams)
         return processAttachments(_doc)
       }).then(function (_doc) {
-        logger.info('Document updated: %j', _doc)
+        logger.info('Document content updated: %j', _doc.id)
         // Broadcast document update event.
         eventHandler.document.emit('update', _doc)
         return Promise.resolve(_doc)
