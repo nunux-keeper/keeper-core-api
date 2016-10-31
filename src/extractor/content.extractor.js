@@ -14,12 +14,12 @@ require('fs').readdirSync(path.join(__dirname, 'content')).forEach((file) => {
   }
 })
 
-const extractContent = function (doc) {
+const extractContent = function (doc, meta) {
   const extractor = _.find(contentExtractors, function (ext) {
     return ext.support(doc)
   })
   if (extractor) {
-    return extractor.extract(doc)
+    return extractor.extract(doc, meta)
   } else {
     logger.debug('No content extractor found for content type: %s. Using none.', doc.contentType)
     return Promise.resolve(doc)
@@ -55,12 +55,14 @@ module.exports = {
             }
             return false
           })
-          extractContent(doc).then(resolve, reject)
+          // We assume that the content is a full web page so we ask to the extractor
+          // to try to detect the main content.
+          extractContent(doc, {detectMainContent: true}).then(resolve, reject)
         })
       })
     } else {
       logger.debug('Extracting content form the document...')
-      return extractContent(doc)
+      return extractContent(doc, {detectMainContent: false})
     }
   }
 }

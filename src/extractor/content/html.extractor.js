@@ -69,9 +69,10 @@ const extractResources = function (doc, document) {
 /**
  * Extract and clean HTML content of a document using Readability.
  * @param {Document} doc
+ * @param {Oject} meta Meta data used toconfigure the extractor
  * @returns {Promise} Promise of the doc with clean HTML content.
  */
-const extractHtml = function (doc) {
+const extractHtml = function (doc, meta) {
   return new Promise(function (resolve, reject) {
     readability(doc.content, function (err, read) {
       if (err) {
@@ -87,22 +88,25 @@ const extractHtml = function (doc) {
     // Step 2: Ask to Readability to extract the main content
     // But before save the whole content in case of Readability fails
     doc.content = read.document.body.innerHTML
-    if (read.content) {
+    let dom = Promise.resolve(read.document)
+    if (meta.detectMainContent && read.content) {
       // Readability founds the main content.
       doc.content = read.content
     }
-    // We have to put back this content to a DOM for further manipulations...
-    // This is not very clean but we don't have the possibility to get the DOM
-    // of the content from Readability. DOM is mutated :(
-    const dom = new Promise(function (resolve, reject) {
-      jsdom.env(doc.content, function (err, window) {
-        if (err) {
-          window.close()
-          return reject(err)
-        }
-        return resolve(window.document)
+    if (meta.detectMainContent) {
+      // We have to put back this content to a DOM for further manipulations...
+      // This is not very clean but we don't have the possibility to get the DOM
+      // of the content from Readability. DOM is mutated :(
+      dom = new Promise(function (resolve, reject) {
+        jsdom.env(doc.content, function (err, window) {
+          if (err) {
+            window.close()
+            return reject(err)
+          }
+          return resolve(window.document)
+        })
       })
-    })
+    }
     // Step 3: Setup the title
     if (!doc.title && read.title) {
       doc.title = read.title
@@ -131,12 +135,13 @@ module.exports = {
   /**
    * Extract HTML content a document.
    * @param {Document} doc
+   * @param {Oject} meta Meta data used toconfigure the extractor
    * @return {Promise} Promise of the document with extracted HTML.
    */
-  extract: function (doc) {
+  extract: function (doc, meta) {
     logger.debug('Using html extractor.')
     if (doc.content) {
-      return extractHtml(doc)
+      return extractHtml(doc, meta)
     } else {
       logger.debug('No HTML content to parse.')
       doc.content = ''

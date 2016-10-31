@@ -69,6 +69,13 @@ const filterImages = function (document, options) {
         return
       }
     }
+
+    // Remove v1 attribute
+    if (img.hasAttribute('app-src')) {
+      img.setAttribute('src', img.getAttribute('app-src'))
+      img.removeAttribute('app-src')
+    }
+
     const src = img.getAttribute('src')
     if (src) {
       if (src.startsWith(globals.REALM)) {
