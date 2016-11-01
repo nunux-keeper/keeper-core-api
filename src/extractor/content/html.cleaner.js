@@ -75,6 +75,11 @@ const filterImages = function (document, options) {
       img.setAttribute('src', img.getAttribute('app-src'))
       img.removeAttribute('app-src')
     }
+    // Remove data attribute
+    if (img.hasAttribute('data-src')) {
+      img.setAttribute('src', img.getAttribute('data-src'))
+      img.removeAttribute('data-src')
+    }
 
     const src = img.getAttribute('src')
     if (src) {
