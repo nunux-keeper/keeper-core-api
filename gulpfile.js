@@ -16,8 +16,8 @@ gulp.task('lint', function () {
 
 // Task to run tests
 gulp.task('test', function () {
-  // return gulp.src('features/admin.feature')
-  return gulp.src('features/*.feature')
+  const features = process.env.FEATURES || '*'
+  return gulp.src(`features/${features}.feature`)
   .pipe(cucumber({
     steps: 'features/step_definitions/*_step_definition.js',
     support: 'features/support/*.js'
