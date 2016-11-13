@@ -54,7 +54,8 @@ down:
 ## Install as a service (needs root privileges)
 install: build
 	echo "Install as a service..."
-	mkdir -p /var/opt/$(APPNAME)/storage/{upload,exports}
+	mkdir -p /var/opt/$(APPNAME)/storage/upload
+	mkdir -p /var/opt/$(APPNAME)/storage/exports
 	cp etc/systemd/system/* /etc/systemd/system/
 	cp etc/default/$(env).env /etc/default/$(APPNAME)
 	systemctl daemon-reload
