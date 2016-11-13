@@ -24,7 +24,7 @@ Feature: Document API with HTML cleanup
         When I update the document with:
             | content | <p>updated sample</P><img src="http://reader.nunux.org/icons/favicon.png"/> |
         Then I should get the following document:
-            | content | <div><p>updated sample</p><img data-ref="4af6eef358b9356312aef278dee3d9b3.png"></div> |
+            | content | <p>updated sample</p><img data-ref="4af6eef358b9356312aef278dee3d9b3.png"> |
         And  I should have 1 attachment(s) of "image/png" into the document
         When I delete the document
         Then I should not retrieve the document
