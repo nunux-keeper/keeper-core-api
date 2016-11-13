@@ -77,14 +77,7 @@ class AbstractMongodbDao {
    */
   count (query) {
     return this.getCollection().then((collection) => {
-      return new Promise((resolve, reject) => {
-        collection.count(query, function (err, count) {
-          if (err) {
-            return reject(err)
-          }
-          resolve(count)
-        })
-      })
+      return collection.count(query)
     })
   }
 
