@@ -4,7 +4,7 @@ const crypto = require('crypto')
 const hal = require('hal')
 const globals = require('../helper').globals
 const storage = require('../storage')
-const documentDao = require('../dao').user
+const documentDao = require('../dao').document
 
 /**
  * Add Gravatar link.
