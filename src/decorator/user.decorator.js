@@ -37,13 +37,12 @@ const decorateWithStatsData = function (user) {
 /**
  * Add HAL data into the document.
  * @param {Object} user user DTO
- * @return {Function} the decorator function
+ * @return {Promise} promise of the dto
  */
-const decorateWithHalData = function (url) {
-  return function (user) {
-    const resource = new hal.Resource(user, globals.BASE_URL + url + '/' + user.uid)
-    return Promise.resolve(resource)
-  }
+const decorateWithHalData = function (user) {
+  const resource = new hal.Resource(user, `${globals.BASE_URL}/admin/user/${user.id}`)
+  resource.link('all', globals.BASE_URL + '/admin/user')
+  return Promise.resolve(resource)
 }
 
 module.exports = {
@@ -65,10 +64,9 @@ module.exports = {
 
   /**
    * Decorate user DTO with HAL data.
-   * @param {String} url Path URL
    * @return {Function} decorator function
    */
-  hal: function (url) {
-    return decorateWithHalData(url)
+  hal: function () {
+    return decorateWithHalData
   }
 }

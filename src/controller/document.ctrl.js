@@ -41,7 +41,7 @@ module.exports = {
       decorator.decorate(
         req.requestData.document,
         decorator.document.privacy(),
-        decorator.document.hal(req.path, true)
+        decorator.document.hal()
       )
       .then(function (resource) {
         res.json(resource)
@@ -70,7 +70,7 @@ module.exports = {
         const qs = querystring.stringify(query)
         resource.link('next', globals.BASE_URL + req.path + '?' + qs)
       }
-      resource.link('find', {href: globals.BASE_URL + req.path + '/{id}', templated: true})
+      resource.link('get', {href: globals.BASE_URL + req.path + '/{id}', templated: true})
       res.json(resource)
     }, next)
   },
@@ -114,7 +114,7 @@ module.exports = {
       return decorator.decorate(
         result,
         decorator.document.privacy(),
-        decorator.document.hal(`${req.path}/${result.id}`, false)
+        decorator.document.hal()
       )
     })
     .then(function (resource) {
@@ -160,7 +160,7 @@ module.exports = {
       return decorator.decorate(
         result,
         decorator.document.privacy(),
-        decorator.document.hal(req.path, false)
+        decorator.document.hal()
       )
     })
     .then(function (resource) {
@@ -198,7 +198,7 @@ module.exports = {
       return decorator.decorate(
         result,
         decorator.document.privacy(),
-        decorator.document.hal(req.path, false)
+        decorator.document.hal()
       )
     })
     .then(function (resource) {

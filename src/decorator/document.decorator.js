@@ -6,7 +6,7 @@ const globals = require('../helper').globals
 
 /**
  * Remove private data from document.
- * @param {Object} document Document DTO
+ * @param {Object} sharing Sharing DTO
  * @return {Promise} promise of the dto
  */
 const decorateWithoutPrivateData = function (doc) {
@@ -15,19 +15,14 @@ const decorateWithoutPrivateData = function (doc) {
 
 /**
  * Add HAL data into the document.
- * @param {String} url Path URL
- * @param {Boolean} extra add extra links
- * @return {Function} the decorator function
+ * @param {Object} sharing Sharing DTO
+ * @return {Promise} promise of the dto
  */
-const decorateWithHalData = function (url, extra) {
-  return function (doc) {
-    const resource = new hal.Resource(doc, globals.BASE_URL + url)
-    if (extra) {
-      resource.link('search', globals.BASE_URL + '/document')
-      resource.link('raw', globals.BASE_URL + url + '?raw')
-    }
-    return Promise.resolve(resource)
-  }
+const decorateWithHalData = function (doc) {
+  const resource = new hal.Resource(doc, `${globals.BASE_URL}/document/${doc.id}`)
+  resource.link('search', globals.BASE_URL + '/document')
+  resource.link('raw', `${globals.BASE_URL}/document/${doc.id}?raw`)
+  return Promise.resolve(resource)
 }
 
 module.exports = {
@@ -41,11 +36,9 @@ module.exports = {
 
   /**
    * Decorate document DTO with HAL data.
-   * @param {String} url Path URL
-   * @param {Boolean} extra add extra links
    * @return {Function} decorator function
    */
-  hal: function (url, extra) {
-    return decorateWithHalData(url, extra)
+  hal: function () {
+    return decorateWithHalData
   }
 }

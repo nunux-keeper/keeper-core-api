@@ -49,7 +49,7 @@ module.exports = function (router) {
   /**
    * @api {get} /label/:id Get label details.
    * @apiVersion 2.0.0
-   * @apiName GetAllLabel
+   * @apiName GetLabelDetail
    * @apiGroup label
    * @apiPermission user
    *
