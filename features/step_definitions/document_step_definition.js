@@ -5,23 +5,7 @@ const chance = require('chance').Chance()
 const expect = require('chai').expect
 const request = require('supertest')
 
-const expectDocument = function (doc, expected) {
-  // console.log('ACTUAL', doc)
-  expect(doc).to.contain.keys(
-    'id', 'title', 'content', 'contentType', 'date', 'labels', '_links'
-  )
-  if (expected) {
-    const doNotCompare = ['_links', 'date', 'attachments', 'labels', 'origin']
-    // console.log('EXPECTED', expected)
-    for (let prop in expected) {
-      if (expected.hasOwnProperty(prop)) {
-        if (doNotCompare.indexOf(prop) < 0) {
-          expect(doc[prop]).to.equals(expected[prop])
-        }
-      }
-    }
-  }
-}
+const ofADocumentObject = ['id', 'title', 'content', 'contentType', 'date', 'labels', '_links']
 
 module.exports = function () {
   this.When(/^I create the following document:$/, {timeout: 10 * 1000}, function (attrs, callback) {
@@ -56,10 +40,9 @@ module.exports = function () {
     .expect('Content-Type', /json/)
     .expect(function (res) {
       expect(res.status).to.equals(201)
-      const newDoc = res.body
-      expectDocument(newDoc, doc)
-      expect(newDoc.date).not.to.be.null
-      this.myDocument = newDoc
+      expect(res.body).to.contain.all.keys(ofADocumentObject)
+      expect(res.body.date).not.to.be.null
+      this.myDocument = res.body
     }.bind(this))
     .end(callback)
   })
@@ -77,10 +60,11 @@ module.exports = function () {
     .expect('Content-Type', /json/)
     .expect(function (res) {
       expect(res.status).to.equals(201)
-      const newDoc = res.body
-      expectDocument(newDoc)
-      expect(newDoc.date).not.to.be.null
-      this.myDocument = newDoc
+      expect(res.body).to.contain.all.keys(ofADocumentObject)
+      // expect(res.body.content).to.equals(content)
+      expect(res.body.contentType).to.equals('text/html')
+      expect(res.body.date).not.to.be.null
+      this.myDocument = res.body
     }.bind(this))
     .end(callback)
   })
@@ -101,10 +85,9 @@ module.exports = function () {
     .expect('Content-Type', /json/)
     .expect(function (res) {
       expect(res.status).to.equals(200)
-      const updatedDoc = res.body
-      expectDocument(updatedDoc)
-      expect(updatedDoc.date).not.to.be.null
-      this.myDocument = updatedDoc
+      expect(res.body).to.contain.all.keys(ofADocumentObject)
+      expect(res.body.date).not.to.be.null
+      this.myDocument = res.body
     }.bind(this))
     .end(callback)
   })
@@ -126,9 +109,9 @@ module.exports = function () {
     .use(this.setAuthorizationHeader(this.uid))
     .expect(function (res) {
       expect(res.status).to.equals(200)
-      const restoredDoc = res.body
-      expectDocument(restoredDoc, this.myDocument)
-      expect(restoredDoc.date).not.to.be.null
+      expect(res.body).to.contain.all.keys(ofADocumentObject)
+      // console.log('COMPARE:\n', res.body, '\n', this.myDocument)
+      expect(res.body).to.eql(this.myDocument)
     }.bind(this))
     .end(callback)
   })
@@ -148,7 +131,9 @@ module.exports = function () {
         if (shoulBeRaw) {
           expect(res.text).to.equals(this.myDocument.content)
         } else {
-          expectDocument(res.body, this.myDocument)
+          expect(res.body).to.contain.all.keys(ofADocumentObject)
+          // console.log('COMPARE:\n', res.body, '\n', this.myDocument)
+          expect(res.body).to.eql(this.myDocument)
           this.myDocument = res.body
         }
       } else {
