@@ -5,12 +5,7 @@ const app = require('../../src/app')
 const expect = require('chai').expect
 const request = require('supertest')
 
-const expectUser = function (user) {
-  // console.log('ACTUAL', user)
-  expect(user).to.contain.keys(
-    'id', 'uid', 'date', 'gravatar', 'documents', 'storage', '_links'
-  )
-}
+const ofAnUserObject = ['id', 'uid', 'date', 'gravatar', 'documents', 'storage', '_links']
 
 module.exports = function () {
   this.When(/^I get all the users$/, function (callback) {
@@ -36,7 +31,7 @@ module.exports = function () {
     .use(this.setAuthorizationHeader(this.uid))
     .expect('Content-Type', /json/)
     .expect(function (res) {
-      expectUser(res.body)
+      expect(res.body).to.contain.all.keys(ofAnUserObject)
       this.myUser = res.body
     }.bind(this))
     .expect(200, callback)
@@ -46,7 +41,7 @@ module.exports = function () {
     const uid = this.uid
     expect(this.myUsers).to.not.be.undefined
     var found = _.find(this.myUsers, function (item) {
-      expectUser(item)
+      expect(item).to.contain.all.keys(ofAnUserObject)
       return item.uid === uid
     })
     expect(found).to.not.be.undefined
