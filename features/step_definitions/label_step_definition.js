@@ -5,6 +5,8 @@ const app = require('../../src/app')
 const expect = require('chai').expect
 const request = require('supertest')
 
+const ofALabelObject = ['id', 'label', 'color', 'date', '_links']
+
 module.exports = function () {
   this.When(/^I create the label "([^"]*)" with "([^"]*)" as color$/, function (label, color, callback) {
     request(app)
@@ -18,12 +20,9 @@ module.exports = function () {
     .expect('Content-Type', /json/)
     .expect(function (res) {
       expect(res.status).to.equals(201)
-      const newLabel = res.body
-      expect(newLabel).to.contain.keys(
-        'id', 'label', 'color', 'date', '_links'
-      )
-      expect(newLabel.label).to.equals(label)
-      expect(newLabel.color).to.equals(color)
+      expect(res.body).to.contain.all.keys(ofALabelObject)
+      expect(res.body.label).to.equals(label)
+      expect(res.body.color).to.equals(color)
     })
     .end(callback)
   })
@@ -39,7 +38,7 @@ module.exports = function () {
       const labels = res.body.labels
       if (labels.length) {
         labels.forEach(function (label) {
-          expect(label).to.contain.keys(
+          expect(label).to.contain.all.keys(
             'id', 'label', 'color', 'date'
           )
         })
@@ -76,14 +75,11 @@ module.exports = function () {
     .use(this.setAuthorizationHeader(this.uid))
     .expect('Content-Type', /json/)
     .expect(function (res) {
-      const newLabel = res.body
-      expect(newLabel).to.contain.keys(
-        'id', 'label', 'color', 'date', '_links'
-      )
-      expect(newLabel.id).to.equals(this.myLabel.id)
-      expect(newLabel.label).to.equals(label)
-      expect(newLabel.color).to.equals(color)
-      this.myLabel = newLabel
+      expect(res.body).to.contain.all.keys(ofALabelObject)
+      expect(res.body.id).to.equals(this.myLabel.id)
+      expect(res.body.label).to.equals(label)
+      expect(res.body.color).to.equals(color)
+      this.myLabel = res.body
     }.bind(this))
     .expect(200, callback)
   })
@@ -104,13 +100,10 @@ module.exports = function () {
     .set('Content-Type', 'application/json')
     .use(this.setAuthorizationHeader(this.uid))
     .expect(function (res) {
-      const newLabel = res.body
-      expect(newLabel).to.contain.keys(
-        'id', 'label', 'color', 'date', '_links'
-      )
-      expect(newLabel.id).to.equals(this.myLabel.id)
-      expect(newLabel.label).to.equals(this.myLabel.label)
-      expect(newLabel.color).to.equals(this.myLabel.color)
+      expect(res.body).to.contain.all.keys(ofALabelObject)
+      expect(res.body.id).to.equals(this.myLabel.id)
+      expect(res.body.label).to.equals(this.myLabel.label)
+      expect(res.body.color).to.equals(this.myLabel.color)
     }.bind(this))
     .expect(200, callback)
   })
