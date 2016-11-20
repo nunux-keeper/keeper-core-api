@@ -1,12 +1,12 @@
 'use strict'
 
-const AbstractMongodbDao = require('./common/abstract.dao')
+const AbstractElasticsearchDao = require('./common/abstract.dao')
 
 /**
  * User DAO.
  * @module user.dao
  */
-class UserDao extends AbstractMongodbDao {
+class UserDao extends AbstractElasticsearchDao {
   constructor (client, index) {
     super(client, index, 'user')
   }

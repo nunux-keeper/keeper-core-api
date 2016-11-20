@@ -1,0 +1,95 @@
+'use strict'
+
+const _ = require('lodash')
+const app = require('../../src/app')
+const expect = require('chai').expect
+const request = require('supertest')
+
+const ofASharingObject = ['id', 'owner', 'targetLabel', 'public', 'date', 'startDate']
+const ofADocumentObject = ['id', 'title', 'content', 'contentType', 'date', 'labels']
+
+module.exports = function () {
+  this.When(/^I share the label/, function (callback) {
+    expect(this.myLabel).to.not.be.undefined
+    request(app)
+    .post(`/v2/label/${this.myLabel.id}/sharing`)
+    .set('Content-Type', 'application/json')
+    .use(this.setAuthorizationHeader(this.uid))
+    .expect('Content-Type', /json/)
+    .expect((res) => {
+      expect(res.status).to.equals(201)
+      expect(res.body).to.contain.all.keys(ofASharingObject)
+      expect(res.body.date).not.to.be.null
+      this.mySharing = res.body
+    })
+    .end(callback)
+  })
+
+  this.When(/^I remove the sharing$/, function (callback) {
+    expect(this.myLabel).to.not.be.undefined
+    request(app)
+    .delete(`/v2/label/${this.myLabel.id}/sharing`)
+    .set('Content-Type', 'application/json')
+    .use(this.setAuthorizationHeader(this.uid))
+    .expect(204, callback)
+  })
+
+  this.Then(/^I should (not retrieve|retrieve) the sharing$/, function (get, callback) {
+    expect(this.mySharing).to.not.be.undefined
+    const shoulBeRetrieve = get === 'retrieve'
+    request(app)
+    .get(`/v2/label/${this.mySharing.targetLabel}/sharing`)
+    .use(this.setAuthorizationHeader(this.uid))
+    .expect('Content-Type', /json/)
+    .expect((res) => {
+      if (shoulBeRetrieve) {
+        console.log('BODY:', res.body)
+        expect(res.status).to.equals(200)
+        expect(_.omit(res.body, 'endDate')).to.eql(this.mySharing)
+      } else {
+        expect(res.status).to.equals(404)
+      }
+    })
+    .end(callback)
+  })
+
+  this.Then(/^I should (not retrieve|retrieve) the shared label$/, function (get, callback) {
+    expect(this.mySharing).to.not.be.undefined
+    const shoulBeRetrieve = get === 'retrieve'
+    request(app)
+    .get(`/v2/sharing/${this.mySharing.id}`)
+    .use(this.setAuthorizationHeader(this.uid))
+    .expect('Content-Type', /json/)
+    .expect((res) => {
+      if (shoulBeRetrieve) {
+        expect(res.status).to.equals(200)
+        expect(res.body).to.contain.all.keys(['total', 'hits'])
+        this.myDocuments = res.body.hits
+      } else {
+        expect(res.status).to.equals(404)
+      }
+    })
+    .end(callback)
+  })
+
+  this.Then(/^I should (not retrieve|retrieve) the shared document$/, function (get, callback) {
+    expect(this.myDocument).to.not.be.undefined
+    expect(this.mySharing).to.not.be.undefined
+    const shoulBeRetrieve = get === 'retrieve'
+    request(app)
+    .get(`/v2/sharing/${this.mySharing.id}/${this.myDocument.id}`)
+    .use(this.setAuthorizationHeader(this.uid))
+    .expect('Content-Type', /json/)
+    .expect((res) => {
+      if (shoulBeRetrieve) {
+        expect(res.status).to.equals(200)
+        // console.log('compare:', res.body, _.omit(this.myDocument, '_links'))
+        expect(res.body).to.contain.all.keys(ofADocumentObject)
+        expect(res.body).to.eql(_.omit(this.myDocument, '_links'))
+      } else {
+        expect(res.status).to.equals(404)
+      }
+    })
+    .end(callback)
+  })
+}

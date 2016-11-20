@@ -108,7 +108,7 @@ module.exports = {
    * Restore deleted label.
    */
   restore: function (req, res, next) {
-    labelService.get(req.params.id, true)
+    labelService.get(req.params.labelId, true)
     .then(function (ghost) {
       if (!ghost) {
         return Promise.reject(new errors.NotFound('Label ghost not found.'))

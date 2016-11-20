@@ -1,6 +1,7 @@
 'use strict'
 
 const _ = require('lodash')
+const chance = require('chance').Chance()
 const app = require('../../src/app')
 const expect = require('chai').expect
 const request = require('supertest')
@@ -8,21 +9,28 @@ const request = require('supertest')
 const ofALabelObject = ['id', 'label', 'color', 'date', '_links']
 
 module.exports = function () {
-  this.When(/^I create the label "([^"]*)" with "([^"]*)" as color$/, function (label, color, callback) {
+  this.When(/^I create the following label:$/, function (attrs, callback) {
+    const label = {
+      label: chance.word(),
+      color: chance.color()
+    }
+    attrs.raw().forEach(function (attr) {
+      const prop = attr[0]
+      const value = attr[1]
+      label[prop] = value
+    })
     request(app)
     .post('/v2/label')
-    .send({
-      label: label,
-      color: color
-    })
+    .send(label)
     .set('Content-Type', 'application/json')
     .use(this.setAuthorizationHeader(this.uid))
     .expect('Content-Type', /json/)
-    .expect(function (res) {
+    .expect((res) => {
       expect(res.status).to.equals(201)
       expect(res.body).to.contain.all.keys(ofALabelObject)
-      expect(res.body.label).to.equals(label)
-      expect(res.body.color).to.equals(color)
+      expect(res.body.label).to.equals(label.label)
+      expect(res.body.color).to.equals(label.color)
+      this.myLabel = res.body
     })
     .end(callback)
   })
@@ -33,7 +41,8 @@ module.exports = function () {
     .set('Content-Type', 'application/json')
     .use(this.setAuthorizationHeader(this.uid))
     .expect('Content-Type', /json/)
-    .expect(function (res) {
+    .expect((res) => {
+      expect(res.status).to.equals(200)
       expect(res.body).to.contain.keys('labels', '_links')
       const labels = res.body.labels
       if (labels.length) {
@@ -44,8 +53,8 @@ module.exports = function () {
         })
       }
       this.myLabels = labels
-    }.bind(this))
-    .expect(200, callback)
+    })
+    .end(callback)
   })
 
   this.Then(/^I should (not get|get) the label "([^"]*)" with "([^"]*)" as color in my labels$/, function (get, label, color, callback) {
@@ -74,14 +83,15 @@ module.exports = function () {
     .set('Content-Type', 'application/json')
     .use(this.setAuthorizationHeader(this.uid))
     .expect('Content-Type', /json/)
-    .expect(function (res) {
+    .expect((res) => {
+      expect(res.status).to.equals(200)
       expect(res.body).to.contain.all.keys(ofALabelObject)
       expect(res.body.id).to.equals(this.myLabel.id)
       expect(res.body.label).to.equals(label)
       expect(res.body.color).to.equals(color)
       this.myLabel = res.body
-    }.bind(this))
-    .expect(200, callback)
+    })
+    .end(callback)
   })
 
   this.When(/^I delete the previous label$/, function (callback) {
@@ -99,12 +109,13 @@ module.exports = function () {
     .post('/v2/label/' + this.myLabel.id + '/restore')
     .set('Content-Type', 'application/json')
     .use(this.setAuthorizationHeader(this.uid))
-    .expect(function (res) {
+    .expect((res) => {
+      expect(res.status).to.equals(200)
       expect(res.body).to.contain.all.keys(ofALabelObject)
       expect(res.body.id).to.equals(this.myLabel.id)
       expect(res.body.label).to.equals(this.myLabel.label)
       expect(res.body.color).to.equals(this.myLabel.color)
-    }.bind(this))
-    .expect(200, callback)
+    })
+    .end(callback)
   })
 }

@@ -51,7 +51,7 @@ module.exports = function (router) {
    * @apiSuccessExample Success-Response:
    *     HTTP/1.1 204 OK
    */
-  router.delete('/graveyard/:id', controller.document.destroy)
+  router.delete('/graveyard/:docid', controller.document.destroy)
 
   /**
    * @api {delete} /graveyard Remove permanently all documents of the graveyard.

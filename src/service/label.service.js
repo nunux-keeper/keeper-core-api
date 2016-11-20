@@ -3,6 +3,7 @@
 const _ = require('lodash')
 const logger = require('../helper').logger
 const labelDao = require('../dao').label
+const sharingDao = require('../dao').sharing
 
 /**
  * Label services.
@@ -93,8 +94,13 @@ LabelService.restore = function (ghost) {
  * @return {Object} the destroyed label
  */
 LabelService.destroy = function (label) {
-  return labelDao.remove(label)
-  .then(function (_label) {
+  // Remove eventual sharing
+  const removeSharing = () => {
+    return label.sharing ? sharingDao.remove({id: label.sharing}) : Promise.resolve()
+  }
+  return removeSharing()
+  .then(() => labelDao.remove(label))
+  .then((_label) => {
     logger.info('Label destroyed: %j', _label)
     return Promise.resolve(_label)
   })

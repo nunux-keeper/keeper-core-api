@@ -1,5 +1,6 @@
 'use strict'
 
+const _ = require('lodash')
 const app = require('../../src/app')
 const chance = require('chance').Chance()
 const expect = require('chai').expect
@@ -25,6 +26,9 @@ module.exports = function () {
         doc[prop] = value
       }
     })
+    if (this.myLabel) {
+      doc.labels = [this.myLabel.id]
+    }
     const req = request(app).post('/v2/document')
     if (doc.files) {
       const files = doc.files
@@ -133,7 +137,7 @@ module.exports = function () {
         } else {
           expect(res.body).to.contain.all.keys(ofADocumentObject)
           // console.log('COMPARE:\n', res.body, '\n', this.myDocument)
-          expect(res.body).to.eql(this.myDocument)
+          expect(_.omit(res.body, 'attachments')).to.eql(_.omit(this.myDocument, 'attachments'))
           this.myDocument = res.body
         }
       } else {

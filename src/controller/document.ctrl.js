@@ -183,7 +183,7 @@ module.exports = {
    * Restore deleted document.
    */
   restore: function (req, res, next) {
-    documentService.get(req.params.id)
+    documentService.get(req.params.docid)
     .then(function (ghost) {
       if (!ghost) {
         return Promise.reject(new errors.NotFound('Document ghost not found.'))
@@ -210,7 +210,7 @@ module.exports = {
    * Remove a deleted document.
    */
   destroy: function (req, res, next) {
-    documentService.get(req.params.id)
+    documentService.get(req.params.docid)
     .then(function (ghost) {
       if (!ghost) {
         return Promise.reject(new errors.NotFound('Document ghost not found.'))

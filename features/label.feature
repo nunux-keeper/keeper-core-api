@@ -3,7 +3,9 @@ Feature: Label API
 
     Scenario: Post/Update/Delete/Restore a new label
         Given I am a valid user with the uid "test"
-        When I create the label "test" with "#f2f2f2" as color
+        When I create the following label:
+          | label | test |
+          | color | #f2f2f2 |
         And  I get my labels
         Then I should get the label "test" with "#f2f2f2" as color in my labels
         When I update the previous label with value "test_" and color "#f3f3f3"

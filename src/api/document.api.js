@@ -73,7 +73,7 @@ module.exports = function (router) {
   router.get('/document', controller.document.search)
 
   /**
-   * @api {get} /document Get a document.
+   * @api {get} /document/:id Get a document.
    * @apiVersion 2.0.0
    * @apiName GetDocument
    * @apiGroup document
@@ -84,7 +84,7 @@ module.exports = function (router) {
    *
    * @apiSuccessStructure Document
    */
-  router.get('/document/:id', middleware.document, controller.document.get)
+  router.get('/document/:docid', middleware.document, controller.document.get)
 
   /**
    * @api {put} /document/:id Update a document.
@@ -101,7 +101,7 @@ module.exports = function (router) {
    *
    * @apiSuccessStructure Document
    */
-  router.put('/document/:id', middleware.document, controller.document.update)
+  router.put('/document/:docid', middleware.document, controller.document.update)
 
   /**
    * @api {post} /document Create a document.
@@ -135,7 +135,7 @@ module.exports = function (router) {
    * @apiSuccessExample Success-Response:
    *     HTTP/1.1 204 OK
    */
-  router.delete('/document/:id', middleware.document, controller.document.del)
+  router.delete('/document/:docid', middleware.document, controller.document.del)
 
   /**
    * @api {post} /document/:id/restore Restore a deleted document.
@@ -148,5 +148,5 @@ module.exports = function (router) {
    *
    * @apiSuccessStructure Document
    */
-  router.post('/document/:id/restore', controller.document.restore)
+  router.post('/document/:docid/restore', controller.document.restore)
 }

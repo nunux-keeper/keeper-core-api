@@ -1,0 +1,156 @@
+'use strict'
+
+const hal = require('hal')
+const querystring = require('querystring')
+const errors = require('../helper').errors
+const globals = require('../helper').globals
+const sharingService = require('../service').sharing
+const documentService = require('../service').document
+const decorator = require('../decorator')
+
+/**
+ * Controller to manage sharing.
+ * @module sharing.ctrl
+ */
+module.exports = {
+  /**
+   * Get all user's sharing.
+   */
+  all: function (req, res, next) {
+    sharingService.all(req.user.id)
+    .then(function (sharing) {
+      const resource = new hal.Resource({sharing}, globals.BASE_URL + req.path)
+      // TODO Add items links
+      res.json(resource)
+    }, next)
+  },
+
+  /**
+   * Get sharing details.
+   */
+  get: function (req, res, next) {
+    decorator.decorate(
+      req.requestData.sharing,
+      decorator.sharing.hal()
+    )
+    .then(function (resource) {
+      res.json(resource)
+    }, next)
+  },
+
+  /**
+   * Create new sharing.
+   */
+  create: function (req, res, next) {
+    const label = req.requestData.label
+    if (label.sharing) {
+      // Maybe we should overid the current share...
+      return next(new errors.BadRequest('Label allready shared.'))
+    }
+    req.sanitizeBody('sharing').escape()
+    req.checkBody('startDate', 'Invalid starting date').optional().isDate()
+    req.checkBody('endDate', 'Invalid ending date').optional().isDate()
+    req.checkBody('public', 'Invalid public flag').optional().isBoolean()
+    const validationErrors = req.validationErrors(true)
+    if (validationErrors) {
+      return next(new errors.BadRequest(null, validationErrors))
+    }
+
+    const newSharing = {
+      owner: req.user.id,
+      targetLabel: label.id,
+      startDate: req.body.startDate,
+      endDate: req.body.endDate,
+      'public': req.body.public
+    }
+    sharingService.create(newSharing)
+    .then(function (sharing) {
+      return decorator.decorate(
+        sharing,
+        decorator.sharing.hal()
+      )
+    })
+    .then(function (resource) {
+      res.status(201).json(resource)
+    }, next)
+  },
+
+  /**
+   * Put sharing modification.
+   */
+  update: function (req, res, next) {
+    req.sanitizeBody('sharing').escape()
+    req.checkBody('startDate', 'Invalid starting date').optional().isDate()
+    req.checkBody('endDate', 'Invalid ending date').optional().isDate()
+    const validationErrors = req.validationErrors(true)
+    if (validationErrors) {
+      return next(new errors.BadRequest(null, validationErrors))
+    }
+
+    const update = {
+      startDate: req.body.startDate,
+      endDate: req.body.endDate
+    }
+    sharingService.update(req.requestData.sharing, update)
+    .then(function (sharing) {
+      return decorator.decorate(
+        sharing,
+        decorator.sharing.hal()
+      )
+    })
+    .then(function (resource) {
+      res.status(200).json(resource)
+    }, next)
+  },
+
+  /**
+   * Delete a sharing.
+   */
+  del: function (req, res, next) {
+    const sharing = req.requestData.sharing
+    sharingService.remove(sharing)
+    .then(function () {
+      res.status(204).json()
+    }, next)
+  },
+
+  /**
+   * Get document of a sharing.
+   */
+  getDocument: function (req, res, next) {
+    // Enrich status with computed properties...
+    decorator.decorate(
+      req.requestData.document,
+      decorator.document.privacy()
+    )
+    .then(function (resource) {
+      res.json(resource)
+    }, next)
+  },
+
+  /**
+   * Get documents of the sharing.
+   */
+  getDocuments: function (req, res, next) {
+    req.checkQuery('from', 'Invalid from param').optional().isAlphanumeric()
+    req.checkQuery('size', 'Invalid size param').optional().isInt({ min: 1, max: 100 })
+    req.checkQuery('order', 'Invalid order param').optional().isIn(['asc', 'desc'])
+    const validationErrors = req.validationErrors(true)
+    if (validationErrors) {
+      return next(new errors.BadRequest(null, validationErrors))
+    }
+
+    const query = Object.assign({order: 'asc', from: 0, size: 50}, req.query, {labels: req.requestData.label.id})
+    documentService.search(req.requestData.sharing.owner, query)
+    .then(function (result) {
+      const resource = new hal.Resource(result, globals.BASE_URL + req.url)
+      query.from = query.form + 1
+      if (result.total > query.from * query.size) {
+        const qs = querystring.stringify(query)
+        resource.link('next', globals.BASE_URL + req.path + '?' + qs)
+      }
+      resource.link('get', {href: globals.BASE_URL + req.path + '/{id}', templated: true})
+      res.json(resource)
+    }, next)
+  }
+}

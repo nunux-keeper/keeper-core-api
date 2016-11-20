@@ -16,6 +16,7 @@ collect, organize, and retrieve online documents.
 * Create labels (name, color)
 * Classify documents with labels
 * Remove and restore documents
+* Share documents with other people
 * Import and Export documents of an user
 * RESTFul API (with [HATOAS][hateoas] support)
 * Authentication delegated to external identity provider (like
