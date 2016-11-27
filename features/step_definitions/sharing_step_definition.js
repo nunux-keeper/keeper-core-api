@@ -25,6 +25,29 @@ module.exports = function () {
     .end(callback)
   })
 
+  this.When(/^I update the sharing:$/, function (attrs, callback) {
+    expect(this.myLabel).to.not.be.undefined
+    const sharing = {}
+    attrs.raw().forEach(function (attr) {
+      const prop = attr[0]
+      const value = attr[1]
+      sharing[prop] = value
+    })
+    request(app)
+    .put(`/v2/label/${this.myLabel.id}/sharing`)
+    .send(sharing)
+    .set('Content-Type', 'application/json')
+    .use(this.setAuthorizationHeader(this.uid))
+    .expect('Content-Type', /json/)
+    .expect((res) => {
+      expect(res.status).to.equals(200)
+      expect(res.body).to.contain.all.keys(ofASharingObject)
+      expect(res.body).to.satisfy((obj) => _.isMatch(obj, sharing))
+      this.mySharing = res.body
+    })
+    .end(callback)
+  })
+
   this.When(/^I remove the sharing$/, function (callback) {
     expect(this.myLabel).to.not.be.undefined
     request(app)
@@ -43,11 +66,11 @@ module.exports = function () {
     .expect('Content-Type', /json/)
     .expect((res) => {
       if (shoulBeRetrieve) {
-        console.log('BODY:', res.body)
         expect(res.status).to.equals(200)
-        expect(_.omit(res.body, 'endDate')).to.eql(this.mySharing)
+        // console.log('compare:', res.body, this.mySharing)
+        expect(_.omit(res.body, 'endDate')).to.eql(_.omit(this.mySharing, 'endDate'))
       } else {
-        expect(res.status).to.equals(404)
+        expect(res.status).to.be.within(401, 404)
       }
     })
     .end(callback)
@@ -66,7 +89,7 @@ module.exports = function () {
         expect(res.body).to.contain.all.keys(['total', 'hits'])
         this.myDocuments = res.body.hits
       } else {
-        expect(res.status).to.equals(404)
+        expect(res.status).to.be.within(401, 404)
       }
     })
     .end(callback)
@@ -87,7 +110,7 @@ module.exports = function () {
         expect(res.body).to.contain.all.keys(ofADocumentObject)
         expect(res.body).to.eql(_.omit(this.myDocument, '_links'))
       } else {
-        expect(res.status).to.equals(404)
+        expect(res.status).to.be.within(401, 404)
       }
     })
     .end(callback)

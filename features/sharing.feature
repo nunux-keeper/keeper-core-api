@@ -25,9 +25,26 @@ Feature: Sharing API
     And  I should not retrieve the shared label
     And  I should not retrieve the shared document
 
-# TODO:
-# - Test update
-# - Same test on labels
-# - Test attachments
-# - Test search in a label sharing
-# - Test target deletion
+  Scenario: Share a public document
+    Given I am a valid user with the uid "test"
+    When I create the following label:
+      | label | public  |
+      | color | #f2f2f2 |
+    And  I create the following document:
+      | title | Document to publish |
+      | content | Lorem ipsum dolor sit amet |
+      | contentType | text/plain; charset=utf-8 |
+    And  I share the label
+    Then I should retrieve the sharing
+    Given I am an anonymous user
+    Then I should not retrieve the document
+    And  I should not retrieve the shared label
+    And  I should not retrieve the shared document
+    Given I am a valid user with the uid "test"
+    When I update the sharing:
+      | public | true  |
+    Then I should retrieve the sharing
+    Given I am an anonymous user
+    Then  I should retrieve the shared label
+    And  I should retrieve the shared document
+

@@ -14,6 +14,11 @@ module.exports = {
       if (!sharing) {
         return next(new errors.NotFound('Sharing not found.'))
       }
+      // Ceck that the sharing can be accessed
+      if (!sharing.public && !req.user) {
+        return next(new errors.Unauthorized())
+      }
+
       // Check that the sharing is available in the current time frame
       if (sharing.startDate > Date.now() || (sharing.endDate && sharing.endDate < Date.now())) {
         return next(new errors.NotFound('Sharing not available.'))

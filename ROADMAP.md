@@ -1,5 +1,6 @@
 # Roadmap
 
+- Follow a shared label (with notification)
 - Create basic documentation
 - Add revision to documents (in order to be able to manage sync)
 - Add ttl to documents (in order to manage temp documents)

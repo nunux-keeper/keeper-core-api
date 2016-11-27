@@ -4,6 +4,7 @@ const url = require('url')
 const jwt = require('jsonwebtoken')
 const Cookies = require('cookies')
 const errors = require('../helper').errors
+const logger = require('../helper').logger
 const globals = require('../helper').globals
 const validators = require('../helper').validators
 const userService = require('../service').user
@@ -19,7 +20,7 @@ if (globals.TOKEN_PUB_KEY) {
 /**
  * Middleware to handle Token.
  */
-module.exports = function (realm) {
+module.exports = function (realm, exceptions) {
   return function (req, res, next) {
     let token = null
     let setCookie = false
@@ -35,6 +36,11 @@ module.exports = function (realm) {
       token = cookies.get('access_token')
     }
     if (!token) {
+      // Ignore the middleware if the path match an exception
+      if (exceptions.find((exp) => req.path.match(exp))) {
+        logger.debug('No token and %s is public. So the token middleware is ignored.', req.path)
+        return next()
+      }
       return next(new errors.Unauthorized('Missing access token'))
     }
     jwt.verify(token, key, {algorithm: algorithm}, function (err, decoded) {
@@ -60,7 +66,7 @@ module.exports = function (realm) {
         }
         next()
       }).catch((e) => {
-        console.error('UNABLE TO LOGIN', e)
+        logger.error('Unable to login', e)
         return next(new errors.Unauthorized(e))
       })
     })

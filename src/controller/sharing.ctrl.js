@@ -82,6 +82,7 @@ module.exports = {
     req.sanitizeBody('sharing').escape()
     req.checkBody('startDate', 'Invalid starting date').optional().isDate()
     req.checkBody('endDate', 'Invalid ending date').optional().isDate()
+    req.checkBody('public', 'Invalid public flag').optional().isBoolean()
     const validationErrors = req.validationErrors(true)
     if (validationErrors) {
       return next(new errors.BadRequest(null, validationErrors))
@@ -89,7 +90,8 @@ module.exports = {
 
     const update = {
       startDate: req.body.startDate,
-      endDate: req.body.endDate
+      endDate: req.body.endDate,
+      'public': req.body.public
     }
     sharingService.update(req.requestData.sharing, update)
     .then(function (sharing) {
