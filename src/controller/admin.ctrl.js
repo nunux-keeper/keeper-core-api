@@ -13,7 +13,7 @@ module.exports = {
     const decorators = [
       decorator.user.stats(),
       decorator.user.gravatar(),
-      decorator.user.hal(req.path)
+      decorator.user.hal()
     ]
     userService.stream(decorators)
     .then(function (s) {
@@ -29,7 +29,7 @@ module.exports = {
     const decorators = [
       decorator.user.stats(),
       decorator.user.gravatar(),
-      decorator.user.hal(req.path)
+      decorator.user.hal()
     ]
     userService.get(req.params.id, decorators)
     .then(function (user) {

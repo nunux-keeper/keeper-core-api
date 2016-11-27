@@ -26,14 +26,12 @@ const decorateWithHash = function (profile) {
 
 /**
  * Add HAL data into the profile.
- * @param {String} url Path URL
- * @return {Function} the decorator function
+ * @param {Object} profile Profile DTO
+ * @return {Promise} promise of the dto
  */
-const decorateWithHalData = function (url) {
-  return function (profile) {
-    const resource = new hal.Resource(profile, globals.BASE_URL + url)
-    return Promise.resolve(resource)
-  }
+const decorateWithHalData = function (profile) {
+  const resource = new hal.Resource(profile, `${globals.BASE_URL}/profile`)
+  return Promise.resolve(resource)
 }
 
 module.exports = {
@@ -54,10 +52,9 @@ module.exports = {
 
   /**
    * Decorate profile DTO with HAL data.
-   * @param {String} url Path URL
    * @return {Function} decorator function
    */
-  hal: function (url) {
-    return decorateWithHalData(url)
+  hal: function () {
+    return decorateWithHalData
   }
 }

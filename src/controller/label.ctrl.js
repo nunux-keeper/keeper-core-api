@@ -18,7 +18,7 @@ module.exports = {
     labelService.all(req.user.id)
     .then(function (labels) {
       const resource = new hal.Resource({labels}, globals.BASE_URL + req.path)
-      resource.link('find', {href: globals.BASE_URL + req.path + '/{id}', templated: true})
+      resource.link('get', {href: globals.BASE_URL + req.path + '/{id}', templated: true})
       res.json(resource)
     }, next)
   },
@@ -29,7 +29,7 @@ module.exports = {
   get: function (req, res, next) {
     decorator.decorate(
       req.requestData.label,
-      decorator.label.hal(req.path, true)
+      decorator.label.hal()
     )
     .then(function (resource) {
       res.json(resource)
@@ -57,7 +57,7 @@ module.exports = {
     .then(function (label) {
       return decorator.decorate(
         label,
-        decorator.label.hal(`${req.path}/${label.id}`, false)
+        decorator.label.hal()
       )
     })
     .then(function (resource) {
@@ -85,7 +85,7 @@ module.exports = {
     .then(function (label) {
       return decorator.decorate(
         label,
-        decorator.label.hal(req.path, false)
+        decorator.label.hal()
       )
     })
     .then(function (resource) {
@@ -108,7 +108,7 @@ module.exports = {
    * Restore deleted label.
    */
   restore: function (req, res, next) {
-    labelService.get(req.params.id, true)
+    labelService.get(req.params.labelId, true)
     .then(function (ghost) {
       if (!ghost) {
         return Promise.reject(new errors.NotFound('Label ghost not found.'))
@@ -122,7 +122,7 @@ module.exports = {
     .then(function (label) {
       return decorator.decorate(
         label,
-        decorator.label.hal(req.path, false)
+        decorator.label.hal()
       )
     })
     .then(function (resource) {

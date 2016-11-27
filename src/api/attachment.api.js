@@ -26,7 +26,7 @@ module.exports = function (router) {
    * @apiSuccessExample Success-Response:
    *     HTTP/1.1 200 OK
    */
-  router.get('/document/:id/files/:key', middleware.document, controller.attachment.get)
+  router.get('/document/:docid/files/:key', middleware.document, controller.attachment.get)
 
   /**
    * @api {delete} /document/:id/files/:key Remove document attachment file.
@@ -42,7 +42,7 @@ module.exports = function (router) {
    * @apiSuccessExample Success-Response:
    *     HTTP/1.1 204 OK
    */
-  router.delete('/document/:id/files/:key', middleware.document, controller.attachment.del)
+  router.delete('/document/:docid/files/:key', middleware.document, controller.attachment.del)
 
   /**
    * @api {post} /document/:id/files Upload document attachment file(s).
@@ -58,5 +58,5 @@ module.exports = function (router) {
    * @apiSuccessExample Success-Response:
    *     HTTP/1.1 201 OK
    */
-  router.post('/document/:id/files', middleware.document, controller.attachment.post)
+  router.post('/document/:docid/files', middleware.document, controller.attachment.post)
 }

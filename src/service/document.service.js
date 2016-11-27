@@ -174,7 +174,6 @@ DocumentService.update = function (doc, update) {
  * @return {Array} deleted document (it's ghost)
  */
 DocumentService.remove = function (doc) {
-  doc.date = new Date()
   return documentDao.update(doc, {ghost: true})
   .then(function (ghost) {
     logger.info('Document removed: %j', ghost.id)

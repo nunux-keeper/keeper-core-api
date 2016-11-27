@@ -1,14 +1,14 @@
 'use strict'
 
 const _ = require('lodash')
-const AbstractMongodbDao = require('./common/abstract.dao')
+const AbstractElasticsearchDao = require('./common/abstract.dao')
 const QueryBuilder = require('./common/query-builder')
 
 /**
  * Document DAO.
  * @module document.dao
  */
-class DocumentDao extends AbstractMongodbDao {
+class DocumentDao extends AbstractElasticsearchDao {
   constructor (client, index, useAsMainDatabaseEngine) {
     super(client, index, 'document')
     this.storeContent = useAsMainDatabaseEngine ? 'yes' : 'no'
@@ -33,7 +33,7 @@ class DocumentDao extends AbstractMongodbDao {
   buildFindQuery (query, params) {
     params = params || {}
     return new QueryBuilder()
-    .exclude(['content', 'contentType', 'owner', 'date'])
+    .exclude(['content', 'contentType', 'date'])
     .filtered(_.pick(query, ['owner', 'ghost']))
     .size(params.size)
     .from(params.from)

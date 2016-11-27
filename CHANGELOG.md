@@ -12,6 +12,7 @@ Changelog
 * Create labels (name, color)
 * Classify documents with labels
 * Remove and restore documents
+* Share documents with other people
 * Import and Export documents of an user
 * Store attachments on disk or on S3
 * Index documents into ElasticSearch

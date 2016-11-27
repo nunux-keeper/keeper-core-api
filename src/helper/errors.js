@@ -11,8 +11,9 @@ const errorBuilder = function (code, defaultMessage) {
 }
 
 module.exports = {
-  BadRequest:   errorBuilder(400, 'Bad request'),
-  Unauthorized: errorBuilder(401, 'Unauthorized'),
-  Forbidden:    errorBuilder(403, 'Forbidden'),
-  NotFound:     errorBuilder(404, 'Not found')
+  BadRequest:    errorBuilder(400, 'Bad request'),
+  Unauthorized:  errorBuilder(401, 'Unauthorized'),
+  Forbidden:     errorBuilder(403, 'Forbidden'),
+  NotFound:      errorBuilder(404, 'Not found'),
+  InternalError: errorBuilder(500, 'Internal Server Error')
 }

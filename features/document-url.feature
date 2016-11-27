@@ -17,10 +17,10 @@ Feature: Document API using url
     Scenario: Post a HTML URL document
         Given I am a valid user with the uid "test"
         When I create the following document:
-            | origin | http://reader.nunux.org |
+            | origin | https://reader.nunux.org |
         Then I should retrieve the document
         And  I should have "text/html; charset=utf-8" into the document contentType
-        And  I should have "http://reader.nunux.org" into the document origin
+        And  I should have "https://reader.nunux.org" into the document origin
         When I am waiting 1000 ms
         Then I should retrieve the document 1st attachment
         When I delete the document
@@ -29,11 +29,11 @@ Feature: Document API using url
     Scenario: Post a bookmark URL document
         Given I am a valid user with the uid "test"
         When I create the following document:
-            | origin | bookmark+http://reader.nunux.org |
+            | origin | bookmark+https://reader.nunux.org |
         Then I should retrieve the document
         And  I should have "text/html" into the document contentType
         And  I should have 1 attachment(s) of "image/png" into the document
-        And  I should have "http://reader.nunux.org" into the document origin
+        And  I should have "https://reader.nunux.org" into the document origin
         When I am waiting 1000 ms
         Then I should retrieve the document 1st attachment
         When I delete the document

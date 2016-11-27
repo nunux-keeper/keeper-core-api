@@ -7,7 +7,7 @@ const labelService = require('../service').label
  * Middleware to get label form path params.
  */
 module.exports = function (req, res, next) {
-  labelService.get(req.params.id)
+  labelService.get(req.params.labelId)
   .then(function (label) {
     if (!label) {
       return next(new errors.NotFound('Label not found.'))

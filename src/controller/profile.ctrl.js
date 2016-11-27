@@ -13,7 +13,7 @@ module.exports = {
       req.user,
       decorator.profile.privacy(),
       decorator.profile.hash(),
-      decorator.profile.hal(req.path)
+      decorator.profile.hal()
     )
     .then((resource) => {
       res.json(resource)
@@ -40,7 +40,7 @@ module.exports = {
         req.user,
         decorator.profile.privacy(),
         decorator.profile.hash(),
-        decorator.profile.hal(req.path)
+        decorator.profile.hal()
       )
     })
     .then(function (resource) {

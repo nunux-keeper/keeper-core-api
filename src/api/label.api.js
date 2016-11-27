@@ -49,7 +49,7 @@ module.exports = function (router) {
   /**
    * @api {get} /label/:id Get label details.
    * @apiVersion 2.0.0
-   * @apiName GetAllLabel
+   * @apiName GetLabelDetail
    * @apiGroup label
    * @apiPermission user
    *
@@ -63,7 +63,7 @@ module.exports = function (router) {
    *       "color": "#FE2EC8"
    *     }
    */
-  router.get('/label/:id', middleware.label, controller.label.get)
+  router.get('/label/:labelId', middleware.label, controller.label.get)
 
   /**
    * @api {put} /label/:id Update label details.
@@ -79,7 +79,7 @@ module.exports = function (router) {
    *
    * @apiSuccessStructure Label
    */
-  router.put('/label/:id', middleware.label, controller.label.update)
+  router.put('/label/:labelId', middleware.label, controller.label.update)
 
   /**
    * @api {post} /label Create new label.
@@ -108,7 +108,7 @@ module.exports = function (router) {
    * @apiSuccessExample Success-Response:
    *     HTTP/1.1 204 OK
    */
-  router.delete('/label/:id', middleware.label, controller.label.del)
+  router.delete('/label/:labelId', middleware.label, controller.label.del)
 
   /**
    * @api {post} /label/:id/restore Restore a deleted label.
@@ -121,5 +121,5 @@ module.exports = function (router) {
    *
    * @apiSuccessStructure Label
    */
-  router.post('/label/:id/restore', controller.label.restore)
+  router.post('/label/:labelId/restore', controller.label.restore)
 }

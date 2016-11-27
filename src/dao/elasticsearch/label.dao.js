@@ -1,12 +1,12 @@
 'use strict'
 
-const AbstractMongodbDao = require('./common/abstract.dao')
+const AbstractElasticsearchDao = require('./common/abstract.dao')
 
 /**
  * Label DAO.
  * @module label.dao
  */
-class LabelDao extends AbstractMongodbDao {
+class LabelDao extends AbstractElasticsearchDao {
   constructor (client, index) {
     super(client, index, 'label')
   }
@@ -14,11 +14,12 @@ class LabelDao extends AbstractMongodbDao {
   getMapping () {
     return {
       properties: {
-        label: {type: 'string', store: 'yes', index: 'not_analyzed'},
-        color: {type: 'string', store: 'yes', index: 'not_analyzed'},
-        owner: {type: 'string', store: 'yes', index: 'not_analyzed'},
-        ghost: {type: 'boolean', store: 'yes'},
-        date : {type: 'date', store: 'yes', format: 'date_optional_time'}
+        label   : {type: 'string', store: 'yes', index: 'not_analyzed'},
+        color   : {type: 'string', store: 'yes', index: 'not_analyzed'},
+        owner   : {type: 'string', store: 'yes', index: 'not_analyzed'},
+        ghost   : {type: 'boolean', store: 'yes'},
+        sharing : {type: 'string', store: 'yes', index: 'not_analyzed'},
+        date    : {type: 'date', store: 'yes', format: 'date_optional_time'}
       }
     }
   }

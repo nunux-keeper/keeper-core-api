@@ -37,7 +37,7 @@ app.use('/doc', express.static(path.join(__dirname, '..', 'documentation')))
 app.use('/', require('./api/info')())
 
 // Protect API with access token.
-app.use(middleware.token(globals.REALM))
+app.use(middleware.token(globals.REALM, [/^\/v2\/sharing\//]))
 
 // Register API...
 app.use('/v2', require('./api'))
