@@ -4,7 +4,6 @@ const gulp = require('gulp')
 const cucumber = require('gulp-cucumber')
 const eslint = require('gulp-eslint')
 const todo = require('gulp-todo')
-const apidoc = require('gulp-api-doc')
 
 // Task to lint the code.
 gulp.task('lint', function () {
@@ -30,22 +29,12 @@ gulp.task('test', function () {
   })
 })
 
-// Task to generate the API documentation
-gulp.task('doc', function () {
-  return gulp.src('src/api')
-  .pipe(apidoc())
-  .pipe(gulp.dest('documentation'))
-})
-
 // Task to generate the TODO file
 gulp.task('todo', function () {
   gulp.src(['src/**/*.js'])
   .pipe(todo())
   .pipe(gulp.dest('./'))
 })
-
-// Task to install the app (nothing more than generate the doc)
-gulp.task('install', ['doc'])
 
 // Default task.
 gulp.task('default', ['lint', 'todo'], function () {

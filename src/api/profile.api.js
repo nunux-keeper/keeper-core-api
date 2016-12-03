@@ -7,41 +7,42 @@ const controller = require('../controller')
  */
 module.exports = function (router) {
   /**
-   * @apiDefineSuccessStructure Profile
-   * @apiSuccess {String}  uid  ID of the User (email).
-   * @apiSuccess {String}  name Name of the User.
-   * @apiSuccess {Date}    date Date of the registration.
-   *
-   * @apiSuccessExample Success-Response:
-   *     HTTP/1.1 200 OK
-   *     {
-   *       "uid": "jhon.doe@foo.bar",
-   *       "name": "Jhon Doe",
-   *       "date": "1373964740026"
-   *     }
-   */
-
-  /**
-   * @api {get} /profile Get current profile informations.
-   * @apiVersion 2.0.0
-   * @apiName GetProfile
-   * @apiGroup profile
-   * @apiPermission user
-   *
-   * @apiSuccessStructure Profile
+   * @swagger
+   * /v2/profile:
+   *   get:
+   *     summary: Get current profile informations
+   *     tags:
+   *       - profile
+   *     parameters:
+   *       - $ref: '#/parameters/authorization'
+   *     responses:
+   *       200:
+   *         description: Success
+   *         schema:
+   *           $ref: "#/definitions/Profile"
    */
   router.get('/profile', controller.profile.get)
 
   /**
-   * @api {put} /profile Update current profile informations.
-   * @apiVersion 2.0.0
-   * @apiName UpdateProfile
-   * @apiGroup profile
-   * @apiPermission user
-   *
-   * @apiParam {String} alias Alias of the profile.
-   *
-   * @apiSuccessStructure Profile
+   * @swagger
+   * /v2/profile:
+   *   put:
+   *     summary: Update current profile informations
+   *     tags:
+   *       - profile
+   *     parameters:
+   *       - $ref: '#/parameters/authorization'
+   *       - name: body
+   *         description: Profile values to update
+   *         in: body
+   *         required: true
+   *         schema:
+   *           $ref: '#/definitions/ProfilePayload'
+   *     responses:
+   *       200:
+   *         description: Success
+   *         schema:
+   *           $ref: "#/definitions/Profile"
    */
   router.put('/profile', controller.profile.update)
 }

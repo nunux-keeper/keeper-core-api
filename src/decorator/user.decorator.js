@@ -2,8 +2,8 @@
 
 const crypto = require('crypto')
 const hal = require('hal')
-const globals = require('../helper').globals
 const storage = require('../storage')
+const urlConfig = require('../helper').urlConfig
 const documentDao = require('../dao').document
 
 /**
@@ -40,8 +40,8 @@ const decorateWithStatsData = function (user) {
  * @return {Promise} promise of the dto
  */
 const decorateWithHalData = function (user) {
-  const resource = new hal.Resource(user, `${globals.BASE_URL}/admin/user/${user.id}`)
-  resource.link('all', globals.BASE_URL + '/admin/user')
+  const resource = new hal.Resource(user, urlConfig.resolve(`/admin/user/${user.id}`))
+  resource.link('all', urlConfig.resolve('/admin/user'))
   return Promise.resolve(resource)
 }
 

@@ -1,0 +1,206 @@
+definitions:
+  Info:
+    type: object
+    properties:
+      name:
+        type: string
+        description: Project name
+      description:
+        type: string
+        description: Project description
+      version:
+        type: string
+        description: Project version
+      apiVersion:
+        type: string
+        description: API version
+      env:
+        type: string
+        description: Environment (development/production)
+  Error:
+    type: object
+    properties:
+      error:
+        type: string
+        description: Error description
+      meta:
+        type: object
+        description: Error meta data
+  SearchResult:
+    type: object
+    properties:
+      total:
+        type: integer
+        description: Total of items
+      hits:
+        type: array
+        items:
+          $ref: "#/definitions/Document"
+  Attachment:
+    type: object
+    properties:
+      key:
+        type: string
+        description: Attachment key
+      contentType:
+        type: string
+        description: Content type of the attachment
+      origin:
+        type: string
+        description: Source URL of the attachment
+  Document:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Document ID
+      title:
+        type: string
+        description: Title of the document
+      content:
+        type: string
+        description: Content of the document
+      contentType:
+        type: string
+        description: Content type of the document
+      origin:
+        type: string
+        description: Source URL of the document
+      date:
+        type: string
+        format: date-time
+        description: Date of the last modification
+      labels:
+        type: array
+        description: Lables of the document
+        items:
+          type: string
+      attacments:
+        type: array
+        description: Document attachments
+        items:
+          $ref: "#/definitions/Attachment"
+  DocumentPayload:
+    type: object
+    properties:
+      title:
+        type: string
+        description: Title of the document
+      content:
+        type: string
+        description: Content of the document
+      origin:
+        type: string
+        description: Source URL of the document
+      labels:
+        type: array
+        description: Lables of the document
+        items:
+          type: string
+  Label:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Label ID
+      label:
+        type: string
+        description: Label value
+      color:
+        type: string
+        description: Color
+  LabelPayload:
+    type: object
+    properties:
+      label:
+        type: string
+        description: Label value
+      color:
+        type: string
+        description: Color
+  Profile:
+    type: object
+    properties:
+      uid:
+        type: string
+        description: User ID (email)
+      name:
+        type: string
+        description: "User's name"
+      date:
+        type: string
+        format: date-time
+        description: Registration date
+  ProfilePayload:
+    type: object
+    properties:
+      alias:
+        type: string
+        description: Profile alias
+  Sharing:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Sharing ID
+      targetLabel:
+        type: string
+        description: Targeted label ID
+      date:
+        type: string
+        format: date-time
+        description: Last modification date
+      startDate:
+        type: string
+        format: date-time
+        description: Date to start the sharing
+      endDate:
+        type: string
+        format: date-time
+        description: Date to end the sharing
+      public:
+        type: boolean
+        description: Set if the sharing is public or not
+  SharingPayload:
+    type: object
+    properties:
+      startDate:
+        type: string
+        format: date-time
+        description: Date to start the sharing
+      endDate:
+        type: string
+        format: date-time
+        description: Date to end the sharing
+      public:
+        type: boolean
+        description: Set if the sharing is public or not
+  User:
+    type: object
+    properties:
+      id:
+        type: string
+        description: User technical ID
+      uid:
+        type: string
+        description: User ID (email)
+      name:
+        type: string
+        description: "User's name"
+      date:
+        type: string
+        format: date-time
+        description: Registration date
+      publicAlias:
+        type: string
+        description: Public alias
+      documents:
+        type: integer
+        description: Number of documents
+      storage:
+        type: integer
+        description: Storage used (bytes)
+      gravatar:
+        type: string
+        description: Gravatar URL
+

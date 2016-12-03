@@ -1,0 +1,15 @@
+tags:
+  - name: admin
+    description: Administration operations
+  - name: document
+    description: Documents operations
+  - name: label
+    description: Labels operations
+  - name: graveyard
+    description: Graveyard operations
+  - name: attachment
+    description: Attachments operations
+  - name: sharing
+    description: Sharing operations
+  - name: profile
+    description: Profile operations

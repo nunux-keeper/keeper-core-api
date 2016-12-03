@@ -2,7 +2,7 @@
 
 const hal = require('hal')
 const errors = require('../helper').errors
-const globals = require('../helper').globals
+const urlConfig = require('../helper').urlConfig
 const attachmentService = require('../service').attachment
 const documentService = require('../service').document
 
@@ -67,7 +67,7 @@ AttachementCtrl.post = function (req, res, next) {
   const doc = req.requestData.document
   documentService.addAttachment(doc, req.files)
   .then(function (result) {
-    const resource = new hal.Resource(result, globals.BASE_URL + req.path + '/' + result.id)
+    const resource = new hal.Resource(result, urlConfig.resolve(`/attachment/${result.id}`))
     res.status(201).json(resource)
   }, next)
 }

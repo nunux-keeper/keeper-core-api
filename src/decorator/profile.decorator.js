@@ -3,7 +3,7 @@
 const _ = require('lodash')
 const hal = require('hal')
 const hash = require('../helper/hash').hash
-const globals = require('../helper').globals
+const urlConfig = require('../helper').urlConfig
 
 /**
  * Remove private data from profile.
@@ -30,7 +30,7 @@ const decorateWithHash = function (profile) {
  * @return {Promise} promise of the dto
  */
 const decorateWithHalData = function (profile) {
-  const resource = new hal.Resource(profile, `${globals.BASE_URL}/profile`)
+  const resource = new hal.Resource(profile, urlConfig.resolve('/profile'))
   return Promise.resolve(resource)
 }
 

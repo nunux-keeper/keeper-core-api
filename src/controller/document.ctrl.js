@@ -4,7 +4,7 @@ const _ = require('lodash')
 const hal = require('hal')
 const querystring = require('querystring')
 const errors = require('../helper').errors
-const globals = require('../helper').globals
+const urlConfig = require('../helper').urlConfig
 const decorator = require('../decorator')
 const documentService = require('../service').document
 
@@ -64,13 +64,13 @@ module.exports = {
     const query = Object.assign({order: 'asc', from:0, size: 50}, req.query)
     documentService.search(req.user.id, query)
     .then(function (result) {
-      const resource = new hal.Resource(result, globals.BASE_URL + req.url)
+      const resource = new hal.Resource(result, urlConfig.resolve('/document'))
       query.from = query.form + 1
       if (result.total > query.from * query.size) {
         const qs = querystring.stringify(query)
-        resource.link('next', globals.BASE_URL + req.path + '?' + qs)
+        resource.link('next', urlConfig.resolve(`/document?${qs}`))
       }
-      resource.link('get', {href: globals.BASE_URL + req.path + '/{id}', templated: true})
+      resource.link('get', {href: urlConfig.resolve('/document/{id}'), templated: true})
       res.json(resource)
     }, next)
   },

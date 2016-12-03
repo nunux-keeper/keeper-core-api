@@ -2,15 +2,8 @@
   "author": "Nicolas Carlier <https://github.com/ncarlier>",
   "name": "keeper-core-api",
   "version": "2.0.0",
-  "description": "Keeper core API",
+  "description": "Nunux Keeper core API",
   "license": "GPL-3.0",
-  "apidoc": {
-    "title": "Nunux Keeper core API documentation",
-    "url": "https://api.nunux.org/keeper/v2",
-    "template": {
-      "withCompare": false
-    }
-  },
   "repository": {
     "type": "git",
     "url": "gitlab.com:nunux-keeper/keeper-core-api.git"
@@ -18,9 +11,7 @@
   "scripts": {
     "start": "node --harmony src/cluster | bunyan",
     "debug": "node-inspector & node --harmony --debug src/cluster",
-    "doc": "node --harmony `which gulp` doc",
     "test": "node --harmony `which gulp` | bunyan",
-    "postinstall": "node --harmony `which gulp` install",
     "export": "node --harmony src/job/export",
     "import": "node --harmony src/job/import",
     "downloader": "node --harmony src/daemon/downloader",
@@ -54,6 +45,8 @@
     "node-readability": "^2.2.0",
     "redis": "^2.6.2",
     "request": "^2.73.0",
+    "swagger-jsdoc": "^1.8.2",
+    "swagger-ui-express": "^1.0.2",
     "webshot": "^0.18.0",
     "when": "^3.7.7"
   },
@@ -64,7 +57,6 @@
     "eslint-plugin-promise": "^1.3.2",
     "eslint-plugin-standard": "^1.3.2",
     "gulp": "^3.9.1",
-    "gulp-api-doc": "^1.1.0",
     "gulp-cucumber": "0.0.21",
     "gulp-eslint": "^3.0.1",
     "gulp-todo": "^4.1.0",

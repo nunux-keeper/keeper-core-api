@@ -16,8 +16,6 @@ const globals = {
   VERSION: pkg.version,
   // App env
   ENV: process.env.NODE_ENV || 'development',
-  // Server port
-  PORT: process.env.APP_PORT || 3000,
   // Auth realm
   AUTH_REALM: process.env.APP_AUTH_REALM,
   // Database URI
@@ -31,8 +29,5 @@ const globals = {
   // Auto-provisioning users
   AUTO_PROVISIONING_USERS: process.env.APP_AUTO_PROVISIONING_USERS !== false
 }
-
-globals.REALM = process.env.APP_REALM || 'http://localhost:' + globals.PORT
-globals.BASE_URL = globals.REALM + '/v2'
 
 module.exports = globals

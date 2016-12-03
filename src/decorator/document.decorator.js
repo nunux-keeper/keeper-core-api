@@ -2,7 +2,7 @@
 
 const _ = require('lodash')
 const hal = require('hal')
-const globals = require('../helper').globals
+const urlConfig = require('../helper').urlConfig
 
 /**
  * Remove private data from document.
@@ -19,9 +19,9 @@ const decorateWithoutPrivateData = function (doc) {
  * @return {Promise} promise of the dto
  */
 const decorateWithHalData = function (doc) {
-  const resource = new hal.Resource(doc, `${globals.BASE_URL}/document/${doc.id}`)
-  resource.link('search', globals.BASE_URL + '/document')
-  resource.link('raw', `${globals.BASE_URL}/document/${doc.id}?raw`)
+  const resource = new hal.Resource(doc, urlConfig.resolve(`/document/${doc.id}`))
+  resource.link('search', urlConfig.resolve('/document'))
+  resource.link('raw', urlConfig.resolve(`/document/${doc.id}?raw`))
   return Promise.resolve(resource)
 }
 

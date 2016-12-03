@@ -1,7 +1,7 @@
 'use strict'
 
 const hal = require('hal')
-const globals = require('../helper').globals
+const urlConfig = require('../helper').urlConfig
 
 /**
  * Add HAL data into the label.
@@ -9,8 +9,8 @@ const globals = require('../helper').globals
  * @return {Promise} promise of the dto
  */
 const decorateWithHalData = function (label) {
-  const resource = new hal.Resource(label, `${globals.BASE_URL}/label/${label.id}`)
-  resource.link('all', `${globals.BASE_URL}/label`)
+  const resource = new hal.Resource(label, urlConfig.resolve(`/label/${label.id}`))
+  resource.link('all', urlConfig.resolve('/label'))
   return Promise.resolve(resource)
 }
 

@@ -2,7 +2,7 @@
 
 const hal = require('hal')
 const errors = require('../helper').errors
-const globals = require('../helper').globals
+const urlConfig = require('../helper').urlConfig
 const labelService = require('../service').label
 const decorator = require('../decorator')
 
@@ -17,8 +17,8 @@ module.exports = {
   all: function (req, res, next) {
     labelService.all(req.user.id)
     .then(function (labels) {
-      const resource = new hal.Resource({labels}, globals.BASE_URL + req.path)
-      resource.link('get', {href: globals.BASE_URL + req.path + '/{id}', templated: true})
+      const resource = new hal.Resource({labels}, urlConfig.resolve('/label'))
+      resource.link('get', {href: urlConfig.resolve('/label/{id}'), templated: true})
       res.json(resource)
     }, next)
   },

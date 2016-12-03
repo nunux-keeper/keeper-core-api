@@ -1,6 +1,5 @@
 'use strict'
 
-const path = require('path')
 const express = require('express')
 const bodyParser = require('body-parser')
 const compress = require('compression')
@@ -9,7 +8,10 @@ const expressValidator = require('express-validator')
 const customValidators = require('./helper').validators
 const logger = require('./helper').logger
 const globals = require('./helper').globals
+const urlConfig = require('./helper').urlConfig
 const middleware = require('./middleware')
+const swaggerJSDoc = require('swagger-jsdoc')
+const swaggerUi = require('swagger-ui-express')
 
 // APM
 if (process.env.NEW_RELIC_LICENSE_KEY) {
@@ -19,7 +21,7 @@ if (process.env.NEW_RELIC_LICENSE_KEY) {
 const app = express()
 
 // Set properties
-app.set('port', globals.PORT)
+app.set('port', urlConfig.port)
 
 // Disable some properties
 app.disable('x-powered-by')
@@ -33,14 +35,52 @@ app.use(bodyParser.text({ type: 'text/html' }))
 app.use(middleware.multipart())
 app.use(expressValidator({customValidators: customValidators}))
 app.use(methodOverride())
-app.use('/doc', express.static(path.join(__dirname, '..', 'documentation')))
+
+// Options for the swagger docs
+const options = {
+  // Import swaggerDefinitions
+  swaggerDefinition: {
+    info: {
+      title: globals.NAME,
+      version: globals.VERSION,
+      description: globals.DESCRIPTION
+    },
+    host: urlConfig.host,
+    basePath: urlConfig.basePath,
+    securityDefinitions: {
+      authenticated: {
+        type: 'oauth2',
+        authorizationUrl: globals.AUTH_REALM + '/protocol/openid-connect/auth',
+        tokenUrl: globals.AUTH_REALM + '/protocol/openid-connect/token',
+        flow: 'implicit',
+        scopes: {
+          admin: 'Administration scope'
+        }
+      }
+    }
+  },
+  // Path to the API docs
+  apis: ['./src/api/*.js', './src/api/swagger/*.yaml']
+}
+
+// Initialize swagger-jsdoc -> returns validated swagger spec in json format
+const swaggerSpec = swaggerJSDoc(options)
+
+// Serve swagger docs
 app.use('/', require('./api/info')())
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+app.get('/api-docs.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json')
+  res.send(swaggerSpec)
+})
 
 // Protect API with access token.
-app.use(middleware.token(globals.REALM, [/^\/v2\/sharing\//]))
+app.use(`/${urlConfig.apiVersion}`, middleware.token([
+  /^\/sharing\//
+]))
 
 // Register API...
-app.use('/v2', require('./api'))
+app.use(`/${urlConfig.apiVersion}`, require('./api'))
 
 // Error handler.
 app.use(middleware.error())

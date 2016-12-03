@@ -8,55 +8,75 @@ const middleware = require('../middleware')
  */
 module.exports = function (router) {
   /**
-   * @api {get} /document/:id/files/:key Download document attachment file.
-   *
-   * @apiVersion 2.0.0
-   * @apiName GetDocumentAttachment
-   * @apiGroup attachment
-   * @apiPermission user
-   *
-   * @apiParam {String} id  Id of the document
-   * @apiParam {String} key Key of the attachment.
-   *
-   * @apiParam {String} [size] Size of the image (if conten type of the attachment is an image).
-   *
-   * This is useful to get a thumbnail of the image attachment.
-   * Only the size "320x200" is supported.
-   *
-   * @apiSuccessExample Success-Response:
-   *     HTTP/1.1 200 OK
+   * @swagger
+   * /v2/document/{docid}/files/{key}:
+   *   get:
+   *     summary: Download document attachment file
+   *     tags:
+   *       - document
+   *       - attachment
+   *     parameters:
+   *       - $ref: '#/parameters/authorization'
+   *       - $ref: '#/parameters/docid'
+   *       - $ref: '#/parameters/key'
+   *       - $ref: '#/parameters/imageSize'
+   *     responses:
+   *       200:
+   *         description: Success
+   *         schema:
+   *           type: file
    */
   router.get('/document/:docid/files/:key', middleware.document, controller.attachment.get)
 
   /**
-   * @api {delete} /document/:id/files/:key Remove document attachment file.
-   *
-   * @apiVersion 2.0.0
-   * @apiName DeleteDocumentAttachment
-   * @apiGroup attachment
-   * @apiPermission user
-   *
-   * @apiParam {String} id  Id of the document
-   * @apiParam {String} key Key of the attachment.
-   *
-   * @apiSuccessExample Success-Response:
-   *     HTTP/1.1 204 OK
+   * @swagger
+   * /v2/document/{docid}/files/{key}:
+   *   delete:
+   *     summary: Remove document attachment file
+   *     tags:
+   *       - document
+   *       - attachment
+   *     parameters:
+   *       - $ref: '#/parameters/authorization'
+   *       - $ref: '#/parameters/docid'
+   *       - $ref: '#/parameters/key'
+   *     responses:
+   *       204:
+   *         description: Success
+   *       default:
+   *         description: Unexpected error
+   *         schema:
+   *           $ref: '#/definitions/Error'
    */
   router.delete('/document/:docid/files/:key', middleware.document, controller.attachment.del)
 
   /**
-   * @api {post} /document/:id/files Upload document attachment file(s).
-   *
-   * @apiVersion 2.0.0
-   * @apiName AddDocumentAttachment
-   * @apiGroup attachment
-   * @apiPermission user
-   *
-   * @apiParam {String} id    Id of the document
-   * @apiParam {File[]} files Attachment files.
-   *
-   * @apiSuccessExample Success-Response:
-   *     HTTP/1.1 201 OK
+   * @swagger
+   * /v2/document/{docid}/files:
+   *   post:
+   *     summary: Upload document attachment file(s).
+   *     tags:
+   *       - document
+   *       - attachment
+   *     consumes:
+   *       - multipart/form-data
+   *     parameters:
+   *       - $ref: '#/parameters/authorization'
+   *       - $ref: '#/parameters/docid'
+   *       - name: body
+   *         description: Attachment files
+   *         in: formData
+   *         required: true
+   *         type: file
+   *     responses:
+   *       201:
+   *         description: Success
+   *         schema:
+   *           $ref: "#/definitions/Attachment"
+   *       default:
+   *         description: Unexpected error
+   *         schema:
+   *           $ref: '#/definitions/Error'
    */
   router.post('/document/:docid/files', middleware.document, controller.attachment.post)
 }

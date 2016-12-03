@@ -3,7 +3,7 @@
 const hal = require('hal')
 const querystring = require('querystring')
 const errors = require('../helper').errors
-const globals = require('../helper').globals
+const urlConfig = require('../helper').urlConfig
 const sharingService = require('../service').sharing
 const documentService = require('../service').document
 const decorator = require('../decorator')
@@ -19,7 +19,7 @@ module.exports = {
   all: function (req, res, next) {
     sharingService.all(req.user.id)
     .then(function (sharing) {
-      const resource = new hal.Resource({sharing}, globals.BASE_URL + req.path)
+      const resource = new hal.Resource({sharing}, urlConfig.resolve('/sharing'))
       // TODO Add items links
       res.json(resource)
     }, next)
@@ -145,13 +145,13 @@ module.exports = {
     const query = Object.assign({order: 'asc', from: 0, size: 50}, req.query, {labels: req.requestData.label.id})
     documentService.search(req.requestData.sharing.owner, query)
     .then(function (result) {
-      const resource = new hal.Resource(result, globals.BASE_URL + req.url)
+      const resource = new hal.Resource(result, urlConfig.resolve(req.url, true))
       query.from = query.form + 1
       if (result.total > query.from * query.size) {
         const qs = querystring.stringify(query)
-        resource.link('next', globals.BASE_URL + req.path + '?' + qs)
+        resource.link('next', urlConfig.resolve(`${req.path}?${qs}`))
       }
-      resource.link('get', {href: globals.BASE_URL + req.path + '/{id}', templated: true})
+      resource.link('get', {href: urlConfig.resolve(`${req.path}/{id}`), templated: true})
       res.json(resource)
     }, next)
   }

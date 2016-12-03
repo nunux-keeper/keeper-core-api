@@ -1,0 +1,80 @@
+parameters:
+  authorization:
+    name: authorization
+    description: Authorization header (bearer)
+    in: header
+    required: true
+    type: string
+  uid:
+    name: uid
+    description: User id
+    in: path
+    required: true
+    type: string
+  docid:
+    name: docid
+    description: Document id
+    in: path
+    required: true
+    type: string
+  labelId:
+    name: labelId
+    description: Label ID
+    in: path
+    required: true
+    type: string
+  sid:
+    name: sid
+    description: Sharing ID
+    in: path
+    required: true
+    type: string
+  key:
+    name: key
+    description: Attachment key
+    in: path
+    required: true
+    type: string
+  q:
+    name: q
+    description: Query
+    in: query
+    required: false
+    type: string
+  from:
+    name: from
+    description: Item index from
+    in: query
+    required: false
+    type: integer
+    default: 0
+    minimum: 0
+  size:
+    name: size
+    description: Number of items to retrieve
+    in: query
+    required: false
+    type: integer
+    default: 50
+    minimum: 1
+    maximum: 100
+  order:
+    name: order
+    description: Sort order (asc or desc)
+    in: query
+    required: false
+    type: string
+    default: asc
+    enum: [asc, desc]
+  imageSize:
+    name: size
+    description: |
+      Size of the image (applicable only if the content type is an image)
+
+      This is useful to get a thumbnail of the image attachment.
+      Only the size "320x200" is supported.
+    in: query
+    required: false
+    type: string
+
+
