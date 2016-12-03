@@ -19,7 +19,7 @@ module.exports = {
         apiVersion: urlConfig.apiVersion.substring(1),
         env: globals.ENV
       }, urlConfig.baseUrl)
-      resource.link('documentation', urlConfig.resolve('/api-docs', true))
+      resource.link('documentation', urlConfig.resolve('/api-docs/', true))
       resource.link('documentation.json', urlConfig.resolve('/api-docs.json', true))
       resource.link('auth-realm', globals.AUTH_REALM)
       res.status(ok ? 200 : 503).json(resource)
