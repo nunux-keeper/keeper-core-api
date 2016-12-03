@@ -12,9 +12,6 @@ RUN bash -c 'mkdir -p /var/opt/app/storage/{upload,exports}'
 # Ports
 EXPOSE 3000 8080
 
-# Generate documentation
-RUN npm run doc
-
 ENTRYPOINT ["/usr/bin/npm"]
 
 CMD ["start"]
