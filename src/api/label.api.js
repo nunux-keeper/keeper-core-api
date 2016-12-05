@@ -13,9 +13,8 @@ module.exports = function (router) {
    *   get:
    *     summary: Get all user's labels
    *     tags:
-   *       - label
+   *       - Label
    *     parameters:
-   *       - $ref: '#/parameters/authorization'
    *     responses:
    *       200:
    *         description: Success
@@ -26,6 +25,9 @@ module.exports = function (router) {
    *               type: array
    *               items:
    *                 $ref: "#/definitions/Label"
+   *     security:
+   *       - authenticated:
+   *         - user
    */
   router.get('/label', controller.label.all)
 
@@ -35,15 +37,17 @@ module.exports = function (router) {
    *   get:
    *     summary: Get label details
    *     tags:
-   *       - label
+   *       - Label
    *     parameters:
-   *       - $ref: '#/parameters/authorization'
    *       - $ref: '#/parameters/labelId'
    *     responses:
    *       200:
    *         description: Success
    *         schema:
    *           $ref: "#/definitions/Label"
+   *     security:
+   *       - authenticated:
+   *         - user
    */
   router.get('/label/:labelId', middleware.label, controller.label.get)
 
@@ -53,9 +57,8 @@ module.exports = function (router) {
    *   put:
    *     summary: Update label details
    *     tags:
-   *       - label
+   *       - Label
    *     parameters:
-   *       - $ref: '#/parameters/authorization'
    *       - $ref: '#/parameters/labelId'
    *       - name: body
    *         description: Label values to update
@@ -68,6 +71,9 @@ module.exports = function (router) {
    *         description: Success
    *         schema:
    *           $ref: "#/definitions/Label"
+   *     security:
+   *       - authenticated:
+   *         - user
    */
   router.put('/label/:labelId', middleware.label, controller.label.update)
 
@@ -77,7 +83,7 @@ module.exports = function (router) {
    *   post:
    *     summary: Update label details
    *     tags:
-   *       - label
+   *       - Label
    *     parameters:
    *       - $ref: '#/parameters/authorization'
    *       - name: body
@@ -101,7 +107,7 @@ module.exports = function (router) {
    *     summary: Delete a label
    *     description: The label is not deleted but moved to the graveyard
    *     tags:
-   *       - label
+   *       - Label
    *     parameters:
    *       - $ref: '#/parameters/authorization'
    *       - $ref: '#/parameters/labelId'
@@ -117,7 +123,7 @@ module.exports = function (router) {
    *   post:
    *     summary: Restore a deleted label
    *     tags:
-   *       - label
+   *       - Label
    *     parameters:
    *       - $ref: '#/parameters/authorization'
    *       - $ref: '#/parameters/labelId'

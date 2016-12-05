@@ -13,9 +13,7 @@ module.exports = function (router) {
    *   get:
    *     summary: Get all user's sharing.
    *     tags:
-   *       - sharing
-   *     parameters:
-   *       - $ref: '#/parameters/authorization'
+   *       - Sharing
    *     responses:
    *       200:
    *         description: Success
@@ -26,6 +24,9 @@ module.exports = function (router) {
    *               type: array
    *               items:
    *                 $ref: "#/definitions/Sharing"
+   *     security:
+   *       - authenticated:
+   *         - user
    */
   router.get('/sharing', controller.sharing.all)
 
@@ -35,7 +36,7 @@ module.exports = function (router) {
    *   get:
    *     summary: Get shared documents.
    *     tags:
-   *       - sharing
+   *       - Sharing
    *     parameters:
    *       - $ref: '#/parameters/sid'
    *       - $ref: '#/parameters/q'
@@ -56,7 +57,7 @@ module.exports = function (router) {
    *   get:
    *     summary: Get shared document
    *     tags:
-   *       - sharing
+   *       - Sharing
    *     parameters:
    *       - $ref: '#/parameters/sid'
    *       - $ref: '#/parameters/docid'
@@ -74,9 +75,9 @@ module.exports = function (router) {
    *   get:
    *     summary: Get shared document's files
    *     tags:
-   *       - sharing
-   *       - document
-   *       - attachment
+   *       - Sharing
+   *       - Document
+   *       - Attachment
    *     parameters:
    *       - $ref: '#/parameters/sid'
    *       - $ref: '#/parameters/docid'

@@ -13,9 +13,8 @@ module.exports = function (router) {
    *   get:
    *     summary: Search documents
    *     tags:
-   *       - document
+   *       - Document
    *     parameters:
-   *       - $ref: '#/parameters/authorization'
    *       - $ref: '#/parameters/q'
    *       - $ref: '#/parameters/from'
    *       - $ref: '#/parameters/size'
@@ -25,6 +24,9 @@ module.exports = function (router) {
    *         description: Success
    *         schema:
    *           $ref: "#/definitions/SearchResult"
+   *     security:
+   *       - authenticated:
+   *         - user
    */
   router.get('/document', controller.document.search)
 
@@ -34,9 +36,8 @@ module.exports = function (router) {
    *   get:
    *     summary: Get a document
    *     tags:
-   *       - document
+   *       - Document
    *     parameters:
-   *       - $ref: '#/parameters/authorization'
    *       - $ref: '#/parameters/docid'
    *       - name: raw
    *         description: Get RAW document if set
@@ -52,6 +53,9 @@ module.exports = function (router) {
    *         description: Unexpected error
    *         schema:
    *           $ref: '#/definitions/Error'
+   *     security:
+   *       - authenticated:
+   *         - user
    */
   router.get('/document/:docid', middleware.document, controller.document.get)
 
@@ -61,9 +65,8 @@ module.exports = function (router) {
    *   put:
    *     summary: Update a document
    *     tags:
-   *       - document
+   *       - Document
    *     parameters:
-   *       - $ref: '#/parameters/authorization'
    *       - $ref: '#/parameters/docid'
    *       - name: body
    *         description: Document details to update
@@ -80,6 +83,9 @@ module.exports = function (router) {
    *         description: Unexpected error
    *         schema:
    *           $ref: '#/definitions/Error'
+   *     security:
+   *       - authenticated:
+   *         - user
    */
   router.put('/document/:docid', middleware.document, controller.document.update)
 
@@ -89,9 +95,8 @@ module.exports = function (router) {
    *   post:
    *     summary: Create a document
    *     tags:
-   *       - document
+   *       - Document
    *     parameters:
-   *       - $ref: '#/parameters/authorization'
    *       - name: body
    *         description: Document to create
    *         in: body
@@ -122,6 +127,9 @@ module.exports = function (router) {
    *         description: Unexpected error
    *         schema:
    *           $ref: '#/definitions/Error'
+   *     security:
+   *       - authenticated:
+   *         - user
    */
   router.post('/document', controller.document.create)
 
@@ -132,9 +140,8 @@ module.exports = function (router) {
    *     summary: Delete a document
    *     description: The document is not deleted but moved to the graveyard
    *     tags:
-   *       - document
+   *       - Document
    *     parameters:
-   *       - $ref: '#/parameters/authorization'
    *       - $ref: '#/parameters/docid'
    *     responses:
    *       204:
@@ -143,6 +150,9 @@ module.exports = function (router) {
    *         description: Unexpected error
    *         schema:
    *           $ref: '#/definitions/Error'
+   *     security:
+   *       - authenticated:
+   *         - user
    */
   router.delete('/document/:docid', middleware.document, controller.document.del)
 
@@ -152,9 +162,8 @@ module.exports = function (router) {
    *   post:
    *     summary: Restore a deleted document
    *     tags:
-   *       - document
+   *       - Document
    *     parameters:
-   *       - $ref: '#/parameters/authorization'
    *       - $ref: '#/parameters/docid'
    *     responses:
    *       200:
@@ -163,6 +172,9 @@ module.exports = function (router) {
    *         description: Unexpected error
    *         schema:
    *           $ref: '#/definitions/Error'
+   *     security:
+   *       - authenticated:
+   *         - user
    */
   router.post('/document/:docid/restore', controller.document.restore)
 }

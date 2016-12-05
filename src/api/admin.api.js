@@ -13,9 +13,7 @@ module.exports = function (router) {
    *   get:
    *     summary: Get all users
    *     tags:
-   *       - admin
-   *     parameters:
-   *       - $ref: '#/parameters/authorization'
+   *       - Admin
    *     responses:
    *       200:
    *         description: Success
@@ -28,7 +26,7 @@ module.exports = function (router) {
    *                 $ref: "#/definitions/User"
    *     security:
    *       - authenticated:
-   *         - admin
+   *         - user
    */
   router.get('/admin/user', middleware.admin.isAdmin, controller.admin.getUsers)
 
@@ -38,19 +36,21 @@ module.exports = function (router) {
    *   get:
    *     summary: Get all user's labels
    *     tags:
-   *       - admin
+   *       - Admin
    *     parameters:
-   *       - $ref: '#/parameters/authorization'
    *       - $ref: '#/parameters/uid'
    *     responses:
    *       200:
    *         description: Success
    *         schema:
    *           $ref: "#/definitions/User"
-   *       40x:
+   *       default:
    *         description: Unexpected error
    *         schema:
    *           $ref: '#/definitions/Error'
+   *     security:
+   *       - authenticated:
+   *         - user
    */
   router.get('/admin/user/:id', middleware.admin.isAdmin, controller.admin.getUser)
 }

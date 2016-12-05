@@ -13,9 +13,8 @@ module.exports = function (router) {
    *   get:
    *     summary: Search documents in the graveyard
    *     tags:
-   *       - graveyard
+   *       - Graveyard
    *     parameters:
-   *       - $ref: '#/parameters/authorization'
    *       - $ref: '#/parameters/from'
    *       - $ref: '#/parameters/size'
    *       - $ref: '#/parameters/order'
@@ -24,6 +23,9 @@ module.exports = function (router) {
    *         description: Success
    *         schema:
    *           $ref: "#/definitions/SearchResult"
+   *     security:
+   *       - authenticated:
+   *         - user
    */
   router.get('/graveyard', middleware.graveyard.ghost, controller.document.search)
 
@@ -33,9 +35,8 @@ module.exports = function (router) {
    *   delete:
    *     summary: Remove a document from the graveyard
    *     tags:
-   *       - graveyard
+   *       - Graveyard
    *     parameters:
-   *       - $ref: '#/parameters/authorization'
    *       - $ref: '#/parameters/docid'
    *     responses:
    *       204:
@@ -44,6 +45,9 @@ module.exports = function (router) {
    *         description: Unexpected error
    *         schema:
    *           $ref: '#/definitions/Error'
+   *     security:
+   *       - authenticated:
+   *         - user
    */
   router.delete('/graveyard/:docid', controller.document.destroy)
 
@@ -53,12 +57,13 @@ module.exports = function (router) {
    *   delete:
    *     summary: Remove all documents from the graveyard
    *     tags:
-   *       - graveyard
-   *     parameters:
-   *       - $ref: '#/parameters/authorization'
+   *       - Graveyard
    *     responses:
    *       204:
    *         description: Success
+   *     security:
+   *       - authenticated:
+   *         - user
    */
   router.delete('/graveyard', controller.document.emptyGraveyard)
 }

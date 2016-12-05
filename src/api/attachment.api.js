@@ -13,10 +13,9 @@ module.exports = function (router) {
    *   get:
    *     summary: Download document attachment file
    *     tags:
-   *       - document
-   *       - attachment
+   *       - Document
+   *       - Attachment
    *     parameters:
-   *       - $ref: '#/parameters/authorization'
    *       - $ref: '#/parameters/docid'
    *       - $ref: '#/parameters/key'
    *       - $ref: '#/parameters/imageSize'
@@ -25,6 +24,9 @@ module.exports = function (router) {
    *         description: Success
    *         schema:
    *           type: file
+   *     security:
+   *       - authenticated:
+   *         - user
    */
   router.get('/document/:docid/files/:key', middleware.document, controller.attachment.get)
 
@@ -34,10 +36,9 @@ module.exports = function (router) {
    *   delete:
    *     summary: Remove document attachment file
    *     tags:
-   *       - document
-   *       - attachment
+   *       - Document
+   *       - Attachment
    *     parameters:
-   *       - $ref: '#/parameters/authorization'
    *       - $ref: '#/parameters/docid'
    *       - $ref: '#/parameters/key'
    *     responses:
@@ -47,6 +48,9 @@ module.exports = function (router) {
    *         description: Unexpected error
    *         schema:
    *           $ref: '#/definitions/Error'
+   *     security:
+   *       - authenticated:
+   *         - user
    */
   router.delete('/document/:docid/files/:key', middleware.document, controller.attachment.del)
 
@@ -56,12 +60,11 @@ module.exports = function (router) {
    *   post:
    *     summary: Upload document attachment file(s).
    *     tags:
-   *       - document
-   *       - attachment
+   *       - Document
+   *       - Attachment
    *     consumes:
    *       - multipart/form-data
    *     parameters:
-   *       - $ref: '#/parameters/authorization'
    *       - $ref: '#/parameters/docid'
    *       - name: body
    *         description: Attachment files
@@ -77,6 +80,9 @@ module.exports = function (router) {
    *         description: Unexpected error
    *         schema:
    *           $ref: '#/definitions/Error'
+   *     security:
+   *       - authenticated:
+   *         - user
    */
   router.post('/document/:docid/files', middleware.document, controller.attachment.post)
 }

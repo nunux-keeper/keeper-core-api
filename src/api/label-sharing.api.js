@@ -13,16 +13,18 @@ module.exports = function (router) {
    *   get:
    *     summary: Get sharing of a label
    *     tags:
-   *       - label
-   *       - sharing
+   *       - Label
+   *       - Sharing
    *     parameters:
-   *       - $ref: '#/parameters/authorization'
    *       - $ref: '#/parameters/labelId'
    *     responses:
    *       200:
    *         description: Success
    *         schema:
    *           $ref: "#/definitions/Sharing"
+   *     security:
+   *       - authenticated:
+   *         - user
    */
   router.get('/label/:labelId/sharing', middleware.label, middleware.sharing.getFromLabel, controller.sharing.get)
 
@@ -32,10 +34,9 @@ module.exports = function (router) {
    *   put:
    *     summary: Update sharing of a label
    *     tags:
-   *       - label
-   *       - sharing
+   *       - Label
+   *       - Sharing
    *     parameters:
-   *       - $ref: '#/parameters/authorization'
    *       - $ref: '#/parameters/labelId'
    *       - name: body
    *         description: Sharing values to update
@@ -48,6 +49,9 @@ module.exports = function (router) {
    *         description: Success
    *         schema:
    *           $ref: "#/definitions/Sharing"
+   *     security:
+   *       - authenticated:
+   *         - user
    */
   router.put('/label/:labelId/sharing', middleware.label, middleware.sharing.getFromLabel, controller.sharing.update)
 
@@ -57,10 +61,9 @@ module.exports = function (router) {
    *   post:
    *     summary: Create a sharing on a label
    *     tags:
-   *       - label
-   *       - sharing
+   *       - Label
+   *       - Sharing
    *     parameters:
-   *       - $ref: '#/parameters/authorization'
    *       - $ref: '#/parameters/labelId'
    *       - name: body
    *         description: Sharing to create
@@ -73,6 +76,9 @@ module.exports = function (router) {
    *         description: Success
    *         schema:
    *           $ref: "#/definitions/Sharing"
+   *     security:
+   *       - authenticated:
+   *         - user
    */
   router.post('/label/:labelId/sharing', middleware.label, controller.sharing.create)
 
@@ -82,14 +88,16 @@ module.exports = function (router) {
    *   delete:
    *     summary: Delete sharing of a label
    *     tags:
-   *       - label
-   *       - sharing
+   *       - Label
+   *       - Sharing
    *     parameters:
-   *       - $ref: '#/parameters/authorization'
    *       - $ref: '#/parameters/labelId'
    *     responses:
    *       204:
    *         description: Success
+   *     security:
+   *       - authenticated:
+   *         - user
    */
   router.delete('/label/:labelId/sharing', middleware.label, middleware.sharing.getFromLabel, controller.sharing.del)
 }

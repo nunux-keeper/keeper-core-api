@@ -12,14 +12,15 @@ module.exports = function (router) {
    *   get:
    *     summary: Get current profile informations
    *     tags:
-   *       - profile
-   *     parameters:
-   *       - $ref: '#/parameters/authorization'
+   *       - Profile
    *     responses:
    *       200:
    *         description: Success
    *         schema:
    *           $ref: "#/definitions/Profile"
+   *     security:
+   *       - authenticated:
+   *         - user
    */
   router.get('/profile', controller.profile.get)
 
@@ -29,9 +30,8 @@ module.exports = function (router) {
    *   put:
    *     summary: Update current profile informations
    *     tags:
-   *       - profile
+   *       - Profile
    *     parameters:
-   *       - $ref: '#/parameters/authorization'
    *       - name: body
    *         description: Profile values to update
    *         in: body
@@ -43,6 +43,9 @@ module.exports = function (router) {
    *         description: Success
    *         schema:
    *           $ref: "#/definitions/Profile"
+   *     security:
+   *       - authenticated:
+   *         - user
    */
   router.put('/profile', controller.profile.update)
 }

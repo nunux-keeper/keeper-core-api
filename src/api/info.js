@@ -15,7 +15,7 @@ module.exports = function () {
    *   get:
    *     summary: Get API informations
    *     tags:
-   *       - info
+   *       - API informations
    *     responses:
    *       200:
    *         description: Success
