@@ -9,7 +9,7 @@ const urlConfig = require('../helper').urlConfig
  * @return {Promise} promise of the dto
  */
 const decorateWithHalData = function (sharing) {
-  const resource = new hal.Resource(sharing, urlConfig.resolve(`/label/${sharing.targetLabel}/sharing`))
+  const resource = new hal.Resource(sharing, urlConfig.resolve(`/labels/${sharing.targetLabel}/sharing`))
   resource.link('all', urlConfig.resolve('/sharing'))
   return Promise.resolve(resource)
 }

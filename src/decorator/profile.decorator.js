@@ -30,7 +30,7 @@ const decorateWithHash = function (profile) {
  * @return {Promise} promise of the dto
  */
 const decorateWithHalData = function (profile) {
-  const resource = new hal.Resource(profile, urlConfig.resolve('/profile'))
+  const resource = new hal.Resource(profile, urlConfig.resolve('/profiles/current'))
   return Promise.resolve(resource)
 }
 

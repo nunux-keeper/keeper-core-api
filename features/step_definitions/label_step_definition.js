@@ -20,7 +20,7 @@ module.exports = function () {
       label[prop] = value
     })
     request(app)
-    .post('/v2/label')
+    .post('/v2/labels')
     .send(label)
     .set('Content-Type', 'application/json')
     .use(this.setAuthorizationHeader(this.uid))
@@ -37,7 +37,7 @@ module.exports = function () {
 
   this.When(/^I get my labels$/, function (callback) {
     request(app)
-    .get('/v2/label')
+    .get('/v2/labels')
     .set('Content-Type', 'application/json')
     .use(this.setAuthorizationHeader(this.uid))
     .expect('Content-Type', /json/)
@@ -75,7 +75,7 @@ module.exports = function () {
   this.When(/^I update the previous label with value "([^"]*)" and color "([^"]*)"$/, function (label, color, callback) {
     expect(this.myLabel).to.not.be.undefined
     request(app)
-    .put('/v2/label/' + this.myLabel.id)
+    .put('/v2/labels/' + this.myLabel.id)
     .send({
       label: label,
       color: color
@@ -97,7 +97,7 @@ module.exports = function () {
   this.When(/^I delete the previous label$/, function (callback) {
     expect(this.myLabel).to.not.be.undefined
     request(app)
-    .delete('/v2/label/' + this.myLabel.id)
+    .delete('/v2/labels/' + this.myLabel.id)
     .set('Content-Type', 'application/json')
     .use(this.setAuthorizationHeader(this.uid))
     .expect(204, callback)
@@ -106,7 +106,7 @@ module.exports = function () {
   this.When(/^I restore the previous label$/, function (callback) {
     expect(this.myLabel).to.not.be.undefined
     request(app)
-    .post('/v2/label/' + this.myLabel.id + '/restore')
+    .put('/v2/graveyard/labels/' + this.myLabel.id)
     .set('Content-Type', 'application/json')
     .use(this.setAuthorizationHeader(this.uid))
     .expect((res) => {

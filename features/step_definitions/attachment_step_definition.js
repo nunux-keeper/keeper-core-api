@@ -12,7 +12,7 @@ module.exports = function () {
     const attachment = this.myDocument.attachments[index - 1]
 
     request(app)
-    .head('/v2/document/' + this.myDocument.id + '/files/' + attachment.key)
+    .head('/v2/documents/' + this.myDocument.id + '/files/' + attachment.key)
     .use(this.setAuthorizationHeader(this.uid))
     .expect('Content-Type', attachment.contentType)
     .expect(200, callback)
@@ -35,14 +35,14 @@ module.exports = function () {
     const attachment = this.myDocument.attachments[index - 1]
 
     request(app)
-    .delete('/v2/document/' + this.myDocument.id + '/files/' + attachment.key)
+    .delete('/v2/documents/' + this.myDocument.id + '/files/' + attachment.key)
     .use(this.setAuthorizationHeader(this.uid))
     .expect(204, callback)
   })
 
   this.When(/^I add attachment\(s\) to the document:$/, function (attrs, callback) {
     expect(this.myDocument).to.not.be.undefined
-    const req = request(app).post('/v2/document/' + this.myDocument.id + '/files')
+    const req = request(app).post('/v2/documents/' + this.myDocument.id + '/files')
 
     attrs.raw().forEach(function (attr) {
       const file = attr[0]

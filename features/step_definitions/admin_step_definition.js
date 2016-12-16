@@ -10,7 +10,7 @@ const ofAnUserObject = ['id', 'uid', 'date', 'gravatar', 'documents', 'storage',
 module.exports = function () {
   this.When(/^I get all the users$/, function (callback) {
     request(app)
-    .get('/v2/admin/user/')
+    .get('/v2/admin/users/')
     .use(this.setAuthorizationHeader(this.uid))
     .expect('Content-Type', /json/)
     .expect(function (res) {
@@ -26,7 +26,7 @@ module.exports = function () {
 
   this.When(/^I get data of "([^"]*)" user$/, function (uid, callback) {
     request(app)
-    .get('/v2/admin/user/' + uid)
+    .get('/v2/admin/users/' + uid)
     .set('Content-Type', 'application/json')
     .use(this.setAuthorizationHeader(this.uid))
     .expect('Content-Type', /json/)

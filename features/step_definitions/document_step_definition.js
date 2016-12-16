@@ -29,7 +29,7 @@ module.exports = function () {
     if (this.myLabel) {
       doc.labels = [this.myLabel.id]
     }
-    const req = request(app).post('/v2/document')
+    const req = request(app).post('/v2/documents')
     if (doc.files) {
       const files = doc.files
       delete doc.files
@@ -53,7 +53,7 @@ module.exports = function () {
 
   this.When(/^I create the following html document$/, function (content, callback) {
     request(app)
-    .post('/v2/document')
+    .post('/v2/documents')
     .send({
       title: chance.sentence({words: 3}),
       content: content,
@@ -82,7 +82,7 @@ module.exports = function () {
       update[prop] = value
     })
     request(app)
-    .put('/v2/document/' + this.myDocument.id)
+    .put('/v2/documents/' + this.myDocument.id)
     .send(update)
     .set('Content-Type', 'application/json')
     .use(this.setAuthorizationHeader(this.uid))
@@ -99,7 +99,7 @@ module.exports = function () {
   this.When(/^I delete the document$/, function (callback) {
     expect(this.myDocument).to.not.be.undefined
     request(app)
-    .delete('/v2/document/' + this.myDocument.id)
+    .delete('/v2/documents/' + this.myDocument.id)
     .set('Content-Type', 'application/json')
     .use(this.setAuthorizationHeader(this.uid))
     .expect(204, callback)
@@ -108,7 +108,7 @@ module.exports = function () {
   this.When(/^I restore the document$/, function (callback) {
     expect(this.myDocument).to.not.be.undefined
     request(app)
-    .post('/v2/document/' + this.myDocument.id + '/restore')
+    .put('/v2/graveyard/documents/' + this.myDocument.id)
     .set('Content-Type', 'application/json')
     .use(this.setAuthorizationHeader(this.uid))
     .expect(function (res) {
@@ -126,7 +126,7 @@ module.exports = function () {
     const shoulBeRaw = raw === 'raw document'
     const suffix = shoulBeRaw ? '?raw' : ''
     request(app)
-    .get('/v2/document/' + this.myDocument.id + suffix)
+    .get('/v2/documents/' + this.myDocument.id + suffix)
     .use(this.setAuthorizationHeader(this.uid))
     .expect('Content-Type', shoulBeRaw ? this.myDocument.contentType : /json/)
     .expect(function (res) {

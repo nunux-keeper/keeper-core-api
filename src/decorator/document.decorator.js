@@ -19,9 +19,9 @@ const decorateWithoutPrivateData = function (doc) {
  * @return {Promise} promise of the dto
  */
 const decorateWithHalData = function (doc) {
-  const resource = new hal.Resource(doc, urlConfig.resolve(`/document/${doc.id}`))
-  resource.link('search', urlConfig.resolve('/document'))
-  resource.link('raw', urlConfig.resolve(`/document/${doc.id}?raw`))
+  const resource = new hal.Resource(doc, urlConfig.resolve(`/documents/${doc.id}`))
+  resource.link('search', urlConfig.resolve('/documents'))
+  resource.link('raw', urlConfig.resolve(`/documents/${doc.id}?raw`))
   return Promise.resolve(resource)
 }
 

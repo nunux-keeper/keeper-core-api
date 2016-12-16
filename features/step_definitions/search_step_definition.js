@@ -15,7 +15,7 @@ module.exports = function () {
     }, {})
 
     request(app)
-    .get('/v2/document')
+    .get('/v2/documents')
     .query(query)
     .use(this.setAuthorizationHeader(this.uid))
     .expect('Content-Type', /json/)
@@ -32,8 +32,6 @@ module.exports = function () {
   this.Then(/^I should (not retrieve|retrieve) the document into the search result$/, function (get, callback) {
     expect(this.myDocument).to.not.be.undefined
     expect(this.myDocuments).to.not.be.undefined
-    // console.log('myDocument', this.myDocument)
-    // console.log('myDocuments', this.myDocuments)
     const shoulBeRetrieve = get === 'retrieve'
     const found = _.find(this.myDocuments, (doc) => {
       return doc.id === this.myDocument.id

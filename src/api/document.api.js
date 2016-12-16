@@ -9,7 +9,7 @@ const middleware = require('../middleware')
 module.exports = function (router) {
   /**
    * @swagger
-   * /v2/document:
+   * /v2/documents:
    *   get:
    *     summary: Search documents
    *     tags:
@@ -28,11 +28,11 @@ module.exports = function (router) {
    *       - authenticated:
    *         - user
    */
-  router.get('/document', controller.document.search)
+  router.get('/documents', controller.document.search)
 
   /**
    * @swagger
-   * /v2/document/{docid}:
+   * /v2/documents/{docid}:
    *   get:
    *     summary: Get a document
    *     tags:
@@ -57,11 +57,11 @@ module.exports = function (router) {
    *       - authenticated:
    *         - user
    */
-  router.get('/document/:docid', middleware.document, controller.document.get)
+  router.get('/documents/:docid', middleware.document, controller.document.get)
 
   /**
    * @swagger
-   * /v2/document/{docid}:
+   * /v2/documents/{docid}:
    *   put:
    *     summary: Update a document
    *     tags:
@@ -87,11 +87,11 @@ module.exports = function (router) {
    *       - authenticated:
    *         - user
    */
-  router.put('/document/:docid', middleware.document, controller.document.update)
+  router.put('/documents/:docid', middleware.document, controller.document.update)
 
   /**
    * @swagger
-   * /v2/document:
+   * /v2/documents:
    *   post:
    *     summary: Create a document
    *     tags:
@@ -131,11 +131,11 @@ module.exports = function (router) {
    *       - authenticated:
    *         - user
    */
-  router.post('/document', controller.document.create)
+  router.post('/documents', controller.document.create)
 
   /**
    * @swagger
-   * /v2/document/{docid}:
+   * /v2/documents/{docid}:
    *   delete:
    *     summary: Delete a document
    *     description: The document is not deleted but moved to the graveyard
@@ -154,27 +154,5 @@ module.exports = function (router) {
    *       - authenticated:
    *         - user
    */
-  router.delete('/document/:docid', middleware.document, controller.document.del)
-
-  /**
-   * @swagger
-   * /v2/document/{docid}/restore:
-   *   post:
-   *     summary: Restore a deleted document
-   *     tags:
-   *       - Document
-   *     parameters:
-   *       - $ref: '#/parameters/docid'
-   *     responses:
-   *       200:
-   *         description: Success
-   *       default:
-   *         description: Unexpected error
-   *         schema:
-   *           $ref: '#/definitions/Error'
-   *     security:
-   *       - authenticated:
-   *         - user
-   */
-  router.post('/document/:docid/restore', controller.document.restore)
+  router.delete('/documents/:docid', middleware.document, controller.document.del)
 }

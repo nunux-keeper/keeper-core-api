@@ -9,7 +9,7 @@ const middleware = require('../middleware')
 module.exports = function (router) {
   /**
    * @swagger
-   * /v2/label:
+   * /v2/labels:
    *   get:
    *     summary: Get all user's labels
    *     tags:
@@ -29,7 +29,7 @@ module.exports = function (router) {
    *       - authenticated:
    *         - user
    */
-  router.get('/label', controller.label.all)
+  router.get('/labels', controller.label.all)
 
   /**
    * @swagger
@@ -49,7 +49,7 @@ module.exports = function (router) {
    *       - authenticated:
    *         - user
    */
-  router.get('/label/:labelId', middleware.label, controller.label.get)
+  router.get('/labels/:labelId', middleware.label, controller.label.get)
 
   /**
    * @swagger
@@ -75,7 +75,7 @@ module.exports = function (router) {
    *       - authenticated:
    *         - user
    */
-  router.put('/label/:labelId', middleware.label, controller.label.update)
+  router.put('/labels/:labelId', middleware.label, controller.label.update)
 
   /**
    * @swagger
@@ -98,7 +98,7 @@ module.exports = function (router) {
    *         schema:
    *           $ref: "#/definitions/Label"
    */
-  router.post('/label', controller.label.create)
+  router.post('/labels', controller.label.create)
 
   /**
    * @swagger
@@ -115,7 +115,7 @@ module.exports = function (router) {
    *       204:
    *         description: Success
    */
-  router.delete('/label/:labelId', middleware.label, controller.label.del)
+  router.delete('/labels/:labelId', middleware.label, controller.label.del)
 
   /**
    * @swagger
@@ -133,5 +133,5 @@ module.exports = function (router) {
    *         schema:
    *           $ref: "#/definitions/Label"
    */
-  router.post('/label/:labelId/restore', controller.label.restore)
+  router.put('/graveyard/labels/:labelId', controller.label.restore)
 }

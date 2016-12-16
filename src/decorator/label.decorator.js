@@ -9,8 +9,8 @@ const urlConfig = require('../helper').urlConfig
  * @return {Promise} promise of the dto
  */
 const decorateWithHalData = function (label) {
-  const resource = new hal.Resource(label, urlConfig.resolve(`/label/${label.id}`))
-  resource.link('all', urlConfig.resolve('/label'))
+  const resource = new hal.Resource(label, urlConfig.resolve(`/labels/${label.id}`))
+  resource.link('all', urlConfig.resolve('/labels'))
   return Promise.resolve(resource)
 }
 

@@ -9,7 +9,7 @@ const middleware = require('../middleware')
 module.exports = function (router) {
   /**
    * @swagger
-   * /v2/label/{labelId}/sharing:
+   * /v2/labels/{labelId}/sharing:
    *   get:
    *     summary: Get sharing of a label
    *     tags:
@@ -26,11 +26,11 @@ module.exports = function (router) {
    *       - authenticated:
    *         - user
    */
-  router.get('/label/:labelId/sharing', middleware.label, middleware.sharing.getFromLabel, controller.sharing.get)
+  router.get('/labels/:labelId/sharing', middleware.label, middleware.sharing.getFromLabel, controller.sharing.get)
 
   /**
    * @swagger
-   * /v2/label/{labelId}/sharing:
+   * /v2/labels/{labelId}/sharing:
    *   put:
    *     summary: Update sharing of a label
    *     tags:
@@ -53,11 +53,11 @@ module.exports = function (router) {
    *       - authenticated:
    *         - user
    */
-  router.put('/label/:labelId/sharing', middleware.label, middleware.sharing.getFromLabel, controller.sharing.update)
+  router.put('/labels/:labelId/sharing', middleware.label, middleware.sharing.getFromLabel, controller.sharing.update)
 
   /**
    * @swagger
-   * /v2/label/{labelId}/sharing:
+   * /v2/labels/{labelId}/sharing:
    *   post:
    *     summary: Create a sharing on a label
    *     tags:
@@ -80,11 +80,11 @@ module.exports = function (router) {
    *       - authenticated:
    *         - user
    */
-  router.post('/label/:labelId/sharing', middleware.label, controller.sharing.create)
+  router.post('/labels/:labelId/sharing', middleware.label, controller.sharing.create)
 
   /**
    * @swagger
-   * /v2/label/{labelId}/sharing:
+   * /v2/labels/{labelId}/sharing:
    *   delete:
    *     summary: Delete sharing of a label
    *     tags:
@@ -99,5 +99,5 @@ module.exports = function (router) {
    *       - authenticated:
    *         - user
    */
-  router.delete('/label/:labelId/sharing', middleware.label, middleware.sharing.getFromLabel, controller.sharing.del)
+  router.delete('/labels/:labelId/sharing', middleware.label, middleware.sharing.getFromLabel, controller.sharing.del)
 }

@@ -9,7 +9,7 @@ const middleware = require('../middleware')
 module.exports = function (router) {
   /**
    * @swagger
-   * /v2/document/{docid}/files/{key}:
+   * /v2/documents/{docid}/files/{key}:
    *   get:
    *     summary: Download document attachment file
    *     tags:
@@ -28,11 +28,11 @@ module.exports = function (router) {
    *       - authenticated:
    *         - user
    */
-  router.get('/document/:docid/files/:key', middleware.document, controller.attachment.get)
+  router.get('/documents/:docid/files/:key', middleware.document, controller.attachment.get)
 
   /**
    * @swagger
-   * /v2/document/{docid}/files/{key}:
+   * /v2/documents/{docid}/files/{key}:
    *   delete:
    *     summary: Remove document attachment file
    *     tags:
@@ -52,11 +52,11 @@ module.exports = function (router) {
    *       - authenticated:
    *         - user
    */
-  router.delete('/document/:docid/files/:key', middleware.document, controller.attachment.del)
+  router.delete('/documents/:docid/files/:key', middleware.document, controller.attachment.del)
 
   /**
    * @swagger
-   * /v2/document/{docid}/files:
+   * /v2/documents/{docid}/files:
    *   post:
    *     summary: Upload document attachment file(s).
    *     tags:
@@ -84,5 +84,5 @@ module.exports = function (router) {
    *       - authenticated:
    *         - user
    */
-  router.post('/document/:docid/files', middleware.document, controller.attachment.post)
+  router.post('/documents/:docid/files', middleware.document, controller.attachment.post)
 }

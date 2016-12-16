@@ -9,7 +9,7 @@ const middleware = require('../middleware')
 module.exports = function (router) {
   /**
    * @swagger
-   * /v2/admin/user:
+   * /v2/admin/users:
    *   get:
    *     summary: Get all users
    *     tags:
@@ -28,11 +28,11 @@ module.exports = function (router) {
    *       - authenticated:
    *         - user
    */
-  router.get('/admin/user', middleware.admin.isAdmin, controller.admin.getUsers)
+  router.get('/admin/users', middleware.admin.isAdmin, controller.admin.getUsers)
 
   /**
    * @swagger
-   * /v2/admin/user/{uid}:
+   * /v2/admin/users/{uid}:
    *   get:
    *     summary: Get all user's labels
    *     tags:
@@ -52,5 +52,5 @@ module.exports = function (router) {
    *       - authenticated:
    *         - user
    */
-  router.get('/admin/user/:id', middleware.admin.isAdmin, controller.admin.getUser)
+  router.get('/admin/users/:id', middleware.admin.isAdmin, controller.admin.getUser)
 }

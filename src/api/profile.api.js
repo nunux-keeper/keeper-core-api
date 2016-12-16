@@ -8,7 +8,7 @@ const controller = require('../controller')
 module.exports = function (router) {
   /**
    * @swagger
-   * /v2/profile:
+   * /v2/profiles/current:
    *   get:
    *     summary: Get current profile informations
    *     tags:
@@ -22,11 +22,11 @@ module.exports = function (router) {
    *       - authenticated:
    *         - user
    */
-  router.get('/profile', controller.profile.get)
+  router.get('/profiles/current', controller.profile.get)
 
   /**
    * @swagger
-   * /v2/profile:
+   * /v2/profiles/current:
    *   put:
    *     summary: Update current profile informations
    *     tags:
@@ -47,5 +47,5 @@ module.exports = function (router) {
    *       - authenticated:
    *         - user
    */
-  router.put('/profile', controller.profile.update)
+  router.put('/profiles/current', controller.profile.update)
 }

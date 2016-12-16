@@ -27,7 +27,7 @@ module.exports = function (router) {
    *       - authenticated:
    *         - user
    */
-  router.get('/graveyard', middleware.graveyard.ghost, controller.document.search)
+  router.get('/graveyard/documents', middleware.graveyard.ghost, controller.document.search)
 
   /**
    * @swagger
@@ -49,7 +49,29 @@ module.exports = function (router) {
    *       - authenticated:
    *         - user
    */
-  router.delete('/graveyard/:docid', controller.document.destroy)
+  router.delete('/graveyard/documents/:docid', controller.document.destroy)
+
+  /**
+   * @swagger
+   * /v2/graveyard/{docid}:
+   *   put:
+   *     summary: Restore a deleted document
+   *     tags:
+   *       - Document
+   *     parameters:
+   *       - $ref: '#/parameters/docid'
+   *     responses:
+   *       200:
+   *         description: Success
+   *       default:
+   *         description: Unexpected error
+   *         schema:
+   *           $ref: '#/definitions/Error'
+   *     security:
+   *       - authenticated:
+   *         - user
+   */
+  router.put('/graveyard/documents/:docid', controller.document.restore)
 
   /**
    * @swagger
@@ -65,5 +87,5 @@ module.exports = function (router) {
    *       - authenticated:
    *         - user
    */
-  router.delete('/graveyard', controller.document.emptyGraveyard)
+  router.delete('/graveyard/documents', controller.document.emptyGraveyard)
 }

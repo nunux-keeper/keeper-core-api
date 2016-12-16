@@ -12,7 +12,7 @@ module.exports = function () {
   this.When(/^I share the label/, function (callback) {
     expect(this.myLabel).to.not.be.undefined
     request(app)
-    .post(`/v2/label/${this.myLabel.id}/sharing`)
+    .post(`/v2/labels/${this.myLabel.id}/sharing`)
     .set('Content-Type', 'application/json')
     .use(this.setAuthorizationHeader(this.uid))
     .expect('Content-Type', /json/)
@@ -34,7 +34,7 @@ module.exports = function () {
       sharing[prop] = value
     })
     request(app)
-    .put(`/v2/label/${this.myLabel.id}/sharing`)
+    .put(`/v2/labels/${this.myLabel.id}/sharing`)
     .send(sharing)
     .set('Content-Type', 'application/json')
     .use(this.setAuthorizationHeader(this.uid))
@@ -51,7 +51,7 @@ module.exports = function () {
   this.When(/^I remove the sharing$/, function (callback) {
     expect(this.myLabel).to.not.be.undefined
     request(app)
-    .delete(`/v2/label/${this.myLabel.id}/sharing`)
+    .delete(`/v2/labels/${this.myLabel.id}/sharing`)
     .set('Content-Type', 'application/json')
     .use(this.setAuthorizationHeader(this.uid))
     .expect(204, callback)
@@ -61,7 +61,7 @@ module.exports = function () {
     expect(this.mySharing).to.not.be.undefined
     const shoulBeRetrieve = get === 'retrieve'
     request(app)
-    .get(`/v2/label/${this.mySharing.targetLabel}/sharing`)
+    .get(`/v2/labels/${this.mySharing.targetLabel}/sharing`)
     .use(this.setAuthorizationHeader(this.uid))
     .expect('Content-Type', /json/)
     .expect((res) => {

@@ -8,7 +8,7 @@ const request = require('supertest')
 module.exports = function () {
   this.When(/^I empty the graveyard$/, function (callback) {
     request(app)
-    .delete('/v2/graveyard')
+    .delete('/v2/graveyard/documents')
     .set('Content-Type', 'application/json')
     .use(this.setAuthorizationHeader(this.uid))
     .expect(204, callback)
@@ -16,7 +16,7 @@ module.exports = function () {
 
   this.When(/^I get the graveyard$/, function (callback) {
     request(app)
-    .get('/v2/graveyard')
+    .get('/v2/graveyard/documents')
     .use(this.setAuthorizationHeader(this.uid))
     .expect('Content-Type', /json/)
     .expect(function (res) {
@@ -30,7 +30,7 @@ module.exports = function () {
   this.When(/^I delete the document from the graveyard$/, function (callback) {
     expect(this.myDocument).to.not.be.undefined
     request(app)
-    .delete('/v2/graveyard/' + this.myDocument.id)
+    .delete('/v2/graveyard/documents/' + this.myDocument.id)
     .use(this.setAuthorizationHeader(this.uid))
     .expect(204, callback)
   })
