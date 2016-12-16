@@ -1,7 +1,7 @@
 {
   "author": "Nicolas Carlier <https://github.com/ncarlier>",
   "name": "keeper-core-api",
-  "version": "2.0.0",
+  "version": "2.0.0-beta",
   "description": "Nunux Keeper core API",
   "license": "GPL-3.0",
   "repository": {

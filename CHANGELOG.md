@@ -16,7 +16,7 @@ Changelog
 * Import and Export documents of an user
 * Store attachments on disk or on S3
 * Index documents into ElasticSearch
-* Generated API documentation
+* Online API documentation
 * RESTFul API (with HATOAS support)
 * BDD testing (with Cucumber)
 

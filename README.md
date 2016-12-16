@@ -22,7 +22,7 @@ collect, organize, and retrieve online documents.
 * Authentication delegated to external identity provider (like
   [Keycloak][keycloak], [Auth0][auth0], ...)
 * Store attachments on disk or on [S3][s3]
-* Generated API documentation
+* Online API documentation
 * BDD testing (with [Cucumber][cucumber])
 
 See `ROADMAP.md` for planned features.
@@ -102,7 +102,7 @@ Started services are:
 - **keeper-core-api**: Core API server.
 - **keeper-core-downloader**: Download documents files in background.
 - **keeper-core-ghostbuster**: Remove old deleted documents and files.
-- **keeper-core-backup**: Backup documents files (scheduler).
+- **keeper-data-backup**: Backup documents files (scheduler).
 
 [hateoas]: https://en.wikipedia.org/wiki/HATEOAS
 [keycloak]: http://www.keycloak.org
