@@ -65,11 +65,15 @@ install: build
 	systemctl restart keeper-core-downloader
 	systemctl enable keeper-core-ghostbuster
 	systemctl restart keeper-core-ghostbuster
+	systemctl enable keeper-data-backup.timer
+	systemctl restart keeper-data-backup.timer
 	$(MAKE) cleanup
 
 ## Un-install service (needs root privileges)
 uninstall:
 	echo "Un-install service..."
+	systemctl stop keeper-data-backup.timer
+	systemctl disable keeper-data-backup.timer
 	systemctl stop keeper-core-downloader
 	systemctl disable keeper-core-downloader
 	systemctl stop keeper-core-ghostbuster
