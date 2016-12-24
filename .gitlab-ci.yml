@@ -1,29 +1,42 @@
-image: node:5
+image: docker:git
 
 services:
+  - docker:dind
   - mongo:latest
   - elasticsearch:latest
   - redis:latest
 
-before_script:
-  - apt-get update -qy
-  - apt-get install -y imagemagick
-  - mkdir -p /var/opt/app/storage/upload
-  - npm install --unsafe-perm
+stages:
+  - build
+  - test
+  - release
 
 variables:
-  APP_SEARCH_ENGINE_URI: "elasticsearch://elasticsearch:9200/keeper"
-  APP_REDIS_URI: "redis://redis:6379/1"
-  APP_ADMIN: "system"
-  APP_STORAGE_LOCAL_DIR: "/var/opt/app/storage"
+  REGISTRY: registry.gitlab.com/
+
+before_script:
+  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN docker registry.gitlab.com
+
+build:
+  stage: build
+  script:
+    - make build push REGISTRY=$REGISTRY $VERSION=$CI_BUILD_REF_NAME
 
 spec:feature:mongo:
   stage: test
   script:
-    - APP_DATABASE_URI="mongodb://mongo/keeper" npm test
+    - make test-mongo REGISTRY=$REGISTRY $VERSION=$CI_BUILD_REF_NAME
 
-spec:feature:elasticsearch:
+spec:feature:elastic:
   stage: test
   script:
-    - APP_DATABASE_URI="elasticsearch://elasticsearch:9200/keeper" npm test
+    - make test-elastic REGISTRY=$REGISTRY $VERSION=$CI_BUILD_REF_NAME
+
+release:image:
+  stage: release
+  script:
+    - make pull tag REGISTRY=$REGISTRY $VERSION=$CI_BUILD_REF_NAME
+    - make push $REGISTRY=$REGISTRY
+  only:
+    - master
 

@@ -1,12 +1,12 @@
 .SILENT :
-.PHONY : test up down install uninstall export import
+.PHONY : test test-mongo test-elastic up down install uninstall export import
 
-USERNAME:=ncarlier
+USERNAME:=nunux-keeper
 APPNAME:=keeper-core-api
 env?=dev
 
 # Default links
-LINK_FLAGS?=--link mongodb:mongodb --link elasticsearch:elasticsearch --link redis:redis
+LINK_FLAGS?=--link mongo:mongo --link elasticsearch:elasticsearch --link redis:redis
 
 # Default configuration
 ENV_FLAGS?=--env-file="./etc/default/$(env).env"
@@ -32,6 +32,18 @@ include $(ROOT_DIR)/dockerfiles/common/_Makefile
 test:
 	echo "Running tests..."
 	$(DOCKER) run --rm -it $(RUN_CUSTOM_FLAGS) $(VOLUME_FLAGS) $(IMAGE) test
+
+## Run the container in test mode using MongoDB
+test-mongo:
+	echo "Running tests with MongoDB..."
+	$(eval DB_FLAGS=-e APP_DATABASE_URI=mongodb://mongo/keeper)
+	$(DOCKER) run --rm -it $(LINK_FLAGS) $(VOLUME_FLAGS) $(ENV_FLAGS) $(DB_FLAGS) $(IMAGE) test
+
+## Run the container in test mode using Elasticsearch
+test-elastic:
+	echo "Running tests with Elasticsearch..."
+	$(eval DB_FLAGS=-e APP_DATABASE_URI=elasticsearch://elasticsearch:9200/keeper)
+	$(DOCKER) run --rm -it $(LINK_FLAGS) $(VOLUME_FLAGS) $(ENV_FLAGS) $(DB_FLAGS) $(IMAGE) test
 
 ## Start a complete infrastucture
 up:

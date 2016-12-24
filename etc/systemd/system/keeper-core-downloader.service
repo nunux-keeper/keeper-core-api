@@ -20,6 +20,6 @@ ExecStart=/usr/bin/docker run --rm --name %p \
     --env-file /etc/default/keeper-core-api \
     --env-file /etc/default/keeper-core-api_custom \
     --link redis:redis \
-    ncarlier/keeper-core-api run downloader
+    nunux-keeper/keeper-core-api run downloader
 ExecStop=/usr/bin/docker stop %p
 

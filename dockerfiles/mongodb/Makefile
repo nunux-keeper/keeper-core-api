@@ -1,7 +1,7 @@
 .SILENT :
 .PHONY : client dump restore
 
-APPNAME=mongodb
+APPNAME=mongo
 IMAGE=mongo:latest
 
 DATE:=`date +%Y-%m-%d`

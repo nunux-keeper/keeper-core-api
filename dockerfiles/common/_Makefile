@@ -1,5 +1,5 @@
 .SILENT :
-.PHONY : help volume mount update build clean cleanup start stop rm shell logs
+.PHONY : help volume mount update build clean cleanup start stop rm shell logs push pull tag
 
 # Docker configuartion regarding the system architecture
 DOCKER=docker
@@ -18,11 +18,17 @@ endif
 # Get IP of the running container
 IP:=`docker inspect --format '{{ .NetworkSettings.IPAddress }}' $(APPNAME)`
 
+# Default registry
+REGISTRY?=
+
+# Default version
+VERSION?=latest
+
 # Default username
 USERNAME?=ncarlier
 
 # Default image name
-IMAGE?=$(USERNAME)/$(APPNAME)
+IMAGE?=$(REGISTRY)$(USERNAME)/$(APPNAME):$(VERSION)
 
 # Custom flags
 RUN_CUSTOM_FLAGS?=-P
@@ -122,4 +128,19 @@ shell:
 logs:
 	echo "Logs of the $(APPNAME) container..."
 	$(DOCKER) logs -f $(APPNAME)
+
+## Push docker image to the registry
+push:
+	echo "Pushing $(IMAGE) ..."
+	$(DOCKER) push $(IMAGE)
+
+## Pull docker image from the registry
+pull:
+	echo "Pulling $(IMAGE) ..."
+	$(DOCKER) pull $(IMAGE)
+
+## Tag docker image
+tag:
+	echo "Tagging $(IMAGE) as latest ..."
+	$(DOCKER) tag $(IMAGE) $(REGISTRY)$(USERNAME)/$(APPNAME):latest
 
