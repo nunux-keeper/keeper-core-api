@@ -15,7 +15,7 @@ variables:
   REGISTRY: registry.gitlab.com/
 
 before_script:
-  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN docker registry.gitlab.com
+  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
 
 build:
   stage: build
