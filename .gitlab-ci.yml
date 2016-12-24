@@ -26,12 +26,12 @@ build:
 spec:feature:mongo:
   stage: test
   script:
-    - make test-mongo REGISTRY=$REGISTRY VERSION=$CI_BUILD_REF_NAME
+    - make test-mongo LINK_FLAGS= REGISTRY=$REGISTRY VERSION=$CI_BUILD_REF_NAME
 
 spec:feature:elastic:
   stage: test
   script:
-    - make test-elastic REGISTRY=$REGISTRY VERSION=$CI_BUILD_REF_NAME
+    - make test-elastic LINK_FLAGS= REGISTRY=$REGISTRY VERSION=$CI_BUILD_REF_NAME
 
 release:image:
   stage: release
