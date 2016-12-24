@@ -31,19 +31,19 @@ include $(ROOT_DIR)/dockerfiles/common/_Makefile
 ## Run the container in test mode
 test:
 	echo "Running tests..."
-	$(DOCKER) run --rm -it $(RUN_CUSTOM_FLAGS) $(VOLUME_FLAGS) $(IMAGE) test
+	$(DOCKER) run --rm $(RUN_CUSTOM_FLAGS) $(VOLUME_FLAGS) $(IMAGE) test
 
 ## Run the container in test mode using MongoDB
 test-mongo:
 	echo "Running tests with MongoDB..."
 	$(eval DB_FLAGS=-e APP_DATABASE_URI=mongodb://mongo/keeper)
-	$(DOCKER) run --rm -it $(LINK_FLAGS) $(VOLUME_FLAGS) $(ENV_FLAGS) $(DB_FLAGS) $(IMAGE) test
+	$(DOCKER) run --rm $(LINK_FLAGS) $(VOLUME_FLAGS) $(ENV_FLAGS) $(DB_FLAGS) $(IMAGE) test
 
 ## Run the container in test mode using Elasticsearch
 test-elastic:
 	echo "Running tests with Elasticsearch..."
 	$(eval DB_FLAGS=-e APP_DATABASE_URI=elasticsearch://elasticsearch:9200/keeper)
-	$(DOCKER) run --rm -it $(LINK_FLAGS) $(VOLUME_FLAGS) $(ENV_FLAGS) $(DB_FLAGS) $(IMAGE) test
+	$(DOCKER) run --rm $(LINK_FLAGS) $(VOLUME_FLAGS) $(ENV_FLAGS) $(DB_FLAGS) $(IMAGE) test
 
 ## Start a complete infrastucture
 up:
