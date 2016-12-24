@@ -21,22 +21,22 @@ before_script:
 build:
   stage: build
   script:
-    - make build push REGISTRY=$REGISTRY $VERSION=$CI_BUILD_REF_NAME
+    - make build push REGISTRY=$REGISTRY VERSION=$CI_BUILD_REF_NAME
 
 spec:feature:mongo:
   stage: test
   script:
-    - make test-mongo REGISTRY=$REGISTRY $VERSION=$CI_BUILD_REF_NAME
+    - make test-mongo REGISTRY=$REGISTRY VERSION=$CI_BUILD_REF_NAME
 
 spec:feature:elastic:
   stage: test
   script:
-    - make test-elastic REGISTRY=$REGISTRY $VERSION=$CI_BUILD_REF_NAME
+    - make test-elastic REGISTRY=$REGISTRY VERSION=$CI_BUILD_REF_NAME
 
 release:image:
   stage: release
   script:
-    - make pull tag REGISTRY=$REGISTRY $VERSION=$CI_BUILD_REF_NAME
+    - make pull tag REGISTRY=$REGISTRY VERSION=$CI_BUILD_REF_NAME
     - make push $REGISTRY=$REGISTRY
   only:
     - master
