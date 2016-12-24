@@ -9,9 +9,9 @@
     "url": "gitlab.com:nunux-keeper/keeper-core-api.git"
   },
   "scripts": {
-    "start": "node --harmony src/cluster | bunyan",
+    "start": "node --harmony src/cluster",
     "debug": "node-inspector & node --harmony --debug src/cluster",
-    "test": "node --harmony `which gulp` | bunyan",
+    "test": "node --harmony `which gulp`",
     "export": "node --harmony src/job/export",
     "import": "node --harmony src/job/import",
     "downloader": "node --harmony src/daemon/downloader",

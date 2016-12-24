@@ -92,17 +92,18 @@ const shutdown = function (signal) {
   logger.info('Stopping server...')
   require('./daemon').shutdown()
   require('./service').system.shutdown()
-    .catch(function (err) {
+    .then(function () {
+      const retval = signal === 'SIGINT' ? 1 : 0
+      logger.info(`Server stopped (${retval})`)
+      process.exit(retval)
+    }, function (err) {
       logger.error('Error while stopping server.', err)
       process.exit(1)
-    }).then(function () {
-      logger.info('Server stopped.')
-      process.exit(signal === 'SIGINT' ? 1 : 0)
     })
 
   setTimeout(function () {
     logger.error('Could not close connections in time, forcefully shutting down')
-    process.exit()
+    process.exit(1)
   }, 10 * 1000)
 }
 
