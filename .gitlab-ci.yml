@@ -23,6 +23,8 @@ build:
 spec:feature:mongo:
   stage: test
   before_script:
+    - apk add --no-cache make
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
     - make up
   after_script:
     - make down
@@ -32,6 +34,8 @@ spec:feature:mongo:
 spec:feature:elastic:
   stage: test
   before_script:
+    - apk add --no-cache make
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
     - make up
   after_script:
     - make down
