@@ -2,9 +2,6 @@ image: docker:git
 
 services:
   - docker:dind
-  - mongo:latest
-  - elasticsearch:latest
-  - redis:latest
 
 stages:
   - build
@@ -25,11 +22,19 @@ build:
 
 spec:feature:mongo:
   stage: test
+  before_script:
+    - make up
+  after_script:
+    - make down
   script:
-    - make test-mongo LINK_FLAGS= REGISTRY=$REGISTRY VERSION=$CI_BUILD_REF_NAME
+    - make test-mongo REGISTRY=$REGISTRY VERSION=$CI_BUILD_REF_NAME
 
 spec:feature:elastic:
   stage: test
+  before_script:
+    - make up
+  after_script:
+    - make down
   script:
     - make test-elastic LINK_FLAGS= REGISTRY=$REGISTRY VERSION=$CI_BUILD_REF_NAME
 
