@@ -1,52 +1,48 @@
-image: docker:git
-
-services:
-  - docker:dind
-
 stages:
-  - build
   - test
   - release
 
-variables:
-  REGISTRY: registry.gitlab.com/
+image: node:5
 
 before_script:
-  - apk add --no-cache make
-  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+  - apt-get update -qy
+  - apt-get install -y imagemagick
+  - mkdir -p /var/opt/app/storage/upload
+  - npm install --unsafe-perm
 
-build:
-  stage: build
-  script:
-    - make build push REGISTRY=$REGISTRY VERSION=$CI_BUILD_REF_NAME
+variables:
+  APP_SEARCH_ENGINE_URI: "elasticsearch://elasticsearch:9200/keeper"
+  APP_REDIS_URI: "redis://redis:6379/1"
+  APP_ADMIN: "system"
+  APP_STORAGE_LOCAL_DIR: "/var/opt/app/storage"
 
 spec:feature:mongo:
   stage: test
-  before_script:
-    - apk add --no-cache make
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
-    - make up
-  after_script:
-    - make down
+  services:
+    - mongo:latest
+    - elasticsearch:latest
+    - redis:latest
   script:
-    - make test-mongo REGISTRY=$REGISTRY VERSION=$CI_BUILD_REF_NAME
+    - APP_DATABASE_URI="mongodb://mongo/keeper" npm test
 
 spec:feature:elastic:
   stage: test
-  before_script:
-    - apk add --no-cache make
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
-    - make up
-  after_script:
-    - make down
+  services:
+    - elasticsearch:latest
+    - redis:latest
   script:
-    - make test-elastic LINK_FLAGS= REGISTRY=$REGISTRY VERSION=$CI_BUILD_REF_NAME
+    - APP_DATABASE_URI="elasticsearch://elasticsearch:9200/keeper" npm test
 
 release:image:
   stage: release
+  image: docker:git
+  services:
+    - docker:dind
+  before_script:
+    - apk add --no-cache make
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
   script:
-    - make pull tag REGISTRY=$REGISTRY VERSION=$CI_BUILD_REF_NAME
-    - make push $REGISTRY=$REGISTRY
+    - make build push REGISTRY=registry.gitlab.com/
   only:
     - master
 
