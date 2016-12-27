@@ -19,17 +19,17 @@ variables:
 spec:feature:mongo:
   stage: test
   services:
-    - mongo:latest
-    - elasticsearch:latest
-    - redis:latest
+    - mongo:3
+    - elasticsearch:2
+    - redis:3
   script:
     - APP_DATABASE_URI="mongodb://mongo/keeper" npm test
 
 spec:feature:elastic:
   stage: test
   services:
-    - elasticsearch:latest
-    - redis:latest
+    - elasticsearch:2
+    - redis:3
   script:
     - APP_DATABASE_URI="elasticsearch://elasticsearch:9200/keeper" npm test
 
