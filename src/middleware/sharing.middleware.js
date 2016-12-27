@@ -14,8 +14,8 @@ module.exports = {
       if (!sharing) {
         return next(new errors.NotFound('Sharing not found.'))
       }
-      // Ceck that the sharing can be accessed
-      if (!sharing.public && !req.user) {
+      // Check that the sharing can be accessed
+      if (!sharing.pub && !req.user) {
         return next(new errors.Unauthorized())
       }
 

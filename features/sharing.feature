@@ -42,7 +42,7 @@ Feature: Sharing API
     And  I should not retrieve the shared document
     Given I am a valid user with the uid "test"
     When I update the sharing:
-      | public | true  |
+      | pub | true  |
     Then I should retrieve the sharing
     Given I am an anonymous user
     Then  I should retrieve the shared label

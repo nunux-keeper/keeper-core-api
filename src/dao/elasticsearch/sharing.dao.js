@@ -16,7 +16,7 @@ class SharingDao extends AbstractElasticsearchDao {
       properties: {
         owner: {type: 'string', store: 'yes', index: 'not_analyzed'},
         targetLabel: {type: 'string', store: 'yes', index: 'not_analyzed'},
-        'public': {type: 'boolean', store: 'yes'},
+        pub: {type: 'boolean', store: 'yes'},
         date : {type: 'date', store: 'yes', format: 'date_optional_time'},
         startDate : {type: 'date', store: 'yes', format: 'date_optional_time'},
         endDate : {type: 'date', store: 'yes', format: 'date_optional_time'}

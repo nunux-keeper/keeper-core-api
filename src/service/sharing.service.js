@@ -36,9 +36,9 @@ SharingService.all = function (owner) {
  */
 SharingService.create = function (sharing) {
   const newSharing = _.defaults(
-    _.pick(sharing, ['owner', 'targetLabel', 'public', 'startDate', 'endDate']),
+    _.pick(sharing, ['owner', 'targetLabel', 'pub', 'startDate', 'endDate']),
     {
-      'public': false,
+      pub: false,
       date: new Date(),
       startDate: new Date()
     }
@@ -60,7 +60,7 @@ SharingService.create = function (sharing) {
  */
 SharingService.update = function (sharing, update) {
   update = _.defaults(
-    _.pick(update, ['public', 'startDate', 'endDate']),
+    _.pick(update, ['pub', 'startDate', 'endDate']),
     { date: new Date() }
   )
 

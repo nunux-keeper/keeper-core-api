@@ -5,7 +5,7 @@ const app = require('../../src/app')
 const expect = require('chai').expect
 const request = require('supertest')
 
-const ofASharingObject = ['id', 'owner', 'targetLabel', 'public', 'date', 'startDate']
+const ofASharingObject = ['id', 'owner', 'targetLabel', 'pub', 'date', 'startDate']
 const ofADocumentObject = ['id', 'title', 'content', 'contentType', 'date', 'labels']
 
 module.exports = function () {

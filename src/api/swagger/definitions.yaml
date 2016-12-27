@@ -158,7 +158,7 @@ definitions:
         type: string
         format: date-time
         description: Date to end the sharing
-      public:
+      pub:
         type: boolean
         description: Set if the sharing is public or not
   SharingPayload:
@@ -172,7 +172,7 @@ definitions:
         type: string
         format: date-time
         description: Date to end the sharing
-      public:
+      pub:
         type: boolean
         description: Set if the sharing is public or not
   User:
