@@ -48,13 +48,16 @@ module.exports = {
       return next(new errors.BadRequest('Label allready shared.'))
     }
     req.sanitizeBody('sharing').escape()
-    req.checkBody('startDate', 'Invalid starting date').optional().isDate()
-    req.checkBody('endDate', 'Invalid ending date').optional().isDate()
+    req.checkBody('startDate', 'Invalid starting date').optional({ checkFalsy: true }).isDate()
+    req.checkBody('endDate', 'Invalid ending date').optional({ checkFalsy: true }).isDate()
     req.checkBody('pub', 'Invalid public flag').optional().isBoolean()
     const validationErrors = req.validationErrors(true)
     if (validationErrors) {
       return next(new errors.BadRequest(null, validationErrors))
     }
+    req.sanitizeBody('startDate').toDate()
+    req.sanitizeBody('endDate').toDate()
+    req.sanitizeBody('pub').toBoolean()
 
     const newSharing = {
       owner: req.user.id,
@@ -80,13 +83,16 @@ module.exports = {
    */
   update: function (req, res, next) {
     req.sanitizeBody('sharing').escape()
-    req.checkBody('startDate', 'Invalid starting date').optional().isDate()
-    req.checkBody('endDate', 'Invalid ending date').optional().isDate()
+    req.checkBody('startDate', 'Invalid starting date').optional({ checkFalsy: true }).isDate()
+    req.checkBody('endDate', 'Invalid ending date').optional({ checkFalsy: true }).isDate()
     req.checkBody('pub', 'Invalid public flag').optional().isBoolean()
     const validationErrors = req.validationErrors(true)
     if (validationErrors) {
       return next(new errors.BadRequest(null, validationErrors))
     }
+    req.sanitizeBody('startDate').toDate()
+    req.sanitizeBody('endDate').toDate()
+    req.sanitizeBody('pub').toBoolean()
 
     const update = {
       startDate: req.body.startDate,

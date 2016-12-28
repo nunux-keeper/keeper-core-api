@@ -33,6 +33,9 @@ module.exports = function () {
       const value = attr[1]
       sharing[prop] = value
     })
+    if (sharing.pub) {
+      sharing.pub = sharing.pub === 'true'
+    }
     request(app)
     .put(`/v2/labels/${this.myLabel.id}/sharing`)
     .send(sharing)
@@ -42,6 +45,7 @@ module.exports = function () {
     .expect((res) => {
       expect(res.status).to.equals(200)
       expect(res.body).to.contain.all.keys(ofASharingObject)
+      // console.log('compare:', res.body, sharing)
       expect(res.body).to.satisfy((obj) => _.isMatch(obj, sharing))
       this.mySharing = res.body
     })
