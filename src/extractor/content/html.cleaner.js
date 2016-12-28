@@ -2,7 +2,7 @@
 
 const _ = require('lodash')
 const url = require('url')
-const globals = require('../../helper').globals
+const urlConfig = require('../../helper').urlConfig
 const logger = require('../../helper').logger
 const validators = require('../../helper').validators
 
@@ -83,8 +83,8 @@ const filterImages = function (document, options) {
 
     const src = img.getAttribute('src')
     if (src) {
-      if (src.startsWith(globals.REALM)) {
-        // Remove src pointing to the Realm
+      if (src.startsWith(urlConfig.baseUrl)) {
+        // Remove src pointing to the current server
         img.removeAttribute('src')
       } else if (!/^data:/i.test(src)) {
         // Create absolute URL if possible
