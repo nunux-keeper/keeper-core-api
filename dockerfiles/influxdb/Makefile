@@ -22,6 +22,9 @@ client:
 ## Init Influx database...
 init:
 	echo "Init Influx database..."
-	curl -G http://$(IP):8086/query \
-		--data-urlencode "q=CREATE DATABASE $(DATABASE_NAME)"
+	$(DOCKER) run --rm \
+		-it \
+		--net=$(NETWORK) \
+		$(IMAGE) \
+		influx -host $(APPNAME) -execute 'CREATE DATABASE $(DATABASE_NAME)'
 
