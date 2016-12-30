@@ -6,24 +6,19 @@ IMAGE=mongo:latest
 
 DATE:=`date +%Y-%m-%d`
 
-define RUN_CUSTOM_FLAGS
--P
-endef
-
-SHELL_CUSTOM_FLAGS:=-P
-
 ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
 include $(ROOT_DIR)/../common/_Makefile
 
 ## Run the container in client mode
 client:
-	echo "Running client to container $(APPNAME) with IP=$(IP)..."
+	echo "Running client to container $(APPNAME)..."
 	$(DOCKER) run --rm \
 		-it \
+		--net=$(NETWORK) \
 		--entrypoint="mongo" \
 		$(IMAGE) \
-		$(IP)/admin
+		$(APPNAME)/admin
 
 ## Dump database to disk
 dump:
@@ -31,8 +26,9 @@ dump:
 	$(DOCKER) run --rm \
 		--volumes-from $(APPNAME)_volumes \
 		--entrypoint='mongodump' \
+		--net=$(NETWORK) \
 		$(IMAGE) \
-		-h $(IP) --out /var/opt/mongodb/$(DATE)
+		-h $(APPNAME) --out /var/opt/mongodb/$(DATE)
 
 ## Restore database from disk (need BACKUP_NAME)
 restore:
@@ -43,7 +39,8 @@ else
 	$(DOCKER) run --rm \
 		--volumes-from $(APPNAME)_volumes \
 		--entrypoint='mongorestore' \
+		--net=$(NETWORK) \
 		$(IMAGE) \
-		--host $(IP) /var/opt/mongodb/$(BACKUP_NAME)
+		--host $(APPNAME) /var/opt/mongodb/$(BACKUP_NAME)
 endif
 

@@ -15,6 +15,8 @@ ifeq ($(UNAME_M),armv7l)
 	VOLUME_IMAGE=armbuild/busybox
 endif
 
+NETWORK?=keeper-vlan
+
 # Get IP of the running container
 IP:=`docker inspect --format '{{ .NetworkSettings.IPAddress }}' $(APPNAME)`
 
@@ -31,16 +33,16 @@ USERNAME?=ncarlier
 IMAGE?=$(REGISTRY)$(USERNAME)/$(APPNAME):$(VERSION)
 
 # Custom flags
-RUN_CUSTOM_FLAGS?=-P
+RUN_CUSTOM_FLAGS?=
 # Default Docker run flags
-RUN_FLAGS?=-d -h $(APPNAME) --name $(APPNAME) $(RUN_CUSTOM_FLAGS)
+RUN_FLAGS?=-d -h $(APPNAME) --name $(APPNAME) --net=$(NETWORK) $(RUN_CUSTOM_FLAGS)
 # Default Docker run command
 RUN_CMD?=
 
 # Custom flags
 SHELL_CUSTOM_FLAGS?=$(RUN_CUSTOM_FLAGS)
 # Default Docker run flags for shell access
-SHELL_FLAGS?=--rm -it -h $(APPNAME) --entrypoint="/bin/bash" $(SHELL_CUSTOM_FLAGS)
+SHELL_FLAGS?=--rm -it -h $(APPNAME) --name $(APPNAME) --entrypoint="/bin/bash" $(SHELL_CUSTOM_FLAGS)
 # Default Docker run command for shell access
 SHELL_CMD?=-c /bin/bash
 
@@ -72,6 +74,11 @@ ifeq ($(UNAME_M),armv7l)
 	echo "Building $(APPNAME) ARM dockerfile..."
 	sed -e 's|$(BASEIMAGE_)|$(BASEIMAGE)|' Dockerfile > Dockerfile.arm
 endif
+
+## Build the network
+network:
+	echo "Building network: $(NETWORK)..."
+	$(DOCKER) network create $(NETWORK)
 
 ## Build the volume image
 volume:

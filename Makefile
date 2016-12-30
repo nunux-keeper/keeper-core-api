@@ -5,23 +5,20 @@ USERNAME:=nunux-keeper
 APPNAME:=keeper-core-api
 env?=dev
 
-# Default links
-LINK_FLAGS?=--link mongo:mongo --link elasticsearch:elasticsearch --link redis:redis
-
 # Default configuration
 ENV_FLAGS?=--env-file="./etc/default/$(env).env"
 
 # Custom run flags
-RUN_CUSTOM_FLAGS?=-p 8080:3000 $(ENV_FLAGS) $(LINK_FLAGS)
+RUN_CUSTOM_FLAGS?=-p 8080:3000 $(ENV_FLAGS)
 
 # Custom run flags
-SHELL_CUSTOM_FLAGS?=-P $(ENV_FLAGS) $(LINK_FLAGS)
+SHELL_CUSTOM_FLAGS?=-P $(ENV_FLAGS)
 
 # Docker configuartion regarding the system architecture
-BASEIMAGE=node:5-onbuild
+BASEIMAGE=node:6-onbuild
 UNAME_M := $(shell uname -m)
 ifeq ($(UNAME_M),armv7l)
-	BASEIMAGE=armhfbuild/node:5
+	BASEIMAGE=hypriot/rpi-node/6-onbuild
 endif
 
 ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
@@ -31,19 +28,19 @@ include $(ROOT_DIR)/dockerfiles/common/_Makefile
 ## Run the container in test mode
 test:
 	echo "Running tests..."
-	$(DOCKER) run --rm $(RUN_CUSTOM_FLAGS) $(VOLUME_FLAGS) $(IMAGE) test
+	$(DOCKER) run --rm --net=$(NETWORK) $(VOLUME_FLAGS) $(ENV_FLAGS) $(IMAGE) test
 
 ## Run the container in test mode using MongoDB
 test-mongo:
 	echo "Running tests with MongoDB..."
 	$(eval DB_FLAGS=-e APP_DATABASE_URI=mongodb://mongo/keeper)
-	$(DOCKER) run --rm $(LINK_FLAGS) $(VOLUME_FLAGS) $(ENV_FLAGS) $(DB_FLAGS) $(IMAGE) test
+	$(DOCKER) run --rm --net=$(NETWORK) $(VOLUME_FLAGS) $(ENV_FLAGS) $(DB_FLAGS) $(IMAGE) test
 
 ## Run the container in test mode using Elasticsearch
 test-elastic:
 	echo "Running tests with Elasticsearch..."
 	$(eval DB_FLAGS=-e APP_DATABASE_URI=elasticsearch://elasticsearch:9200/keeper)
-	$(DOCKER) run --rm $(LINK_FLAGS) $(VOLUME_FLAGS) $(ENV_FLAGS) $(DB_FLAGS) $(IMAGE) test
+	$(DOCKER) run --rm --net=$(NETWORK) $(VOLUME_FLAGS) $(ENV_FLAGS) $(DB_FLAGS) $(IMAGE) test
 
 ## Start a complete infrastucture
 up:
@@ -103,7 +100,8 @@ ifndef uid
 	$(error User not defined. You should set "uid" variable.)
 else
 	echo "Exporting $(uid) documents..."
-	$(DOCKER) exec $(APPNAME) npm run export -- -d --user $(uid) --file /var/opt/app/storage/exports/$(uid).zip
+	$(DOCKER) exec $(APPNAME) \
+		npm run export -- -d --user $(uid) --file /var/opt/app/storage/exports/$(uid).zip
 endif
 
 ## Import documents from an archive to an user (defined by $uid)
@@ -112,5 +110,6 @@ ifndef uid
 	$(error User not defined. You should set "uid" variable.)
 else
 	echo "Exporting $(uid) documents..."
-	$(DOCKER) exec $(APPNAME) npm run import -- -d --user $(uid) --file /var/opt/app/storage/exports/$(uid).zip
+	$(DOCKER) exec $(APPNAME) \
+		npm run import -- -d --user $(uid) --file /var/opt/app/storage/exports/$(uid).zip
 endif

@@ -6,24 +6,19 @@ IMAGE:=redis:latest
 
 DATE:=`date +%Y-%m-%d`
 
-define RUN_CUSTOM_FLAGS
--P
-endef
-
-SHELL_CUSTOM_FLAGS:=-P
-
 ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
 include $(ROOT_DIR)/../common/_Makefile
 
 ## Run the container in client mode
 client:
-	echo "Running client of container $(APPNAME) with IP=$(IP)..."
+	echo "Running client of container $(APPNAME)..."
 	$(DOCKER) run --rm \
 		-it \
 		--entrypoint="redis-cli" \
+		--net=$(NETWORK) \
 		$(IMAGE) \
-		-h $(IP)
+		-h $(APPNAME)
 
 ## Dump database to disk
 dump:
