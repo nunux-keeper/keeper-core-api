@@ -23,6 +23,7 @@ collect, organize, and retrieve online documents.
   [Keycloak][keycloak], [Auth0][auth0], ...)
 * Store attachments on disk or on [S3][s3]
 * Online API documentation
+* Produce metrics (with [StatsD][statsd])
 * BDD testing (with [Cucumber][cucumber])
 
 See `ROADMAP.md` for planned features.
@@ -115,6 +116,7 @@ Started services are:
 [express]: http://expressjs.com
 [cucumber]: https://cucumber.io
 [s3]: https://aws.amazon.com/s3
+[statsd]: https://github.com/b/statsd_spec
 
 
 ----------------------------------------------------------------------

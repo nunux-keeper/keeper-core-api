@@ -7,6 +7,7 @@ const globals = require('../helper').globals
 const errors = require('../helper').errors
 const validators = require('../helper').validators
 const decorator = require('../decorator')
+const eventHandler = require('../event')
 const DecoratorStream = require('../decorator/decorator.stream')
 const userDao = require('../dao').user
 
@@ -56,6 +57,7 @@ UserService.update = function (user, update) {
   return userDao.update(user, update)
     .then(function (u) {
       logger.info('User updated: %j', u)
+      eventHandler.user.emit('update', u)
       return Promise.resolve(u)
     })
 }
@@ -74,12 +76,18 @@ UserService.login = function (user) {
       return Promise.resolve(_user)
     } else if (globals.AUTO_PROVISIONING_USERS || validators.isAdmin(user.uid)) {
       // Create the user.
-      logger.info('User %s authorized. Auto-provisioning...', user.uid)
+      logger.debug('User %s authorized. Auto-provisioning...', user.uid)
       user.alias = crypto.createHash('md5').update(user.uid).digest('hex')
       return userDao.create(user)
+      .then((_user) => {
+        logger.debug('User %s created.', _user.uid)
+        eventHandler.user.emit('create', _user)
+        return Promise.resolve(_user)
+      })
     } else {
       // User not found and auto grant access is disabled.
       logger.warn('User %s not authorized.', user.uid)
+      eventHandler.user.emit('unauthorized', user)
       return Promise.reject(new errors.Unauthorized('Auto-provisioning disabled.'))
     }
   })

@@ -18,6 +18,7 @@ Changelog
 * Index documents into ElasticSearch
 * Online API documentation
 * RESTFul API (with HATOAS support)
+* Produce metrics (with StatsD)
 * BDD testing (with Cucumber)
 
 ### Improvements
