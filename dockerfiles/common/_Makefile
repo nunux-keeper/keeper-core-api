@@ -1,17 +1,16 @@
 .SILENT :
-.PHONY : help volume mount update build clean cleanup start stop rm shell logs push pull tag
+.PHONY : help network volume mount update build clean cleanup start stop rm shell logs push pull tag
 
-# Docker configuartion regarding the system architecture
+# Docker configuration regarding the system architecture
 DOCKER=docker
 DOCKERFILE=Dockerfile
 BASEIMAGE?=debian:jessie
-BASEIMAGE_?=$(BASEIMAGE)
-VOLUME_IMAGE?=busybox
+VOLUME_IMAGE=busybox
 UNAME_M := $(shell uname -m)
 ifeq ($(UNAME_M),armv7l)
 	DOCKERFILE=Dockerfile.arm
 	APPNAME=$(APPNAME)-arm
-	BASEIMAGE=armhfbuild/$(BASEIMAGE)
+	ARM_BASEIMAGE?=armhfbuild/$(BASEIMAGE)
 	VOLUME_IMAGE=armbuild/busybox
 endif
 
@@ -72,7 +71,7 @@ help:
 Dockerfile.arm:
 ifeq ($(UNAME_M),armv7l)
 	echo "Building $(APPNAME) ARM dockerfile..."
-	sed -e 's|$(BASEIMAGE_)|$(BASEIMAGE)|' Dockerfile > Dockerfile.arm
+	sed -e 's|$(BASEIMAGE)|$(ARM_BASEIMAGE)|' Dockerfile > Dockerfile.arm
 endif
 
 ## Build the network
