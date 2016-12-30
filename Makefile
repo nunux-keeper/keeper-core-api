@@ -1,5 +1,5 @@
 .SILENT :
-.PHONY : test test-mongo test-elastic up down install uninstall export import
+.PHONY : test test-mongo test-elastic up up-metrics down down-metrics install uninstall export import
 
 USERNAME:=nunux-keeper
 APPNAME:=keeper-core-api
@@ -14,11 +14,11 @@ RUN_CUSTOM_FLAGS?=-p 8080:3000 $(ENV_FLAGS)
 # Custom run flags
 SHELL_CUSTOM_FLAGS?=-P $(ENV_FLAGS)
 
-# Docker configuartion regarding the system architecture
+# Docker configuration regarding the system architecture
 BASEIMAGE=node:6-onbuild
 UNAME_M := $(shell uname -m)
 ifeq ($(UNAME_M),armv7l)
-	BASEIMAGE=hypriot/rpi-node/6-onbuild
+	ARM_BASEIMAGE=hypriot/rpi-node/6-onbuild
 endif
 
 ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
@@ -46,10 +46,19 @@ test-elastic:
 up:
 	echo "Starting MongoDB..."
 	make -C $(ROOT_DIR)/dockerfiles/mongodb stop rm start
-	echo "Starting Elasticsearch ..."
+	echo "Starting Elasticsearch..."
 	make -C $(ROOT_DIR)/dockerfiles/elasticsearch stop rm start
-	echo "Starting Redis ..."
+	echo "Starting Redis..."
 	make -C $(ROOT_DIR)/dockerfiles/redis stop rm start
+
+## Start a complete metrics stack
+up-metrics:
+	echo "Starting InfluxDB..."
+	make -C $(ROOT_DIR)/dockerfiles/influxdb stop rm start init
+	echo "Starting Telegraf..."
+	make -C $(ROOT_DIR)/dockerfiles/telegraf stop rm start
+	echo "Starting Grafana..."
+	make -C $(ROOT_DIR)/dockerfiles/grafana stop rm start
 
 ## Stop the infrastucture
 down:
@@ -59,6 +68,15 @@ down:
 	make -C $(ROOT_DIR)/dockerfiles/elasticsearch stop rm
 	echo "Stoping Redis ..."
 	make -C $(ROOT_DIR)/dockerfiles/redis stop rm
+
+## Stop the metrics stack
+down-metrics:
+	echo "Stoping Grafana..."
+	make -C $(ROOT_DIR)/dockerfiles/grafana stop rm
+	echo "Stoping Telegraf..."
+	make -C $(ROOT_DIR)/dockerfiles/telegraf stop rm
+	echo "Stoping InfluxDB..."
+	make -C $(ROOT_DIR)/dockerfiles/influxdb stop rm
 
 ## Install as a service (needs root privileges)
 install: build
