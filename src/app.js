@@ -67,7 +67,7 @@ const swaggerSpec = swaggerJSDoc(options)
 
 // Serve swagger docs
 app.use('/', require('./api/info')())
-app.use('/api-docs', express.static('./doc/swagger-ui'))
+app.use('/api-docs', express.static(__dirname + '/../doc/swagger-ui'))
 app.get('/api-docs.json', (req, res) => {
   res.setHeader('Content-Type', 'application/json')
   res.send(swaggerSpec)
