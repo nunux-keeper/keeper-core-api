@@ -9,11 +9,12 @@ const middleware = require('../middleware')
 module.exports = function (router) {
   /**
    * @swagger
-   * /v2/graveyard:
+   * /v2/graveyard/documents:
    *   get:
    *     summary: Search documents in the graveyard
    *     tags:
    *       - Graveyard
+   *       - Document
    *     parameters:
    *       - $ref: '#/parameters/from'
    *       - $ref: '#/parameters/size'
@@ -31,11 +32,12 @@ module.exports = function (router) {
 
   /**
    * @swagger
-   * /v2/graveyard/{docid}:
+   * /v2/graveyard/documents/{docid}:
    *   delete:
    *     summary: Remove a document from the graveyard
    *     tags:
    *       - Graveyard
+   *       - Document
    *     parameters:
    *       - $ref: '#/parameters/docid'
    *     responses:
@@ -53,10 +55,11 @@ module.exports = function (router) {
 
   /**
    * @swagger
-   * /v2/graveyard/{docid}:
+   * /v2/graveyard/documents/{docid}:
    *   put:
    *     summary: Restore a deleted document
    *     tags:
+   *       - Graveyard
    *       - Document
    *     parameters:
    *       - $ref: '#/parameters/docid'
@@ -75,11 +78,12 @@ module.exports = function (router) {
 
   /**
    * @swagger
-   * /v2/graveyard:
+   * /v2/graveyard/documents:
    *   delete:
    *     summary: Remove all documents from the graveyard
    *     tags:
    *       - Graveyard
+   *       - Document
    *     responses:
    *       204:
    *         description: Success

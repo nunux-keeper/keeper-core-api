@@ -18,7 +18,6 @@ module.exports = function (router) {
    *       200:
    *         description: Success
    *         schema:
-   *           type: object
    *           properties:
    *             users:
    *               type: array
@@ -34,7 +33,7 @@ module.exports = function (router) {
    * @swagger
    * /v2/admin/users/{uid}:
    *   get:
-   *     summary: Get all user's labels
+   *     summary: Get user details
    *     tags:
    *       - Admin
    *     parameters:
@@ -44,10 +43,6 @@ module.exports = function (router) {
    *         description: Success
    *         schema:
    *           $ref: "#/definitions/User"
-   *       default:
-   *         description: Unexpected error
-   *         schema:
-   *           $ref: '#/definitions/Error'
    *     security:
    *       - authenticated:
    *         - user

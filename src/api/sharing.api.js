@@ -18,7 +18,6 @@ module.exports = function (router) {
    *       200:
    *         description: Success
    *         schema:
-   *           type: object
    *           properties:
    *             sharing:
    *               type: array

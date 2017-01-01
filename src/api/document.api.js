@@ -113,11 +113,6 @@ module.exports = function (router) {
    *         in: query
    *         required: false
    *         type: string
-   *       - name: files
-   *         description: Attachment files
-   *         in: formData
-   *         required: false
-   *         type: file
    *     responses:
    *       201:
    *         description: Success
