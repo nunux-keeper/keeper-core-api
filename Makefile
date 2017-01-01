@@ -45,20 +45,20 @@ test-elastic:
 ## Start a complete infrastucture
 up:
 	echo "Starting MongoDB..."
-	make -C $(ROOT_DIR)/dockerfiles/mongodb stop rm start
+	make -C $(ROOT_DIR)/dockerfiles/mongodb stop rm update start
 	echo "Starting Elasticsearch..."
-	make -C $(ROOT_DIR)/dockerfiles/elasticsearch stop rm start
+	make -C $(ROOT_DIR)/dockerfiles/elasticsearch stop rm update start
 	echo "Starting Redis..."
-	make -C $(ROOT_DIR)/dockerfiles/redis stop rm start
+	make -C $(ROOT_DIR)/dockerfiles/redis stop rm update start
 
 ## Start a complete metrics stack
 up-metrics:
 	echo "Starting InfluxDB..."
-	make -C $(ROOT_DIR)/dockerfiles/influxdb stop rm start init
+	make -C $(ROOT_DIR)/dockerfiles/influxdb stop rm update start init
 	echo "Starting Telegraf..."
-	make -C $(ROOT_DIR)/dockerfiles/telegraf stop rm start
+	make -C $(ROOT_DIR)/dockerfiles/telegraf stop rm update start
 	echo "Starting Grafana..."
-	make -C $(ROOT_DIR)/dockerfiles/grafana stop rm start
+	make -C $(ROOT_DIR)/dockerfiles/grafana stop rm update start
 
 ## Stop the infrastucture
 down:
