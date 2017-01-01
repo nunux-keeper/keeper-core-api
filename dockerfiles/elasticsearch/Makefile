@@ -1,7 +1,7 @@
 .SILENT :
 
 APPNAME:=elasticsearch
-IMAGE:=elasticsearch:latest
+IMAGE:=elasticsearch:2
 
 ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
