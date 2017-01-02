@@ -34,7 +34,7 @@ class DocumentDao extends AbstractElasticsearchDao {
     params = params || {}
     return new QueryBuilder()
     .exclude(['content', 'contentType', 'date'])
-    .filtered(_.pick(query, ['owner', 'ghost']))
+    .filtered(_.pick(query, ['owner', 'ghost', 'labels']))
     .size(params.size)
     .from(params.from)
     .sort(params.order)
