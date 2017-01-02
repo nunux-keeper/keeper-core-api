@@ -6,7 +6,7 @@ const expect = require('chai').expect
 const request = require('supertest')
 
 const ofASharingObject = ['id', 'owner', 'targetLabel', 'pub', 'date', 'startDate']
-const ofADocumentObject = ['id', 'title', 'content', 'contentType', 'date']
+const ofADocumentObject = ['id', 'title', 'content', 'contentType', 'date', 'sharing']
 
 module.exports = function () {
   this.When(/^I share the label/, function (callback) {
@@ -112,7 +112,7 @@ module.exports = function () {
         expect(res.status).to.equals(200)
         expect(res.body).to.contain.all.keys(ofADocumentObject)
         // console.log('compare:', res.body, _.omit(this.myDocument, '_links', 'ghost', 'labels', 'owner'))
-        expect(res.body).to.eql(_.omit(this.myDocument, '_links', 'ghost', 'labels', 'owner'))
+        expect(_.omit(res.body, 'sharing')).to.eql(_.omit(this.myDocument, '_links', 'ghost', 'labels', 'owner'))
       } else {
         expect(res.status).to.be.within(401, 404)
       }
