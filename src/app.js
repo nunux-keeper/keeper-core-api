@@ -3,6 +3,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const compress = require('compression')
+const path = require('path')
 const methodOverride = require('method-override')
 const expressValidator = require('express-validator')
 const customValidators = require('./helper').validators
@@ -67,7 +68,7 @@ const swaggerSpec = swaggerJSDoc(options)
 
 // Serve swagger docs
 app.use('/', require('./api/info')())
-app.use('/api-docs', express.static(__dirname + '/../doc/swagger-ui'))
+app.use('/api-docs', express.static(path.join(__dirname, '../doc/swagger-ui')))
 app.get('/api-docs.json', (req, res) => {
   res.setHeader('Content-Type', 'application/json')
   res.send(swaggerSpec)
