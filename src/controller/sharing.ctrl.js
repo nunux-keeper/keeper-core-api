@@ -149,7 +149,7 @@ module.exports = {
     }
 
     const query = Object.assign({order: 'asc', from: 0, size: 50}, req.query, {labels: req.requestData.sharing.targetLabel})
-    documentService.search(req.requestData.sharing.owner, query)
+    documentService.search(req.requestData.sharing.owner, query, [decorator.document.privacy()])
     .then(function (result) {
       const resource = new hal.Resource(result, urlConfig.resolve(req.url, true))
       query.from = query.form + 1

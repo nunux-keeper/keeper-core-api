@@ -10,7 +10,7 @@ const urlConfig = require('../helper').urlConfig
  * @return {Promise} promise of the dto
  */
 const decorateWithoutPrivateData = function (doc) {
-  return Promise.resolve(_.omit(doc, 'owner'))
+  return Promise.resolve(_.omit(doc, 'owner', 'ghost', 'labels'))
 }
 
 /**

@@ -60,10 +60,11 @@ DocumentService.get = function (docId, decorators) {
 /**
  * Search documents.
  * @param {String} owner Owner of the document
+ * @param {Function[]} decorators Decorators to apply
  * @param {String} query Search query
  * @return {Object} the documents
  */
-DocumentService.search = function (owner, query) {
+DocumentService.search = function (owner, query, decorators) {
   const _params = _.defaults(
     _.pick(query, ['from', 'order', 'size']),
     {order: 'asc', size: 50}
@@ -75,6 +76,17 @@ DocumentService.search = function (owner, query) {
   _query.owner = owner
 
   return documentDao.search(_query, _params)
+  .then(function (result) {
+    if (result.hits) {
+      return Promise.all(result.hits.map((doc) => decorator.decorate(doc, ...decorators)))
+      .then((hits) => Promise.resolve({
+        total: result.total,
+        hits
+      }))
+    } else {
+      return Promise.resolve(result)
+    }
+  })
 }
 
 /**

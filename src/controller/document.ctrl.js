@@ -40,7 +40,6 @@ module.exports = {
       // Enrich status with computed properties...
       decorator.decorate(
         req.requestData.document,
-        decorator.document.privacy(),
         decorator.document.hal()
       )
       .then(function (resource) {
@@ -62,7 +61,7 @@ module.exports = {
     }
 
     const query = Object.assign({order: 'asc', from:0, size: 50}, req.query)
-    documentService.search(req.user.id, query)
+    documentService.search(req.user.id, query, [decorator.document.hal()])
     .then(function (result) {
       const resource = new hal.Resource(result, urlConfig.resolve('/document'))
       query.from = query.form + 1
@@ -113,7 +112,6 @@ module.exports = {
     .then(function (result) {
       return decorator.decorate(
         result,
-        decorator.document.privacy(),
         decorator.document.hal()
       )
     })
@@ -159,7 +157,6 @@ module.exports = {
     .then(function (result) {
       return decorator.decorate(
         result,
-        decorator.document.privacy(),
         decorator.document.hal()
       )
     })
@@ -197,7 +194,6 @@ module.exports = {
     .then(function (result) {
       return decorator.decorate(
         result,
-        decorator.document.privacy(),
         decorator.document.hal()
       )
     })
