@@ -100,7 +100,7 @@ module.exports = {
     const label = req.requestData.label
     labelService.remove(label)
     .then(function () {
-      res.status(204).json()
+      res.status(205).json()
     }, next)
   },
 

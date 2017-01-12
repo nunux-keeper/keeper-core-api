@@ -32,7 +32,7 @@ module.exports = function () {
     request(app)
     .delete('/v2/graveyard/documents/' + this.myDocument.id)
     .use(this.setAuthorizationHeader(this.uid))
-    .expect(204, callback)
+    .expect(205, callback)
   })
 
   this.Then(/^I should (not retrieve|retrieve) the document into the graveyard$/, function (get, callback) {

@@ -102,7 +102,7 @@ module.exports = function () {
     .delete('/v2/documents/' + this.myDocument.id)
     .set('Content-Type', 'application/json')
     .use(this.setAuthorizationHeader(this.uid))
-    .expect(204, callback)
+    .expect(205, callback)
   })
 
   this.When(/^I restore the document$/, function (callback) {

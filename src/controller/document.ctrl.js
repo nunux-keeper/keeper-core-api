@@ -7,6 +7,7 @@ const errors = require('../helper').errors
 const urlConfig = require('../helper').urlConfig
 const decorator = require('../decorator')
 const documentService = require('../service').document
+const eventHandler = require('../event')
 
 const documentSchema = {
   'title': {
@@ -43,6 +44,8 @@ module.exports = {
         decorator.document.hal()
       )
       .then(function (resource) {
+        // Broadcast document reading event.
+        eventHandler.document.emit('fetch', {doc: resource, viewer: req.user.id})
         res.json(resource)
       }, next)
     }
@@ -172,7 +175,7 @@ module.exports = {
     const doc = req.requestData.document
     documentService.remove(doc)
     .then(function () {
-      res.status(204).json()
+      res.status(205).json()
     }, next)
   },
 
@@ -222,7 +225,7 @@ module.exports = {
       return documentService.destroy(ghost)
     })
     .then(function () {
-      res.status(204).json()
+      res.status(205).json()
     }, next)
   },
 

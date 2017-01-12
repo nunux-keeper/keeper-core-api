@@ -59,7 +59,7 @@ AttachementCtrl.del = function (req, res, next) {
   }
   documentService.removeAttachment(doc, attachment)
   .then(function (result) {
-    res.status(204).json()
+    res.status(205).json()
   }, next)
 }
 

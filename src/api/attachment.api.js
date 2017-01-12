@@ -42,7 +42,7 @@ module.exports = function (router) {
    *       - $ref: '#/parameters/docid'
    *       - $ref: '#/parameters/key'
    *     responses:
-   *       204:
+   *       205:
    *         description: Success
    *       default:
    *         description: Unexpected error

@@ -139,7 +139,7 @@ module.exports = function (router) {
    *     parameters:
    *       - $ref: '#/parameters/docid'
    *     responses:
-   *       204:
+   *       205:
    *         description: Success
    *       default:
    *         description: Unexpected error

@@ -7,6 +7,7 @@ const urlConfig = require('../helper').urlConfig
 const sharingService = require('../service').sharing
 const documentService = require('../service').document
 const decorator = require('../decorator')
+const eventHandler = require('../event')
 
 /**
  * Controller to manage sharing.
@@ -118,7 +119,7 @@ module.exports = {
     const sharing = req.requestData.sharing
     sharingService.remove(sharing)
     .then(function () {
-      res.status(204).json()
+      res.status(205).json()
     }, next)
   },
 
@@ -128,11 +129,14 @@ module.exports = {
   getDocument: function (req, res, next) {
     // Enrich status with computed properties...
     req.requestData.document.sharing = req.requestData.sharing.id
+
     decorator.decorate(
       req.requestData.document,
       decorator.document.privacy()
     )
     .then(function (resource) {
+      // Broadcast document reading event.
+      eventHandler.document.emit('fetch', {doc: resource, viewer: req.user ? req.user.id : 'anonymous'})
       res.json(resource)
     }, next)
   },

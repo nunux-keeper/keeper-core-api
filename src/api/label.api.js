@@ -112,7 +112,7 @@ module.exports = function (router) {
    *     parameters:
    *       - $ref: '#/parameters/labelId'
    *     responses:
-   *       204:
+   *       205:
    *         description: Success
    *     security:
    *       - authenticated:

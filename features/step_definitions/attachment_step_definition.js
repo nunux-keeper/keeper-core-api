@@ -37,7 +37,7 @@ module.exports = function () {
     request(app)
     .delete('/v2/documents/' + this.myDocument.id + '/files/' + attachment.key)
     .use(this.setAuthorizationHeader(this.uid))
-    .expect(204, callback)
+    .expect(205, callback)
   })
 
   this.When(/^I add attachment\(s\) to the document:$/, function (attrs, callback) {
