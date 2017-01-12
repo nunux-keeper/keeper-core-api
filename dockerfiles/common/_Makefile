@@ -41,7 +41,7 @@ RUN_CMD?=
 # Custom flags
 SHELL_CUSTOM_FLAGS?=$(RUN_CUSTOM_FLAGS)
 # Default Docker run flags for shell access
-SHELL_FLAGS?=--rm -it -h $(APPNAME) --name $(APPNAME) --entrypoint="/bin/bash" $(SHELL_CUSTOM_FLAGS)
+SHELL_FLAGS?=--rm -it -h $(APPNAME) --name $(APPNAME) --net=$(NETWORK) --entrypoint="/bin/bash" $(SHELL_CUSTOM_FLAGS)
 # Default Docker run command for shell access
 SHELL_CMD?=-c /bin/bash
 
