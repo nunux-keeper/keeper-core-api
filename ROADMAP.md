@@ -6,8 +6,6 @@
 - Add ttl to documents (in order to manage temp documents)
 - Improve storage service (see: https://github.com/AbstractFS/node-abstractfs)
 - Create the hook system (Trigger a webhook on document's action)
-- Improve administration features (jobs trigger, user management, lock/unlock
-  user, etc.)
 - Add new DAO provider (Couchbase, Cassandra)
 
 

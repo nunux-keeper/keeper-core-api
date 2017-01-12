@@ -19,6 +19,10 @@ module.exports = function (userEventHandler) {
     metrics.increment(`user.update,uid=${user.uid}`)
   })
 
+  userEventHandler.on('remove', (user) => {
+    metrics.increment(`user.remove,uid=${user.uid}`)
+  })
+
   userEventHandler.on('unauthorized', (user) => {
     metrics.increment(`login.unauthorized,uid=${user.uid}`)
   })

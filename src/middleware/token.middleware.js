@@ -6,7 +6,6 @@ const errors = require('../helper').errors
 const logger = require('../helper').logger
 const globals = require('../helper').globals
 const urlConfig = require('../helper').urlConfig
-const validators = require('../helper').validators
 const userService = require('../service').user
 
 let key = globals.TOKEN_SECRET
@@ -48,13 +47,15 @@ module.exports = function (exceptions) {
         return next(new errors.Unauthorized(err))
       }
       userService.login({
-        uid: decoded.email || decoded.sub,
+        uid: decoded.preferred_username || decoded.sub,
         name: decoded.name,
         date: new Date(),
         ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress
       }).then((user) => {
         req.user = user
-        req.user.admin = validators.isAdmin(user.uid)
+        if (decoded.realm_access && decoded.realm_access.roles) {
+          req.user.admin = decoded.realm_access.roles.indexOf('admin') > -1
+        }
         if (setCookie) {
           cookies.set('access_token', token, {
             domain: urlConfig.hostname,

@@ -9,6 +9,24 @@ const middleware = require('../middleware')
 module.exports = function (router) {
   /**
    * @swagger
+   * /v2/admin/infos:
+   *   get:
+   *     summary: Get server informations and statistics
+   *     tags:
+   *       - Admin
+   *     responses:
+   *       200:
+   *         description: Success
+   *         schema:
+   *           $ref: "#/definitions/AdminInfos"
+   *     security:
+   *       - authenticated:
+   *         - user
+   */
+  router.get('/admin/infos', middleware.admin.isAdmin, controller.admin.getInfos)
+
+  /**
+   * @swagger
    * /v2/admin/users:
    *   get:
    *     summary: Get all users
@@ -48,4 +66,22 @@ module.exports = function (router) {
    *         - user
    */
   router.get('/admin/users/:id', middleware.admin.isAdmin, controller.admin.getUser)
+
+  /**
+   * @swagger
+   * /v2/admin/users/{uid}:
+   *   delete:
+   *     summary: Delete user account
+   *     tags:
+   *       - Admin
+   *     parameters:
+   *       - $ref: '#/parameters/uid'
+   *     responses:
+   *       205:
+   *         description: Success
+   *     security:
+   *       - authenticated:
+   *         - user
+   */
+  router.delete('/admin/users/:id', middleware.admin.isAdmin, controller.admin.deleteUser)
 }

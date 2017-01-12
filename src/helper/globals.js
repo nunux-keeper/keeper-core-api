@@ -28,8 +28,10 @@ const globals = {
   TOKEN_SECRET: process.env.APP_TOKEN_SECRET || new Chance().hash({length: 16}),
   // Secret use to encypt token
   TOKEN_PUB_KEY: process.env.APP_TOKEN_PUB_KEY,
-  // Auto-provisioning users
-  AUTO_PROVISIONING_USERS: process.env.APP_AUTO_PROVISIONING_USERS !== false
+  // Allow login to auto create users
+  ALLOW_AUTO_CREATE_USERS: process.env.APP_ALLOW_AUTO_CREATE_USERS !== false,
+  // Allow admin to remove users
+  ALLOW_REMOVE_USERS: process.env.APP_ALLOW_REMOVE_USERS !== false
 }
 
 module.exports = globals

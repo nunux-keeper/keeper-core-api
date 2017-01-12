@@ -11,6 +11,10 @@ module.exports = function (documentEventHandler) {
     return
   }
 
+  documentEventHandler.on('fetch', (evt) => {
+    metrics.increment(`document.fetch,id=${evt.doc.id},owner=${evt.doc.owner},viewer=${evt.viewer}`)
+  })
+
   documentEventHandler.on('create', (doc) => {
     metrics.increment(`document.create,owner=${doc.owner}`)
   })

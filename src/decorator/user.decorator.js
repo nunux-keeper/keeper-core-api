@@ -5,6 +5,9 @@ const hal = require('hal')
 const storage = require('../storage')
 const urlConfig = require('../helper').urlConfig
 const documentDao = require('../dao').document
+const labelDao = require('../dao').label
+const sharingDao = require('../dao').sharing
+const metrics = require('../metrics/client')
 
 /**
  * Add Gravatar link.
@@ -24,12 +27,24 @@ const decorateWithGravatarData = function (user) {
  */
 const decorateWithStatsData = function (user) {
   return documentDao.count({owner: user.id})
-  .then((count) => {
-    user.documents = count
+  .then((nb) => {
+    user.nbDocuments = nb
+    metrics.set(`document,owner=${user.id}`, nb)
+    return labelDao.count({owner: user.id})
+  })
+  .then((nb) => {
+    user.nbLabels = nb
+    metrics.set(`label,owner=${user.id}`, nb)
+    return sharingDao.count({owner: user.id})
+  })
+  .then((nb) => {
+    user.nbSharing = nb
+    metrics.set(`sharing,owner=${user.id}`, nb)
     return storage.usage(user.id)
   })
   .then((usage) => {
-    user.storage = usage
+    user.storageUsage = usage
+    metrics.set(`storage,owner=${user.id}`, usage)
     return Promise.resolve(user)
   })
 }

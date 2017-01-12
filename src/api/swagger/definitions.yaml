@@ -191,16 +191,30 @@ definitions:
         type: string
         format: date-time
         description: Registration date
-      publicAlias:
+      hash:
         type: string
-        description: Public alias
-      documents:
+        description: Public hash
+      nbDocuments:
         type: integer
         description: Number of documents
-      storage:
+      nbLabels:
+        type: integer
+        description: Number of labels
+      nbSharing:
+        type: integer
+        description: Number of sharing
+      storageUsage:
         type: integer
         description: Storage used (bytes)
       gravatar:
         type: string
         description: Gravatar URL
-
+  AdminInfos:
+    type: object
+    properties:
+      nbUsers:
+        type: integer
+        description: Number of users
+      nbDocuments:
+        type: integer
+        description: Number of documents

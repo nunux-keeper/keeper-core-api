@@ -35,6 +35,18 @@ class StatsServerClient {
   }
 
   /**
+   * Set a metric.
+   * @param {String} name Metric name
+   * @param {Integer} value Metric value
+   */
+  set (name, value) {
+    if (this.disabled) {
+      return
+    }
+    this.provider.set(name, value)
+  }
+
+  /**
    * Set a gauge.
    * @param {String} name Gauge name
    * @param {Integer} value Gauge value

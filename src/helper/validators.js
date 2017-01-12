@@ -4,18 +4,7 @@ const url = require('url')
 
 const textListHolder = require('./text-list-holder')
 
-var ADMINS = new Set(process.env.APP_ADMIN ? process.env.APP_ADMIN.split(/[\s,]+/) : [])
-
 var validators = {}
-
-/**
- * Test if uid is an admin.
- * @param {String} uid
- * @return Boolean the test result
- */
-validators.isAdmin = function (uid) {
-  return ADMINS.has(uid)
-}
 
 /**
  * Test if string is into the blacklist.

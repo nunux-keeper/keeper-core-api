@@ -1,15 +1,17 @@
 'use strict'
 
 const _ = require('lodash')
-const crypto = require('crypto')
 const logger = require('../helper').logger
 const globals = require('../helper').globals
 const errors = require('../helper').errors
-const validators = require('../helper').validators
 const decorator = require('../decorator')
 const eventHandler = require('../event')
 const DecoratorStream = require('../decorator/decorator.stream')
 const userDao = require('../dao').user
+const documentDao = require('../dao').document
+const labelDao = require('../dao').label
+const sharingDao = require('../dao').sharing
+const storage = require('../storage')
 
 /**
  * User services.
@@ -23,7 +25,7 @@ const UserService = {}
  * @param {Function[]} decorators Decorators to apply
  * @return {Object} the user
  */
-UserService.get = function (uid, decorators) {
+UserService.get = function (uid, decorators = []) {
   return userDao.findByUid(uid)
   .then(function (user) {
     if (!user) {
@@ -47,8 +49,8 @@ UserService.stream = function (decorators) {
 
 /**
  * Update user's data.
- * @param {String} user   User to update
- * @param {String} update Update data
+ * @param {Object} user   User to update
+ * @param {Object} update Update data
  * @return {Object} the updated user
  */
 UserService.update = function (user, update) {
@@ -63,6 +65,40 @@ UserService.update = function (user, update) {
 }
 
 /**
+ * Remove user account.
+ * @param {String} uid User ID
+ * @return {Object} the removed user
+ */
+UserService.remove = function (uid) {
+  if (!globals.ALLOW_REMOVE_USERS) {
+    return Promise.reject('Remove an user is not allowed by the configuration.')
+  }
+  return this.get(uid)
+  .then((user) => {
+    if (!user.id) {
+      return Promise.reject('Unable to remove user %j. ID not defined.')
+    }
+    logger.warn('Removing user: %j', user)
+    const container = storage.getContainerName(user.id)
+    return Promise.all([
+      sharingDao.remove({owner: user.id}),
+      labelDao.remove({owner: user.id}),
+      documentDao.remove({owner: user.id}),
+      userDao.remove({id: user.id}),
+      storage.remove(container)
+    ])
+    .then(() => {
+      logger.info('User removed: %j', user)
+      eventHandler.user.emit('remove', user)
+      return Promise.resolve(user)
+    }, (err) => {
+      logger.error('Unable to remove user %j. Data may be inconsistent!')
+      return Promise.reject(err)
+    })
+  })
+}
+
+/**
  * Login.
  * @param {String} user User to login
  * @return {Object} the logged user
@@ -74,10 +110,9 @@ UserService.login = function (user) {
       // Return the user.
       logger.debug('User %s authorized.', _user.uid)
       return Promise.resolve(_user)
-    } else if (globals.AUTO_PROVISIONING_USERS || validators.isAdmin(user.uid)) {
+    } else if (globals.ALLOW_AUTO_CREATE_USERS) {
       // Create the user.
       logger.debug('User %s authorized. Auto-provisioning...', user.uid)
-      user.alias = crypto.createHash('md5').update(user.uid).digest('hex')
       return userDao.create(user)
       .then((_user) => {
         logger.debug('User %s created.', _user.uid)

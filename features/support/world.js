@@ -13,7 +13,11 @@ if (process.env.APP_TOKEN_PRIV_KEY) {
 
 function World (/* callback */) {
   this.setAuthorizationHeader = function (uid) {
-    const token = uid ? jwt.sign({sub: uid}, key, {algorithm}) : null
+    const roles = uid === 'system' ? ['admin'] : []
+    const token = uid ? jwt.sign({
+      sub: uid,
+      realm_access: {roles}
+    }, key, {algorithm}) : null
     return function (request) {
       if (token) {
         request.set('Authorization', `Bearer ${token}`)

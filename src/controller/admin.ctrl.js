@@ -3,9 +3,29 @@
 const errors = require('../helper').errors
 const decorator = require('../decorator')
 const userService = require('../service').user
+const documentService = require('../service').document
+const metrics = require('../metrics/client')
 const JSONStream = require('JSONStream')
 
 module.exports = {
+  /**
+   * Get server informations and statistics.
+   */
+  getInfos: function (req, res, next) {
+    const infos = {}
+    userService.count()
+    .then((nb) => {
+      infos.nbUsers = nb
+      metrics.set('user,type=total', nb)
+      return documentService.count()
+    })
+    .then((nb) => {
+      infos.nbDocuments = nb
+      metrics.set('document,type=total', nb)
+      res.json(infos)
+    })
+  },
+
   /**
    * Get all users with statistics.
    */
@@ -52,12 +72,12 @@ module.exports = {
    */
   deleteUser: function (req, res, next) {
     const uid = req.params.id
-    if (req.user.id === uid) {
+    if (req.user.uid === uid) {
       return next(new errors.BadRequest('Unable to self destroy.'))
     }
     userService.remove(uid)
     .then(function () {
-      res.send(205)
+      res.status(205).json()
     }, next)
   }
 
