@@ -33,7 +33,7 @@ class DocumentDao extends AbstractElasticsearchDao {
   buildFindQuery (query, params) {
     params = params || {}
     const fields = (Object.getOwnPropertyNames(this.getMapping().properties)
-      .filter((field) => !/^(content|date|attachments)/i.test(field))
+      .filter((field) => !/^(content|date)/i.test(field))
     )
     const terms = _.pick(query, ['owner', 'ghost', 'labels'])
 
