@@ -39,6 +39,7 @@ class AbstractElasticsearchDao {
   }
 
   _decodeSearchHit (hit) {
+    // console.log('_decodeSearchHit::hit', hit)
     const result = Object.assign(
       {id: hit._id},
       hit._source
@@ -141,7 +142,7 @@ class AbstractElasticsearchDao {
     return this.client.count({
       index: this.index,
       type: this.type,
-      body: _.omit(this.buildFindQuery(query), 'stored_fields')
+      body: _.omit(this.buildFindQuery(query), '_source')
     }).then((r) => {
       if (this.debug) {
         logger.debug('AbstractDao::count', query, r)
@@ -240,7 +241,7 @@ class AbstractElasticsearchDao {
       return this.client.deleteByQuery({
         index: this.index,
         type: this.type,
-        body: _.omit(this.buildFindQuery(doc), 'stored_fields')
+        body: _.omit(this.buildFindQuery(doc), '_source')
       }).then((r) => {
         if (this.debug) {
           logger.debug('AbstractDao::remove', doc, r)

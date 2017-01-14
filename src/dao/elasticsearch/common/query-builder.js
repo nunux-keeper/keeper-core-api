@@ -35,8 +35,7 @@ class QueryBuilder {
 
   fields (fields) {
     if (fields) {
-      this.body.rawOption('stored_fields', fields)
-      // this.body.rawOption('_source', fields)
+      this.body.rawOption('_source', fields)
     }
     return this
   }
