@@ -32,15 +32,24 @@ class DocumentDao extends AbstractElasticsearchDao {
 
   buildFindQuery (query, params) {
     params = params || {}
-    return new QueryBuilder()
-    .exclude(['content', 'contentType', 'date'])
-    .filtered(_.pick(query, ['owner', 'ghost', 'labels']))
+    const fields = (Object.getOwnPropertyNames(this.getMapping().properties)
+      .filter((field) => !/^(content|date|attachments)/i.test(field))
+    )
+    const terms = _.pick(query, ['owner', 'ghost', 'labels'])
+
+    const result = new QueryBuilder()
+    .fields(fields)
     .size(params.size)
     .from(params.from)
-    .sort(params.order)
-    .fulltext(query.q, ['title^5', 'content'])
-    .debug()
-    .build()
+    .sort(params.order ? 'date' : null, params.order)
+
+    if (query.q) {
+      result.fulltext(query.q, ['title^5', 'content']).filters(terms)
+    } else {
+      result.terms(terms)
+    }
+
+    return result.debug(this.debug).build()
   }
 
   /**

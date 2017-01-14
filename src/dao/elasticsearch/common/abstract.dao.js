@@ -4,6 +4,7 @@ const _ = require('lodash')
 const logger = require('../../../helper').logger
 const ReadableSearch = require('elasticsearch-streams').ReadableSearch
 const QueryBuilder = require('./query-builder')
+const ObjectID = require('mongodb').ObjectID
 
 class AbstractElasticsearchDao {
   constructor (client, index, type) {
@@ -11,6 +12,7 @@ class AbstractElasticsearchDao {
     this.index = index
     this.type = type
     this.configured = false
+    this.debug = false
   }
 
   getMapping () {
@@ -30,6 +32,10 @@ class AbstractElasticsearchDao {
       logger.error(`Unable to configure elasticsearch ${this.type} mapping.`, err)
       return Promise.reject(err)
     })
+  }
+
+  _generateId () {
+    return new ObjectID().toHexString()
   }
 
   _decodeSearchHit (hit) {
@@ -65,14 +71,20 @@ class AbstractElasticsearchDao {
    */
   buildFindQuery (query, params) {
     params = params || {}
-    return new QueryBuilder()
-    .fields(Object.keys(this.getMapping().properties))
-    .terms(query)
+    const fields = Object.getOwnPropertyNames(this.getMapping().properties)
+    const result = new QueryBuilder()
+    .fields(fields)
     .size(params.size)
     .from(params.from)
-    .sort(params.order)
-    .debug()
-    .build()
+    .sort(params.order ? 'date' : null, params.order)
+
+    if (query && query.q) {
+      result.fulltext(query.q, ['title^5', 'content']).filters(_.omit(query, 'q'))
+    } else {
+      result.terms(query)
+    }
+
+    return result.debug(this.debug).build()
   }
 
   /**
@@ -88,6 +100,9 @@ class AbstractElasticsearchDao {
       id: id
     }).then((r) => {
       r._source.id = r._id
+      if (this.debug) {
+        logger.debug('AbstractDao::get', id, r)
+      }
       return Promise.resolve(r._source)
     })
   }
@@ -109,7 +124,11 @@ class AbstractElasticsearchDao {
       body: this.buildFindQuery(query, p)
     })
     .then((r) => {
-      return Promise.resolve(this._decodeSearchResult(r))
+      const result = this._decodeSearchResult(r)
+      if (this.debug) {
+        logger.debug('AbstractDao::find', query, result)
+      }
+      return Promise.resolve(result)
     })
   }
 
@@ -122,8 +141,11 @@ class AbstractElasticsearchDao {
     return this.client.count({
       index: this.index,
       type: this.type,
-      body: this.buildFindQuery(query)
+      body: _.omit(this.buildFindQuery(query), 'stored_fields')
     }).then((r) => {
+      if (this.debug) {
+        logger.debug('AbstractDao::count', query, r)
+      }
       return Promise.resolve(r.count)
     })
   }
@@ -158,10 +180,13 @@ class AbstractElasticsearchDao {
     return this.client.create({
       index: this.index,
       type: this.type,
-      id: doc.id,
+      id: doc.id || this._generateId(),
       body: doc,
       refresh: true
-    }).then(function (r) {
+    }).then((r) => {
+      if (this.debug) {
+        logger.debug('AbstractDao::create', doc, r)
+      }
       if (r.created) {
         doc.id = r._id
         return Promise.resolve(doc)
@@ -186,7 +211,10 @@ class AbstractElasticsearchDao {
       },
       fields: '_source',
       refresh: true
-    }).then(function (r) {
+    }).then((r) => {
+      if (this.debug) {
+        logger.debug('AbstractDao::update', doc.id, update, r)
+      }
       const result = r.get._source
       result.id = r._id
       return Promise.resolve(result)
@@ -199,14 +227,27 @@ class AbstractElasticsearchDao {
    * @return {Object} the deleted document
    */
   remove (doc) {
-    return this.client.delete({
-      index: this.index,
-      type: this.type,
-      id: doc.id,
-      refresh: true
-    }).then((/* r */) => {
-      return Promise.resolve(doc)
-    })
+    if (doc.id) {
+      return this.client.delete({
+        index: this.index,
+        type: this.type,
+        id: doc.id,
+        refresh: true
+      }).then((/* r */) => {
+        return Promise.resolve(doc)
+      })
+    } else {
+      return this.client.deleteByQuery({
+        index: this.index,
+        type: this.type,
+        body: _.omit(this.buildFindQuery(doc), 'stored_fields')
+      }).then((r) => {
+        if (this.debug) {
+          logger.debug('AbstractDao::remove', doc, r)
+        }
+        return Promise.resolve(doc)
+      })
+    }
   }
 }
 

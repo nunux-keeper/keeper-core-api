@@ -20,7 +20,7 @@ spec:feature:mongo:
   stage: test
   services:
     - mongo:3
-    - elasticsearch:2
+    - elasticsearch:5
     - redis:3
   script:
     - APP_DATABASE_URI="mongodb://mongo/keeper" npm test
@@ -28,7 +28,7 @@ spec:feature:mongo:
 spec:feature:elastic:
   stage: test
   services:
-    - elasticsearch:2
+    - elasticsearch:5
     - redis:3
   script:
     - APP_DATABASE_URI="elasticsearch://elasticsearch:9200/keeper" npm test
