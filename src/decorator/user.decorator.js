@@ -29,22 +29,22 @@ const decorateWithStatsData = function (user) {
   return documentDao.count({owner: user.id})
   .then((nb) => {
     user.nbDocuments = nb
-    metrics.set(`document,owner=${user.id}`, nb)
+    metrics.gauge(`document,owner=${user.id}`, nb)
     return labelDao.count({owner: user.id})
   })
   .then((nb) => {
     user.nbLabels = nb
-    metrics.set(`label,owner=${user.id}`, nb)
+    metrics.gauge(`label,owner=${user.id}`, nb)
     return sharingDao.count({owner: user.id})
   })
   .then((nb) => {
     user.nbSharing = nb
-    metrics.set(`sharing,owner=${user.id}`, nb)
+    metrics.gauge(`sharing,owner=${user.id}`, nb)
     return storage.usage(user.id)
   })
   .then((usage) => {
     user.storageUsage = usage
-    metrics.set(`storage,owner=${user.id}`, usage)
+    metrics.gauge(`storage,owner=${user.id}`, usage)
     return Promise.resolve(user)
   })
 }

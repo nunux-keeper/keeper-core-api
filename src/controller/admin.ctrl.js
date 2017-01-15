@@ -16,12 +16,12 @@ module.exports = {
     userService.count()
     .then((nb) => {
       infos.nbUsers = nb
-      metrics.set('user,type=total', nb)
+      metrics.gauge('user,type=total', nb)
       return documentService.count()
     })
     .then((nb) => {
       infos.nbDocuments = nb
-      metrics.set('document,type=total', nb)
+      metrics.gauge('document,type=total', nb)
       res.json(infos)
     })
   },
