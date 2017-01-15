@@ -55,7 +55,7 @@ const decorateWithStatsData = function (user) {
  * @return {Promise} promise of the dto
  */
 const decorateWithHalData = function (user) {
-  const resource = new hal.Resource(user, urlConfig.resolve(`/admin/users/${user.id}`))
+  const resource = new hal.Resource(user, urlConfig.resolve(`/admin/users/${user.uid}`))
   resource.link('all', urlConfig.resolve('/admin/users'))
   return Promise.resolve(resource)
 }

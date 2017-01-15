@@ -21,11 +21,27 @@ const UserService = {}
 
 /**
  * Get user's details.
+ * @param {String} id ID
+ * @param {Function[]} decorators Decorators to apply
+ * @return {Object} the user
+ */
+UserService.get = function (id, decorators = []) {
+  return userDao.get(id)
+  .then(function (user) {
+    if (!user) {
+      return Promise.reject(new errors.NotFound('User not found: ' + id))
+    }
+    return decorator.decorate(user, ...decorators)
+  })
+}
+
+/**
+ * Get user's details.
  * @param {String} uid User ID
  * @param {Function[]} decorators Decorators to apply
  * @return {Object} the user
  */
-UserService.get = function (uid, decorators = []) {
+UserService.getByUid = function (uid, decorators = []) {
   return userDao.findByUid(uid)
   .then(function (user) {
     if (!user) {
@@ -81,7 +97,7 @@ UserService.remove = function (uid) {
   if (!globals.ALLOW_REMOVE_USERS) {
     return Promise.reject('Remove an user is not allowed by the configuration.')
   }
-  return this.get(uid)
+  return this.getByUid(uid)
   .then((user) => {
     if (!user.id) {
       return Promise.reject('Unable to remove user %j. ID not defined.')

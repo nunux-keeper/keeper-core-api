@@ -65,7 +65,7 @@ module.exports = function (router) {
    *       - authenticated:
    *         - user
    */
-  router.get('/admin/users/:id', middleware.admin.isAdmin, controller.admin.getUser)
+  router.get('/admin/users/:uid', middleware.admin.isAdmin, controller.admin.getUser)
 
   /**
    * @swagger
@@ -83,5 +83,5 @@ module.exports = function (router) {
    *       - authenticated:
    *         - user
    */
-  router.delete('/admin/users/:id', middleware.admin.isAdmin, controller.admin.deleteUser)
+  router.delete('/admin/users/:uid', middleware.admin.isAdmin, controller.admin.deleteUser)
 }
