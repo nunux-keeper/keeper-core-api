@@ -48,6 +48,14 @@ UserService.stream = function (decorators) {
 }
 
 /**
+ * Count users.
+ * @return {Object} the number of users
+ */
+UserService.count = function () {
+  return userDao.count()
+}
+
+/**
  * Update user's data.
  * @param {Object} user   User to update
  * @param {Object} update Update data

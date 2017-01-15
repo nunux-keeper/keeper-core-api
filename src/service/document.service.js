@@ -90,6 +90,15 @@ DocumentService.search = function (owner, query, decorators) {
 }
 
 /**
+ * Count documents.
+ * @param {String} owner Owner of the documents
+ * @return {Object} the number of documents
+ */
+DocumentService.count = function (owner) {
+  return documentDao.count(owner ? {owner} : {})
+}
+
+/**
  * Create a document.
  * @param {Object} doc Document to create
  * @return {Object} the created document
