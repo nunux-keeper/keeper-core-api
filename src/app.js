@@ -76,7 +76,7 @@ app.get('/api-docs.json', (req, res) => {
 
 // Protect API with access token.
 app.use(`/${urlConfig.apiVersion}`, middleware.token([
-  /^\/sharing\//
+  /^\/public\//
 ]))
 
 // Register API...

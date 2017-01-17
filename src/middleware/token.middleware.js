@@ -21,6 +21,12 @@ if (globals.TOKEN_PUB_KEY) {
  */
 module.exports = function (exceptions) {
   return function (req, res, next) {
+    // Ignore the middleware if the path match an exception
+    if (exceptions.find((exp) => req.path.match(exp))) {
+      logger.debug('%s is public. So the token middleware is ignored.', req.path)
+      return next()
+    }
+
     let token = null
     let setCookie = false
     const cookies = new Cookies(req, res)
@@ -35,11 +41,6 @@ module.exports = function (exceptions) {
       token = cookies.get('access_token')
     }
     if (!token) {
-      // Ignore the middleware if the path match an exception
-      if (exceptions.find((exp) => req.path.match(exp))) {
-        logger.debug('No token and %s is public. So the token middleware is ignored.', req.path)
-        return next()
-      }
       return next(new errors.Unauthorized('Missing access token'))
     }
     jwt.verify(token, key, {algorithm: algorithm}, function (err, decoded) {

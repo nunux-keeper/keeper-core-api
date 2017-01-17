@@ -80,11 +80,14 @@ module.exports = function () {
     .end(callback)
   })
 
-  this.Then(/^I should (not retrieve|retrieve) the shared label$/, function (get, callback) {
+  this.Then(/^I should (not retrieve|retrieve) the (shared|public) label$/, function (get, type, callback) {
     expect(this.mySharing).to.not.be.undefined
     const shoulBeRetrieve = get === 'retrieve'
+    if (type === 'shared') {
+      type = 'sharing'
+    }
     request(app)
-    .get(`/v2/sharing/${this.mySharing.id}`)
+    .get(`/v2/${type}/${this.mySharing.id}`)
     .use(this.setAuthorizationHeader(this.uid))
     .expect('Content-Type', /json/)
     .expect((res) => {
@@ -99,12 +102,15 @@ module.exports = function () {
     .end(callback)
   })
 
-  this.Then(/^I should (not retrieve|retrieve) the shared document$/, function (get, callback) {
+  this.Then(/^I should (not retrieve|retrieve) the (shared|public) document$/, function (get, type, callback) {
     expect(this.myDocument).to.not.be.undefined
     expect(this.mySharing).to.not.be.undefined
     const shoulBeRetrieve = get === 'retrieve'
+    if (type === 'shared') {
+      type = 'sharing'
+    }
     request(app)
-    .get(`/v2/sharing/${this.mySharing.id}/${this.myDocument.id}`)
+    .get(`/v2/${type}/${this.mySharing.id}/${this.myDocument.id}`)
     .use(this.setAuthorizationHeader(this.uid))
     .expect('Content-Type', /json/)
     .expect((res) => {

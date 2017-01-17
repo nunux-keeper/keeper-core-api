@@ -6,6 +6,16 @@ const labelService = require('../service').label
 
 module.exports = {
   /**
+   * Middleware to assert that the sharing is public.
+   */
+  assertPublic: function (req, res, next) {
+    if (!req.requestData.sharing || !req.requestData.sharing.pub) {
+      return next(new errors.NotFound('Sharing not public.'))
+    }
+    return next()
+  },
+
+  /**
    * Middleware to get sharing object form path params.
    */
   get: function (req, res, next) {

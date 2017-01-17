@@ -40,11 +40,14 @@ Feature: Sharing API
     Then I should not retrieve the document
     And  I should not retrieve the shared label
     And  I should not retrieve the shared document
+    And  I should not retrieve the public document
     Given I am a valid user with the uid "test"
     When I update the sharing:
       | pub | true  |
     Then I should retrieve the sharing
     Given I am an anonymous user
-    Then  I should retrieve the shared label
-    And  I should retrieve the shared document
+    Then  I should not retrieve the shared label
+    And  I should not retrieve the shared document
+    And  I should retrieve the public label
+    And  I should retrieve the public document
 
