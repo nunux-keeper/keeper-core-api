@@ -26,7 +26,7 @@ module.exports = function (uri) {
       const name = path.basename(file, '.dao.js')
       if (!useAsMainDatabaseEngine && name !== 'document') {
         // Skip other DAO if not use as main database engine
-        return
+        return acc
       }
       logger.debug('Loading %s ElasticSearch DAO..', name)
       const Dao = require(path.join(__dirname, file))
@@ -48,6 +48,7 @@ module.exports = function (uri) {
         return Promise.resolve(r)
       })
     } else {
+      logger.debug('Index %s exists', indexName)
       return Promise.resolve()
     }
   }).catch(function (err) {
