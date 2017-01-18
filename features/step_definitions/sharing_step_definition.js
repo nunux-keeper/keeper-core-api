@@ -95,6 +95,7 @@ module.exports = function () {
         expect(res.status).to.equals(200)
         expect(res.body).to.contain.all.keys(['total', 'hits'])
         this.myDocuments = res.body.hits
+        // console.log(this.myDocuments)
       } else {
         expect(res.status).to.be.within(401, 404)
       }
@@ -119,6 +120,29 @@ module.exports = function () {
         expect(res.body).to.contain.all.keys(ofADocumentObject)
         // console.log('compare:', res.body, _.omit(this.myDocument, '_links', 'ghost', 'labels', 'owner'))
         expect(_.omit(res.body, 'sharing')).to.eql(_.omit(this.myDocument, '_links', 'ghost', 'labels', 'owner'))
+      } else {
+        expect(res.status).to.be.within(401, 404)
+      }
+    })
+    .end(callback)
+  })
+
+  this.Then(/^I should (not retrieve|retrieve) the (shared|public) feed/, function (get, type, callback) {
+    expect(this.mySharing).to.not.be.undefined
+    const shoulBeRetrieve = get === 'retrieve'
+    if (type === 'shared') {
+      type = 'sharing'
+    }
+    request(app)
+    .get(`/v2/${type}/${this.mySharing.id}`)
+    .query({output: 'rss'})
+    .use(this.setAuthorizationHeader(this.uid))
+    .expect('Content-Type', /rss\+xml/)
+    .expect((res) => {
+      if (shoulBeRetrieve) {
+        expect(res.status).to.equals(200)
+        // console.log(res.text)
+        expect(res.text).not.to.be.empty
       } else {
         expect(res.status).to.be.within(401, 404)
       }

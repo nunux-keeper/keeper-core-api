@@ -4,6 +4,7 @@ const hal = require('hal')
 const querystring = require('querystring')
 const errors = require('../helper').errors
 const urlConfig = require('../helper').urlConfig
+const templateHolder = require('../helper').templateHolder
 const sharingService = require('../service').sharing
 const documentService = require('../service').document
 const decorator = require('../decorator')
@@ -148,6 +149,7 @@ module.exports = {
     req.checkQuery('from', 'Invalid from param').optional().isAlphanumeric()
     req.checkQuery('size', 'Invalid size param').optional().isInt({ min: 1, max: 100 })
     req.checkQuery('order', 'Invalid order param').optional().isIn(['asc', 'desc'])
+    req.checkQuery('output', 'Invalid output param').optional().isIn(['json', 'rss'])
     const validationErrors = req.validationErrors(true)
     if (validationErrors) {
       return next(new errors.BadRequest(null, validationErrors))
@@ -164,7 +166,12 @@ module.exports = {
         resource.link('next', urlConfig.resolve(`${req.path}?${qs}`))
       }
       resource.link('get', {href: urlConfig.resolve(`${req.path}/{id}`), templated: true})
-      res.json(resource)
+      if (req.query.output === 'rss') {
+        res.set('Content-Type', 'application/rss+xml')
+        res.send(templateHolder.rss(resource))
+      } else {
+        res.json(resource)
+      }
     }, next)
   }
 }

@@ -10,6 +10,7 @@ Feature: Sharing API
       | title | Document to share |
       | content | Lorem ipsum dolor sit amet |
       | contentType | text/plain; charset=utf-8 |
+    And  I am waiting 1000 ms
     And  I share the label
     Then I should retrieve the sharing
     Given I am a valid user with the uid "other"
@@ -34,6 +35,7 @@ Feature: Sharing API
       | title | Document to publish |
       | content | Lorem ipsum dolor sit amet |
       | contentType | text/plain; charset=utf-8 |
+    And  I am waiting 1000 ms
     And  I share the label
     Then I should retrieve the sharing
     Given I am an anonymous user
@@ -50,4 +52,5 @@ Feature: Sharing API
     And  I should not retrieve the shared document
     And  I should retrieve the public label
     And  I should retrieve the public document
+    And  I should retrieve the public feed
 

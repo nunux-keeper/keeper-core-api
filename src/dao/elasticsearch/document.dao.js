@@ -12,6 +12,7 @@ class DocumentDao extends AbstractElasticsearchDao {
   constructor (client, index, useAsMainDatabaseEngine) {
     super(client, index, 'document')
     this.storeContent = useAsMainDatabaseEngine ? 'yes' : 'no'
+    // this.debug = true
   }
 
   getMapping () {
@@ -33,7 +34,7 @@ class DocumentDao extends AbstractElasticsearchDao {
   buildFindQuery (query, params) {
     params = params || {}
     const fields = (Object.getOwnPropertyNames(this.getMapping().properties)
-      .filter((field) => !/^(content|date)/i.test(field))
+      .filter((field) => field !== 'content')
     )
     const terms = _.pick(query, ['owner', 'ghost', 'labels'])
 

@@ -60,6 +60,13 @@ parameters:
     type: string
     default: asc
     enum: [asc, desc]
+  output:
+    name: output
+    description: Output type (json by default or RSS)
+    in: query
+    required: false
+    type: string
+    enum: [json, rss]
   imageSize:
     name: size
     description: |

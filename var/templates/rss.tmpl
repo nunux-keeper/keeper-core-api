@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <id><%= _links.self.href %></id>
+  <title><![CDATA[Nunux Keeper public feed]]></title>
+  <author><name>Nunux Keeper</name></author>
+  <% if (hits.length) { %>
+  <updated><%= hits[0].date %></updated>
+  <% } %>
+  <link rel="self" href="<%= _links.self.href %>" hreflang="en"/>
+  <rights>See source copyright</rights>
+  <logo>https://keeper.nunux.org/icons/icon-192x192.png</logo>
+  <generator>Nunux Keeper</generator>
+  <% _.forEach(hits, function(hit) { %>
+  <entry>
+    <id><%= hit.id %></id>
+    <title><![CDATA[<%= hit.title %>]]></title>
+    <updated><%= hit.date %></updated>
+    <link rel="origin" href="<%= hit.origin %>"/>
+    <summary><![CDATA[<%= hit.title %>]]></summary>
+  </entry>
+  <% }); %>
+</feed>

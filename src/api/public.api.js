@@ -20,6 +20,7 @@ module.exports = function (router) {
    *       - $ref: '#/parameters/from'
    *       - $ref: '#/parameters/size'
    *       - $ref: '#/parameters/order'
+   *       - $ref: '#/parameters/output'
    *     responses:
    *       200:
    *         description: Success

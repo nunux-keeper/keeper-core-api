@@ -20,13 +20,14 @@ class AbstractElasticsearchDao {
   }
 
   configure () {
+    logger.debug(`Configuring Elasticsearch ${this.type} mapping...`)
     return this.client.indices.putMapping({
       index: this.index,
       type: this.type,
       body: this.getMapping()
-    }).then(() => {
+    }).then((body) => {
       this.configured = true
-      logger.debug(`Elasticsearch ${this.type} mapping configured.`)
+      logger.debug(`Elasticsearch ${this.type} mapping configured.`, body)
       return Promise.resolve(true)
     }, (err) => {
       logger.error(`Unable to configure elasticsearch ${this.type} mapping.`, err)
