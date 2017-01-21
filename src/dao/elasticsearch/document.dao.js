@@ -25,7 +25,7 @@ class DocumentDao extends AbstractElasticsearchDao {
         labels     : {type: 'string', store: 'yes', index: 'not_analyzed'},
         attachments: {type: 'object'},
         origin     : {type: 'string', store: 'yes'},
-        ghost      : {type: 'string', store: 'yes'},
+        ghost      : {type: 'boolean', store: 'yes'},
         date       : {type: 'date', store: 'yes', format: 'date_optional_time'}
       }
     }
