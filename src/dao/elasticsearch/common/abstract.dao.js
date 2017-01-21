@@ -154,7 +154,6 @@ class AbstractElasticsearchDao {
 
   /**
    * Stream documents.
-   * NOT SUPPORTED
    * @param {Object} query Find query.
    * @return {Stream} the documents stream
    */
