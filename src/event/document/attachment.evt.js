@@ -2,7 +2,7 @@
 
 const logger = require('../../helper').logger
 const storage = require('../../storage')
-const download = require('../../downloader')
+const downloadService = require('../../service/download.service')
 
 /**
  * Download document's attachments.
@@ -11,7 +11,7 @@ const downloadAttachments = function (doc) {
   const attachments = doc.attachments.filter(attachment => attachment.origin)
   if (attachments && attachments.length) {
     logger.debug('Downloading document attachments...', doc.id)
-    download(attachments, storage.getContainerName(doc.owner, 'documents', doc.id, 'files'))
+    downloadService.download(attachments, storage.getContainerName(doc.owner, 'documents', doc.id, 'files'))
   }
 }
 
