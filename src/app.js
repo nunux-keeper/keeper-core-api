@@ -92,7 +92,7 @@ require('./daemon').start()
 const shutdown = function (signal) {
   logger.info('Stopping server...')
   require('./daemon').shutdown()
-  require('./service').system.shutdown()
+  require('./service').shutdown()
     .then(function () {
       const retval = signal === 'SIGINT' ? 1 : 0
       logger.info(`Server stopped (${retval})`)
@@ -109,7 +109,7 @@ const shutdown = function (signal) {
 }
 
 app.isReady = function () {
-  return require('./service').system.isReady()
+  return require('./service').isReady()
   .then(() => {
     logger.info('App is ready.')
     return Promise.resolve()

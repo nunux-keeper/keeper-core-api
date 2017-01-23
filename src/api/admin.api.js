@@ -84,4 +84,44 @@ module.exports = function (router) {
    *         - user
    */
   router.delete('/admin/users/:uid', middleware.admin.isAdmin, controller.admin.deleteUser)
+
+  /**
+   * @swagger
+   * /v2/admin/users/{uid}/exports:
+   *   post:
+   *     summary: Trigger user data export task
+   *     tags:
+   *       - Admin
+   *     parameters:
+   *       - $ref: '#/parameters/uid'
+   *     responses:
+   *       201:
+   *         description: Success
+   *         schema:
+   *           $ref: "#/definitions/JobDetails"
+   *     security:
+   *       - authenticated:
+   *         - user
+   */
+  router.post('/admin/users/:uid/exports', middleware.admin.isAdmin, controller.admin.exportUserData)
+
+  /**
+   * @swagger
+   * /v2/admin/users/{uid}/imports:
+   *   post:
+   *     summary: Trigger user data import task
+   *     tags:
+   *       - Admin
+   *     parameters:
+   *       - $ref: '#/parameters/uid'
+   *     responses:
+   *       201:
+   *         description: Success
+   *         schema:
+   *           $ref: "#/definitions/JobDetails"
+   *     security:
+   *       - authenticated:
+   *         - user
+   */
+  router.post('/admin/users/:uid/imports', middleware.admin.isAdmin, controller.admin.importUserData)
 }

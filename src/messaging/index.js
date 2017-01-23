@@ -4,6 +4,8 @@ const logger = require('../helper').logger
 const path = require('path')
 const redis = require('../helper/redis')
 
+const client = redis.createClient()
+
 // Dynamic loading Messaging...
 const messengers = {}
 require('fs').readdirSync(__dirname).forEach((file) => {
@@ -11,7 +13,7 @@ require('fs').readdirSync(__dirname).forEach((file) => {
     const name = path.basename(file, '.messenger.js')
     logger.debug('Loading %s messenger...', name)
     const Messenger = require(path.join(__dirname, file))
-    messengers[name] = new Messenger(redis)
+    messengers[name] = new Messenger(client)
   }
 })
 

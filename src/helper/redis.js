@@ -3,6 +3,28 @@
 const redis = require('redis')
 const url = require('url')
 
+class RedisHelper {
+  constructor (uri = 'redis://localhost:6379/1') {
+    this.uri = url.parse(uri)
+  }
+
+  createClient () {
+    const options = {
+      port: this.uri.port,
+      host: this.uri.hostname
+    }
+    if (this.uri.auth) {
+      options.password = this.uri.auth.split(':')[1]
+    }
+    const client = redis.createClient(options)
+    if (this.uri.pathname) {
+      client.select(this.uri.pathname.substring(1))
+    }
+    return client
+  }
+
+}
+
 /**
  * Get Redis URI.
  * @return {String} Redis string URI
@@ -21,34 +43,8 @@ const getRedisUri = function () {
 }
 
 /**
- * Connect to redis.
- * @param {String} str Redis string URI
- */
-const connect = function (str) {
-  const u = url.parse(str)
-
-  let redisClient
-  if (u.auth) {
-    redisClient = redis.createClient({
-      port: u.port,
-      host: u.hostname,
-      password: u.auth.split(':')[1]
-    })
-  } else {
-    redisClient = redis.createClient({
-      port: u.port,
-      host: u.hostname
-    })
-  }
-  if (u.pathname) {
-    redisClient.select(u.pathname.substring(1))
-  }
-  return redisClient
-}
-
-/**
  * Redis helper.
  * @module redis
  */
-module.exports = connect(getRedisUri())
+module.exports = new RedisHelper(getRedisUri())
 

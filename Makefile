@@ -8,11 +8,13 @@ env?=dev
 # Default configuration
 ENV_FLAGS?=--env-file="./etc/default/$(env).env"
 
-# Custom run flags
-RUN_CUSTOM_FLAGS?=-p 8080:3000 $(ENV_FLAGS)
+PORTS_FLAGS=-P
+ifdef PORT
+	PORTS_FLAGS=-p $(PORT):3000
+endif
 
 # Custom run flags
-SHELL_CUSTOM_FLAGS?=-P $(ENV_FLAGS)
+RUN_CUSTOM_FLAGS?=$(PORTS_FLAGS) $(ENV_FLAGS)
 
 # Docker configuration regarding the system architecture
 BASEIMAGE=node:6-onbuild
@@ -88,10 +90,8 @@ install: build
 	systemctl daemon-reload
 	systemctl enable $(APPNAME)
 	systemctl restart $(APPNAME)
-	systemctl enable keeper-core-downloader
-	systemctl restart keeper-core-downloader
-	systemctl enable keeper-core-ghostbuster
-	systemctl restart keeper-core-ghostbuster
+	systemctl enable keeper-core-job-worker
+	systemctl restart keeper-core-job-worker
 	systemctl enable keeper-data-backup.timer
 	systemctl restart keeper-data-backup.timer
 	$(MAKE) cleanup
@@ -101,10 +101,8 @@ uninstall:
 	echo "Un-install service..."
 	systemctl stop keeper-data-backup.timer
 	systemctl disable keeper-data-backup.timer
-	systemctl stop keeper-core-downloader
-	systemctl disable keeper-core-downloader
-	systemctl stop keeper-core-ghostbuster
-	systemctl disable keeper-core-ghostbuster
+	systemctl stop keeper-core-job-worker
+	systemctl disable keeper-core-job-worker
 	systemctl stop $(APPNAME)
 	systemctl disable $(APPNAME)
 	rm /etc/systemd/system/keeper-core-*
@@ -112,22 +110,3 @@ uninstall:
 	systemctl daemon-reload
 	$(MAKE) rm clean
 
-## Export all documents of an user (defined by $uid)
-export:
-ifndef uid
-	$(error User not defined. You should set "uid" variable.)
-else
-	echo "Exporting $(uid) documents..."
-	$(DOCKER) exec $(APPNAME) \
-		npm run export -- -d --user $(uid) --file /var/opt/app/storage/exports/$(uid).zip
-endif
-
-## Import documents from an archive to an user (defined by $uid)
-import:
-ifndef uid
-	$(error User not defined. You should set "uid" variable.)
-else
-	echo "Exporting $(uid) documents..."
-	$(DOCKER) exec $(APPNAME) \
-		npm run import -- -d --user $(uid) --file /var/opt/app/storage/exports/$(uid).zip
-endif

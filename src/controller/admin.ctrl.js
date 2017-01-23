@@ -4,6 +4,7 @@ const errors = require('../helper').errors
 const decorator = require('../decorator')
 const userService = require('../service').user
 const documentService = require('../service').document
+const jobService = require('../service').job
 const metrics = require('../metrics/client')
 const JSONStream = require('JSONStream')
 
@@ -79,6 +80,42 @@ module.exports = {
     .then(function () {
       res.status(205).json()
     }, next)
-  }
+  },
 
+  /**
+   * Export user data.
+   */
+  exportUserData: function (req, res, next) {
+    const params = {
+      title: `Export job started by ${req.user.uid}`,
+      uid: req.params.uid
+    }
+    const job = jobService.launch(
+      'export-user',
+      params,
+      jobService.priority.LOW
+    )
+    res.status(201).json({
+      id: job.id
+    })
+  },
+
+  /**
+   * Import user data.
+   */
+  importUserData: function (req, res, next) {
+    const params = {
+      title: `Import job started by ${req.user.uid}`,
+      uid: req.params.uid
+    }
+
+    const job = jobService.launch(
+      'import-user',
+      params,
+      jobService.priority.LOW
+    )
+    res.status(201).json({
+      id: job.id
+    })
+  }
 }
