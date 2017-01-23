@@ -24,7 +24,7 @@ class TaskWorker {
         this.tasks = require('fs').readdirSync(__dirname).reduce((acc, file) => {
           if (/^[a-z_-]+\.task\.js$/.test(file)) {
             const name = path.basename(file, '.task.js')
-            if (this.names.has(name)) {
+            if (this.names.size === 0 || this.names.has(name)) {
               logger.debug('Loading %s task...', name)
               const Task = require(path.join(__dirname, file))
               acc.push(new Task(name))

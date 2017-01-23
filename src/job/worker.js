@@ -20,10 +20,10 @@ const defaultLevel = process.env.APP_LOG_LEVEL || 'error'
 const level = program.debug ? 'debug' : program.verbose ? 'info' : defaultLevel
 logger.level(level)
 
-const jobs = program.jobs || process.env.APP_JOBS || 'ghostbuster'
+const jobs = program.jobs || process.env.APP_JOBS
 
 const Tasks = require('./tasks')
-const worker = new Tasks(jobs.split(','))
+const worker = new Tasks(jobs ? jobs.split(',') : [])
 
 logger.info('Starting job worker...')
 worker.start()

@@ -38,7 +38,7 @@ class JobService {
     const job = this.queue
       .create(name, params)
       .priority(priority).save()
-    logger.debug('Launched job:', job)
+    // logger.debug('Launched job:', job)
     return job
   }
 }

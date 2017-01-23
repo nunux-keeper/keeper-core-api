@@ -85,13 +85,9 @@ app.use(`/${urlConfig.apiVersion}`, require('./api'))
 // Error handler.
 app.use(middleware.error())
 
-// Start embedded deamons.
-require('./daemon').start()
-
 // App shutdown
 const shutdown = function (signal) {
   logger.info('Stopping server...')
-  require('./daemon').shutdown()
   require('./service').shutdown()
     .then(function () {
       const retval = signal === 'SIGINT' ? 1 : 0
