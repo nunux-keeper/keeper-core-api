@@ -41,6 +41,7 @@ class GhostbusterTask extends AbstractTask {
         done(null, {nb: t.length})
       }, (err) => {
         job.log('Unable to delete ghosts', err)
+        done(err)
       })
   }
 }
