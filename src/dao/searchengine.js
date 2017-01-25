@@ -66,9 +66,15 @@ class SearchEngine {
    * @return {Promise} Re-indexed document
    */
   reindexDocument (doc, params = {}) {
+    const {create = false} = params
     return this.getProvider().then((provider) => {
-      logger.debug('Reindexing the document...', doc.id)
-      return provider.update(doc, _.omit(doc, 'id'), params)
+      if (create) {
+        logger.debug('Reindexing from scratch the document...', doc.id)
+        return provider.create(doc, params)
+      } else {
+        logger.debug('Reindexing the document...', doc.id)
+        return provider.update(doc, _.omit(doc, 'id'), params)
+      }
     }).catch((err) => {
       logger.error('Unable to reindex document:', doc, err)
       return Promise.reject(err)

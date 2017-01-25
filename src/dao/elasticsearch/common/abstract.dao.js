@@ -175,15 +175,17 @@ class AbstractElasticsearchDao {
   /**
    * Create a document.
    * @param {Object} doc doc to create
+   * @param {Object} params Create parameters
    * @return {Object} the created doc
    */
-  create (doc) {
+  create (doc, params = {}) {
+    const {refresh = true} = params
     return this.client.create({
       index: this.index,
       type: this.type,
       id: doc.id || this._generateId(),
       body: doc,
-      refresh: true
+      refresh
     }).then((r) => {
       if (this.debug) {
         logger.debug('AbstractDao::create', doc, r)
@@ -200,16 +202,18 @@ class AbstractElasticsearchDao {
    * Update a document.
    * @param {Object} doc Document to update
    * @param {Object} update Update to apply
+   * @param {Object} params Update parameters
    * @return {Object} the updated document
    */
-  update (doc, update, params) {
-    const {refresh = true, upsert = false} = params
-    const body = upsert ? {upsert: update} : {doc: update}
+  update (doc, update, params = {}) {
+    const {refresh = true} = params
     return this.client.update({
       index: this.index,
       type: this.type,
       id: doc.id,
-      body,
+      body: {
+        doc: update
+      },
       refresh,
       fields: '_source'
     }).then((r) => {
