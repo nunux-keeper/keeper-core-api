@@ -202,16 +202,16 @@ class AbstractElasticsearchDao {
    * @param {Object} update Update to apply
    * @return {Object} the updated document
    */
-  update (doc, update) {
+  update (doc, update, params) {
+    const {refresh = true, upsert = false} = params
+    const body = upsert ? {upsert: update} : {doc: update}
     return this.client.update({
       index: this.index,
       type: this.type,
       id: doc.id,
-      body: {
-        doc: update
-      },
-      fields: '_source',
-      refresh: true
+      body,
+      refresh,
+      fields: '_source'
     }).then((r) => {
       if (this.debug) {
         logger.debug('AbstractDao::update', doc.id, update, r)

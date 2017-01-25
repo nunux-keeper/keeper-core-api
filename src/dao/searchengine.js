@@ -65,10 +65,10 @@ class SearchEngine {
    * @param {Object} doc Document to re-index
    * @return {Promise} Re-indexed document
    */
-  reindexDocument (doc) {
+  reindexDocument (doc, params = {}) {
     return this.getProvider().then((provider) => {
       logger.debug('Reindexing the document...', doc.id)
-      return provider.update(doc, _.omit(doc, 'id'))
+      return provider.update(doc, _.omit(doc, 'id'), params)
     }).catch((err) => {
       logger.error('Unable to reindex document:', doc, err)
       return Promise.reject(err)
