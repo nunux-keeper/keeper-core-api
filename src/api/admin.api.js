@@ -87,13 +87,14 @@ module.exports = function (router) {
 
   /**
    * @swagger
-   * /v2/admin/users/{uid}/exports:
+   * /v2/admin/jobs:
    *   post:
-   *     summary: Trigger user data export task
+   *     summary: Trigger a new job
+   *     description: Job parameters are provided by query params
    *     tags:
    *       - Admin
    *     parameters:
-   *       - $ref: '#/parameters/uid'
+   *       - $ref: '#/parameters/jobName'
    *     responses:
    *       201:
    *         description: Success
@@ -103,25 +104,5 @@ module.exports = function (router) {
    *       - authenticated:
    *         - user
    */
-  router.post('/admin/users/:uid/exports', middleware.admin.isAdmin, controller.admin.exportUserData)
-
-  /**
-   * @swagger
-   * /v2/admin/users/{uid}/imports:
-   *   post:
-   *     summary: Trigger user data import task
-   *     tags:
-   *       - Admin
-   *     parameters:
-   *       - $ref: '#/parameters/uid'
-   *     responses:
-   *       201:
-   *         description: Success
-   *         schema:
-   *           $ref: "#/definitions/JobDetails"
-   *     security:
-   *       - authenticated:
-   *         - user
-   */
-  router.post('/admin/users/:uid/imports', middleware.admin.isAdmin, controller.admin.importUserData)
+  router.post('/admin/jobs/:name', middleware.admin.isAdmin, controller.admin.triggerJob)
 }

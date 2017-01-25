@@ -83,39 +83,21 @@ module.exports = {
   },
 
   /**
-   * Export user data.
+   * Trigger a new job.
    */
-  exportUserData: function (req, res, next) {
-    const params = {
-      title: `Export job started by ${req.user.uid}`,
-      uid: req.params.uid
-    }
+  triggerJob: function (req, res, next) {
+    const params = Object.assign({
+      title: `${req.params.name} job started by ${req.user.uid}`
+    }, req.query)
     const job = jobService.launch(
-      'export-user',
+      req.params.name,
       params,
       jobService.priority.LOW
     )
-    res.status(201).json({
-      id: job.id
-    })
-  },
-
-  /**
-   * Import user data.
-   */
-  importUserData: function (req, res, next) {
-    const params = {
-      title: `Import job started by ${req.user.uid}`,
-      uid: req.params.uid
-    }
-
-    const job = jobService.launch(
-      'import-user',
-      params,
-      jobService.priority.LOW
-    )
-    res.status(201).json({
-      id: job.id
+    job.on('enqueue', () => {
+      res.status(201).json({
+        id: job.id
+      })
     })
   }
 }

@@ -77,5 +77,10 @@ parameters:
     in: query
     required: false
     type: string
-
+  jobName:
+    name: name
+    description: Job name
+    in: path
+    required: true
+    type: string
 
