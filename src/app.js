@@ -12,6 +12,7 @@ const globals = require('./helper').globals
 const urlConfig = require('./helper').urlConfig
 const middleware = require('./middleware')
 const swaggerJSDoc = require('swagger-jsdoc')
+const kue = require('kue')
 
 // APM
 if (process.env.NEW_RELIC_LICENSE_KEY) {
@@ -81,6 +82,9 @@ app.use(`/${urlConfig.apiVersion}`, middleware.token([
 
 // Register API...
 app.use(`/${urlConfig.apiVersion}`, require('./api'))
+
+// register Kue GUI...
+app.use(`/${urlConfig.apiVersion}/admin/kue`, middleware.admin.isAdmin, kue.app)
 
 // Error handler.
 app.use(middleware.error())
