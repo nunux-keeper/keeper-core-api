@@ -102,8 +102,7 @@ make install env=staging
 Started services are:
 
 - **keeper-core-api**: Core API server.
-- **keeper-core-downloader**: Download documents files in background.
-- **keeper-core-ghostbuster**: Remove old deleted documents and files.
+- **keeper-core-job-worker**: Job worker to process background tasks
 - **keeper-data-backup**: Backup documents files (scheduler).
 
 [hateoas]: https://en.wikipedia.org/wiki/HATEOAS
