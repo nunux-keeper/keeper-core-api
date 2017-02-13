@@ -10,7 +10,7 @@ Nice=19
 IOSchedulingClass=2
 IOSchedulingPriority=7
 ExecStart=/usr/bin/docker run --rm --name %p \
-    --entrypoint="/bin/bash" \
+    --entrypoint=/bin/bash \
     --volume /var/opt/backup:/var/opt/backup \
     --volume /var/opt/keeper-core-api:/var/opt/app \
     --env-file /etc/environment \
