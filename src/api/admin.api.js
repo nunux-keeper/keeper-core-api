@@ -87,7 +87,7 @@ module.exports = function (router) {
 
   /**
    * @swagger
-   * /v2/admin/jobs:
+   * /v2/admin/jobs/{name}:
    *   post:
    *     summary: Trigger a new job
    *     description: Job parameters are provided by query params
