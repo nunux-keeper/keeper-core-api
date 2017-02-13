@@ -59,8 +59,10 @@ const extractResources = function (doc, document) {
     }
   }
   doc.content = document.body.innerHTML
+  // Build attachment array by merging extracted resources with current resources.
+  // Extracted resources are append before in order to update illustration extraction.
   doc.attachments = _.uniqWith(
-    doc.attachments.concat(resources),
+    resources.concat(doc.attachments),
     _.isEqual
   )
   return doc
