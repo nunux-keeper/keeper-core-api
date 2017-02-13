@@ -50,6 +50,7 @@ module.exports = function (exceptions) {
       userService.login({
         uid: decoded.preferred_username || decoded.sub,
         name: decoded.name,
+        email: decoded.email,
         date: new Date(),
         ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress
       }).then((user) => {

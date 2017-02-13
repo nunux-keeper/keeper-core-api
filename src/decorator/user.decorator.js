@@ -15,7 +15,7 @@ const metrics = require('../metrics/client')
  * @return {Promise} promise of the dto
  */
 const decorateWithGravatarData = function (user) {
-  const hash = crypto.createHash('md5').update(user.uid).digest('hex')
+  const hash = crypto.createHash('md5').update(user.email || user.uid).digest('hex')
   user.gravatar = 'http://www.gravatar.com/avatar/' + hash
   return Promise.resolve(user)
 }

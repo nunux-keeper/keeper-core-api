@@ -15,12 +15,12 @@ const decorateWithoutPrivateData = function (profile) {
 }
 
 /**
- * Remove private data from profile.
+ * Hash email in order to get its gravatar.
  * @param {Object} profile Profile DTO
  * @return {Promise} promise of the dto
  */
 const decorateWithHash = function (profile) {
-  profile.hash = hash(profile.uid)
+  profile.hash = hash(profile.email || profile.uid)
   return Promise.resolve(profile)
 }
 

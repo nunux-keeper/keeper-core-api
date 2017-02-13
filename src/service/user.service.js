@@ -133,16 +133,26 @@ UserService.login = function (user) {
     if (_user) {
       // Return the user.
       logger.debug('User %s authorized.', _user.uid)
+      if (_user.name !== user.name || _user.email !== user.email) {
+        // Update user data if needed
+        logger.debug('Updating user data: %s ...', user.uid, user)
+        return userDao.update(_user, user)
+          .then((_user) => {
+            logger.debug('User %s updated.', _user.uid)
+            eventHandler.user.emit('update', _user)
+            return Promise.resolve(_user)
+          })
+      }
       return Promise.resolve(_user)
     } else if (globals.ALLOW_AUTO_CREATE_USERS) {
       // Create the user.
       logger.debug('User %s authorized. Auto-provisioning...', user.uid)
       return userDao.create(user)
-      .then((_user) => {
-        logger.debug('User %s created.', _user.uid)
-        eventHandler.user.emit('create', _user)
-        return Promise.resolve(_user)
-      })
+        .then((_user) => {
+          logger.debug('User %s created.', _user.uid)
+          eventHandler.user.emit('create', _user)
+          return Promise.resolve(_user)
+        })
     } else {
       // User not found and auto grant access is disabled.
       logger.warn('User %s not authorized.', user.uid)
