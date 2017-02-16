@@ -6,7 +6,7 @@
   "license": "GPL-3.0",
   "repository": {
     "type": "git",
-    "url": "gitlab.com:nunux-keeper/keeper-core-api.git"
+    "url": "github.com:nunux-keeper/keeper-core-api.git"
   },
   "scripts": {
     "start": "node --harmony src/cluster",
