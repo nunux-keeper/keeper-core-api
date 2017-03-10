@@ -52,8 +52,9 @@ const options = {
       authenticated: {
         type: 'oauth2',
         authorizationUrl: globals.AUTH_REALM + '/protocol/openid-connect/auth',
-        // tokenUrl: globals.AUTH_REALM + '/protocol/openid-connect/token',
-        flow: 'implicit',
+        tokenUrl: globals.AUTH_REALM + '/protocol/openid-connect/token',
+        flow: 'accessCode',
+        // flow: 'implicit',
         scopes: {
           user: 'Authenticated user'
         }
