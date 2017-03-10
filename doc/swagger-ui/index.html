@@ -2,9 +2,9 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Swagger UI</title>
-  <link rel="icon" type="image/png" href="images/favicon-32x32.png" sizes="32x32" />
-  <link rel="icon" type="image/png" href="images/favicon-16x16.png" sizes="16x16" />
+  <title>Nunux Keeper API</title>
+  <link rel='icon' href='images/keeper_api.svg' sizes='any' type='image/svg+xml'>
+  <link rel='icon' type='image/png' href='images/favicon-48x48.png' sizes='48x48' />
   <link href='css/typography.css' media='screen' rel='stylesheet' type='text/css'/>
   <link href='css/reset.css' media='screen' rel='stylesheet' type='text/css'/>
   <link href='css/screen.css' media='screen' rel='stylesheet' type='text/css'/>
@@ -37,7 +37,7 @@
       if (url && url.length > 1) {
         url = decodeURIComponent(url[1]);
       } else {
-        url = "/api-docs.json";
+        url = "/keeper/api-docs.json";
       }
 
       hljs.configure({
@@ -91,7 +91,7 @@
 <body class="swagger-section">
 <div id='header'>
   <div class="swagger-ui-wrap">
-    <a id="logo" href="https://keeper.nunux.org"><img class="logo__img" alt="Nunux Keeper" height="30" width="30" src="images/logo_small.png" /><span class="logo__title">Nunux Keeper API</span></a>
+    <a id="logo" href="https://keeper.nunux.org"><img class="logo__img" alt="Nunux Keeper" height="30" width="30" src="images/keeper_api.svg" /><span class="logo__title">Nunux Keeper API</span></a>
     <form id='api_selector'>
       <div class='input'><input placeholder="http://example.com/api" id="input_baseUrl" name="baseUrl" type="text"/></div>
       <div id='auth_container'></div>
