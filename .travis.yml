@@ -1,34 +1,12 @@
-sudo: false
 
-language: node_js
-
-node_js:
-  - "6"
+sudo: required
 
 services:
-  - mongodb
-  - elasticsearch
-  - redis
+  - docker
 
 env:
-  global:
-    - APP_ALLOW_AUTO_CREATE_USERS=true
-    - APP_ALLOW_REMOVE_USERS=true
-    - APP_TOKEN_SECRET="xyKFaqKHLG"
-    - APP_DOWNLOADER="default"
-    - APP_SEARCH_ENGINE_URI="elasticsearch://localhost:9200/keeper"
-    - APP_REDIS_URI="redis://localhost:6379/1"
-    - APP_ADMIN="system"
-    - APP_STORAGE_LOCAL_DIR="/tmp/keeper"
-  matrix:
-    - APP_DATABASE_URI="mongodb://localhost/keeper"
-    - APP_DATABASE_URI="elasticsearch://localhost:9200/keeper"
+  - TARGET=test-mongo
+  - TARGET=test-elastic
 
-addons:
-  apt:
-    packages:
-      - imagemagick
-
-before_script:
-  - mkdir -p /tmp/keeper/upload
-  - mkdir -p /tmp/keeper/exports
+script:
+  - make build up ${TARGET} down
