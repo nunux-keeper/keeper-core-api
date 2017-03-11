@@ -10,12 +10,16 @@ services:
   - elasticsearch
   - redis
 
+
 env:
-  - APP_DATABASE_URI="mongodb://mongodb/keeper"
-  - APP_SEARCH_ENGINE_URI="elasticsearch://elasticsearch:9200/keeper"
-  - APP_REDIS_URI="redis://redis:6379/1"
-  - APP_ADMIN="system"
-  - APP_STORAGE_LOCAL_DIR="/var/opt/app/storage"
+  global:
+    - APP_SEARCH_ENGINE_URI="elasticsearch://elasticsearch:9200/keeper"
+    - APP_REDIS_URI="redis://redis:6379/1"
+    - APP_ADMIN="system"
+    - APP_STORAGE_LOCAL_DIR="/tmp/keeper/storage"
+  matrix:
+    - APP_DATABASE_URI="mongodb://mongodb/keeper"
+    - APP_DATABASE_URI="elasticsearch://elasticsearch:9200/keeper"
 
 addons:
   apt:
@@ -23,4 +27,4 @@ addons:
       - imagemagick
 
 before_script:
-  - mkdir -p /var/opt/app/storage/upload
+  - mkdir -p /tmp/keeper/storage
