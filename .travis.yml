@@ -12,6 +12,10 @@ services:
 
 env:
   global:
+    - APP_ALLOW_AUTO_CREATE_USERS=true
+    - APP_ALLOW_REMOVE_USERS=true
+    - APP_TOKEN_SECRET="xyKFaqKHLG"
+    - APP_DOWNLOADER="default"
     - APP_SEARCH_ENGINE_URI="elasticsearch://localhost:9200/keeper"
     - APP_REDIS_URI="redis://localhost:6379/1"
     - APP_ADMIN="system"
