@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/nunux-keeper/keeper-core-api.svg?branch=master)](https://travis-ci.org/nunux-keeper/keeper-core-api)
+
 # Keeper core API
 
 > Your personal content curation service.
