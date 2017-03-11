@@ -1,5 +1,5 @@
 .SILENT :
-.PHONY : help network volume mount update build clean cleanup start stop rm shell logs push pull tag
+.PHONY : help network volume mount update build clean cleanup start stop rm wait shell logs push pull tag
 
 # Docker configuration regarding the system architecture
 DOCKER=docker
@@ -17,7 +17,7 @@ endif
 NETWORK?=keeper-vlan
 
 # Get IP of the running container
-IP:=`docker inspect --format '{{ .NetworkSettings.IPAddress }}' $(APPNAME)`
+IP:=`$(DOCKER) inspect --format '{{ .NetworkSettings.IPAddress }}' $(APPNAME)`
 
 # Default registry
 REGISTRY?=
@@ -76,12 +76,12 @@ endif
 
 ## Build the network
 network:
-	echo "Building network: $(NETWORK)..."
-	$(DOCKER) network create $(NETWORK)
+	echo "Configure network: $(NETWORK)..."
+	-$(DOCKER) network create $(NETWORK)
 
 ## Build the volume image
 volume:
-	echo "Building volumes: $(VOLUME_HOST_BASE)/$(APPNAME) -> $(VOLUME_CONTAINER_BASE)/$(APPNAME) ..."
+	echo "Building volumes: $(VOLUME_HOST_PATH) -> $(VOLUME_CONTAINER_PATH) ..."
 	$(DOCKER) run -v $(VOLUME_HOST_PATH):$(VOLUME_CONTAINER_PATH) --name $(APPNAME)_volumes $(VOLUME_IMAGE) true
 
 ## Mount volume
@@ -124,6 +124,19 @@ stop:
 rm:
 	echo "Deleting container $(APPNAME) ..."
 	-$(DOCKER) rm $(APPNAME)
+
+## Wait until up and running (needs health run flag)
+wait:
+	n=30;\
+	while [ $${n} -gt 0 ] ; do\
+		status=`docker inspect --format "{{json .State.Health.Status }}" $(APPNAME)`;\
+		if [ -z $${status} ]; then echo "No status informations."; exit 1; fi;\
+		echo "Waiting for $(APPNAME) up and ready ($${status})...";\
+		if [ "\"healthy\"" = $${status} ]; then exit 0; fi;\
+		sleep 2;\
+		n=`expr $$n - 1`;\
+	done;\
+	echo "Timeout" && exit 1
 
 ## Run the container with shell access
 shell:

@@ -42,13 +42,13 @@ test-elastic:
 	$(DOCKER) run --rm --net=$(NETWORK) $(VOLUME_FLAGS) $(ENV_FLAGS) $(DB_FLAGS) $(IMAGE) test
 
 ## Start a complete infrastucture
-up:
+up: network
+	echo "Starting Redis..."
+	make -C $(DOCKERFILES)/redis stop rm update start
 	echo "Starting MongoDB..."
 	make -C $(DOCKERFILES)/mongodb stop rm update start
 	echo "Starting Elasticsearch..."
-	make -C $(DOCKERFILES)/elasticsearch stop rm update start
-	echo "Starting Redis..."
-	make -C $(DOCKERFILES)/redis stop rm update start
+	make -C $(DOCKERFILES)/elasticsearch stop rm update start wait
 
 ## Start a complete metrics stack
 up-metrics:
