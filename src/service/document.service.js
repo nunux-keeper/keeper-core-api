@@ -158,7 +158,6 @@ DocumentService.create = function (doc) {
  */
 DocumentService.update = function (doc, update) {
   update = _.pick(update, ['title', 'labels', 'content'])
-  update.date = new Date()
   // Check that content can be modified
   if (update.content) {
     // Extract content
@@ -168,6 +167,8 @@ DocumentService.update = function (doc, update) {
         // Udpate content
         update.content = _doc.content
         update.attachments = _doc.attachments
+        // Update date
+        update.date = new Date()
         return documentDao.update(doc, update)
       }).then(function (_doc) {
         // Process attachments (streams)
@@ -179,6 +180,12 @@ DocumentService.update = function (doc, update) {
         return Promise.resolve(_doc)
       })
   }
+
+  // Update date only if content or title has changed
+  if (update.title) {
+    update.date = new Date()
+  }
+
   // Update document
   return documentDao.update(doc, update)
     .then(function (_doc) {
