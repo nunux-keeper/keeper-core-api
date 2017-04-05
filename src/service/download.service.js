@@ -60,7 +60,7 @@ class DownloadService {
       return nodefn.call(dns.resolve4, hostname)
         .then(tryDownload, function (/* e */) {
           logger.error('Unable to download %s. Host cannot be resolved: %s', resource.origin, hostname)
-          return Promise.reject('Host cannot be resolved: %s', hostname)
+          return Promise.reject(`Host cannot be resolved: ${hostname}`)
         })
     }
 
