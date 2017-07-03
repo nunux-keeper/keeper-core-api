@@ -42,7 +42,7 @@ release:image:
     - apk add --no-cache make
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
   script:
-    - make build push REGISTRY=registry.gitlab.com/
+    - make image push REGISTRY=registry.gitlab.com/
   only:
     - master
 
