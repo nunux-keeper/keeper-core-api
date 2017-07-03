@@ -6,9 +6,11 @@ IMAGE=mongo:latest
 
 DATE:=`date +%Y-%m-%d`
 
-ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
-
-include $(ROOT_DIR)/../common/_Makefile
+# Include common Make tasks
+root_dir:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+makefiles:=$(root_dir)/../../makefiles
+include $(makefiles)/help.Makefile
+include $(makefiles)/docker.Makefile
 
 ## Run the container in client mode
 client:

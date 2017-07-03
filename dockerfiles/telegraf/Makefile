@@ -3,11 +3,15 @@
 APPNAME:=telegraf
 IMAGE:=telegraf:latest
 
-ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+root_dir:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
 define RUN_CUSTOM_FLAGS
--v $(ROOT_DIR)/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+-v $(root_dir)/telegraf.conf:/etc/telegraf/telegraf.conf:ro
 endef
 
-include $(ROOT_DIR)/../common/_Makefile
+# Include common Make tasks
+makefiles:=$(root_dir)/../../makefiles
+include $(makefiles)/help.Makefile
+include $(makefiles)/docker.Makefile
+
 

@@ -1,10 +1,10 @@
 .SILENT :
-.PHONY : client init
+.PHONY : client
 
-APPNAME:=influxdb
-IMAGE:=influxdb:latest
+USERNAME:=minio
+APPNAME:=minio
 
-DATABASE_NAME:=telegraf
+RUN_CMD=server /export
 
 # Include common Make tasks
 root_dir:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
@@ -18,15 +18,6 @@ client:
 	$(DOCKER) run --rm \
 		-it \
 		--net=$(NETWORK) \
-		$(IMAGE) \
-		influx -host $(APPNAME)
-
-## Init Influx database...
-init:
-	echo "Init Influx database..."
-	$(DOCKER) run --rm \
-		-it \
-		--net=$(NETWORK) \
-		$(IMAGE) \
-		influx -host $(APPNAME) -execute 'CREATE DATABASE $(DATABASE_NAME)'
+		--entrypoint=/bin/ash \
+		$(USERNAME)/mc:edge
 

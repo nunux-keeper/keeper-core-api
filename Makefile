@@ -1,7 +1,6 @@
 .SILENT :
 .PHONY : test test-mongo test-elastic up up-metrics down down-metrics install uninstall deploy
 
-USERNAME:=nunux-keeper
 APPNAME:=keeper-core-api
 env?=dev
 
@@ -17,12 +16,17 @@ RUN_CUSTOM_FLAGS?=$(PORTS_FLAGS) $(ENV_FLAGS)
 
 # Docker configuration regarding the system architecture
 BASEIMAGE=node:6-onbuild
-ARM_BASEIMAGE=hypriot/rpi-node/6-onbuild
 
 # Include common Make tasks
-ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
-DOCKERFILES:=$(ROOT_DIR)/dockerfiles
-include $(DOCKERFILES)/common/_Makefile
+root_dir:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+makefiles:=$(root_dir)/makefiles
+include $(makefiles)/help.Makefile
+include $(makefiles)/docker.Makefile
+
+# Define dockerfiles
+dockerfiles:=$(root_dir)/dockerfiles
+
+all: help
 
 ## Run the container in test mode
 test:
@@ -44,38 +48,38 @@ test-elastic:
 ## Start a complete infrastucture
 up: network
 	echo "Starting Redis..."
-	make -C $(DOCKERFILES)/redis stop rm update start
+	make -C $(dockerfiles)/redis stop rm update start
 	echo "Starting MongoDB..."
-	make -C $(DOCKERFILES)/mongodb stop rm update start
+	make -C $(dockerfiles)/mongodb stop rm update start
 	echo "Starting Elasticsearch..."
-	make -C $(DOCKERFILES)/elasticsearch stop rm update start wait
+	make -C $(dockerfiles)/elasticsearch stop rm update start wait
 
 ## Start a complete metrics stack
 up-metrics:
 	echo "Starting InfluxDB..."
-	make -C $(DOCKERFILES)/influxdb stop rm update start init
+	make -C $(dockerfiles)/influxdb stop rm update start init
 	echo "Starting Telegraf..."
-	make -C $(DOCKERFILES)/telegraf stop rm update start
+	make -C $(dockerfiles)/telegraf stop rm update start
 	echo "Starting Grafana..."
-	make -C $(DOCKERFILES)/grafana stop rm update start
+	make -C $(dockerfiles)/grafana stop rm update start
 
 ## Stop the infrastucture
 down:
 	echo "Stoping MongoDB..."
-	make -C $(DOCKERFILES)/mongodb stop rm
+	make -C $(dockerfiles)/mongodb stop rm
 	echo "Stoping Elasticsearch ..."
-	make -C $(DOCKERFILES)/elasticsearch stop rm
+	make -C $(dockerfiles)/elasticsearch stop rm
 	echo "Stoping Redis ..."
-	make -C $(DOCKERFILES)/redis stop rm
+	make -C $(dockerfiles)/redis stop rm
 
 ## Stop the metrics stack
 down-metrics:
 	echo "Stoping Grafana..."
-	make -C $(DOCKERFILES)/grafana stop rm
+	make -C $(dockerfiles)/grafana stop rm
 	echo "Stoping Telegraf..."
-	make -C $(DOCKERFILES)/telegraf stop rm
+	make -C $(dockerfiles)/telegraf stop rm
 	echo "Stoping InfluxDB..."
-	make -C $(DOCKERFILES)/influxdb stop rm
+	make -C $(dockerfiles)/influxdb stop rm
 
 ## Install as a service (needs root privileges)
 install: build
