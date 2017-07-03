@@ -82,7 +82,7 @@ down-metrics:
 	make -C $(dockerfiles)/influxdb stop rm
 
 ## Install as a service (needs root privileges)
-install: build
+install: image
 	echo "Install as a service..."
 	mkdir -p /var/opt/$(APPNAME)/storage/upload
 	mkdir -p /var/opt/$(APPNAME)/storage/exports
