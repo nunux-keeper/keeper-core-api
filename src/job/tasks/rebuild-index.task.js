@@ -14,7 +14,8 @@ class IndexationStream extends stream.Writable {
   }
 
   _write (chunk, encoding, next) {
-    searchengine.reindexDocument(chunk, {refresh: false, create: true})
+    const { refresh = false, create = true } = this.job.data
+    searchengine.reindexDocument(chunk, {refresh, create})
     .then(() => {
       logger.debug('Document %s re-indexed (%d/%d).', chunk.id, this.counter, this.total)
       this.job.progress(this.counter++, this.total)
