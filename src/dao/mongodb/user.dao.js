@@ -33,6 +33,20 @@ class UserDao extends AbstractMongodbDao {
       })
     })
   }
+
+  /**
+   * Find user by its API key.
+   * @param {String} key API key.
+   * @return {Object} the user
+   */
+  findByApiKey (key) {
+    return this.getCollection().then((collection) => {
+      return collection.findOne({apiKey: key}).then((user) => {
+        // logger.debug('findByApiKey::key', key)
+        return Promise.resolve(this.objectMapper(user))
+      })
+    })
+  }
 }
 
 module.exports = UserDao

@@ -42,34 +42,47 @@ definitions:
       key:
         type: string
         description: Attachment key
+        x-faker: random.uuid
       contentType:
         type: string
         description: Content type of the attachment
+        x-faker:
+          random.arrayElement:
+            - ["image/jpeg"]
       origin:
         type: string
         description: Source URL of the attachment
+        x-faker: image.imageUrl
   Document:
     type: object
     properties:
       id:
         type: string
         description: Document ID
+        x-faker: random.uuid
       title:
         type: string
         description: Title of the document
+        x-faker: lorem.sentence
       content:
         type: string
         description: Content of the document
+        x-faker: lorem.paragraphs
       contentType:
         type: string
         description: Content type of the document
+        x-faker:
+          random.arrayElement:
+            - ["text/html", "text/plain"]
       origin:
         type: string
         description: Source URL of the document
+        x-faker: internet.url
       date:
         type: string
         format: date-time
         description: Date of the last modification
+        x-faker: date.past
       labels:
         type: array
         description: Lables of the document
@@ -103,12 +116,15 @@ definitions:
       id:
         type: string
         description: Label ID
+        x-faker: random.uuid
       label:
         type: string
         description: Label value
+        x-faker: commerce.product
       color:
         type: string
         description: Color
+        x-faker: internet.color
   LabelPayload:
     type: object
     properties:
@@ -124,25 +140,29 @@ definitions:
       uid:
         type: string
         description: User ID (email)
+        x-faker: internet.email
       name:
         type: string
         description: "User's name"
+        x-faker: name.findName
       date:
         type: string
         format: date-time
         description: Registration date
+        x-faker: date.past
   ProfilePayload:
     type: object
     properties:
-      alias:
-        type: string
-        description: Profile alias
+      resetApiKey:
+        type: boolean
+        description: Ask to reste the API key
   Sharing:
     type: object
     properties:
       id:
         type: string
         description: Sharing ID
+        x-faker: random.uuid
       targetLabel:
         type: string
         description: Targeted label ID
@@ -150,17 +170,21 @@ definitions:
         type: string
         format: date-time
         description: Last modification date
+        x-faker: date.past
       startDate:
         type: string
         format: date-time
         description: Date to start the sharing
+        x-faker: date.past
       endDate:
         type: string
         format: date-time
         description: Date to end the sharing
+        x-faker: date.future
       pub:
         type: boolean
         description: Set if the sharing is public or not
+        x-faker: random.boolean
   SharingPayload:
     type: object
     properties:

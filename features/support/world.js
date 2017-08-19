@@ -12,7 +12,13 @@ if (process.env.APP_TOKEN_PRIV_KEY) {
 }
 
 function World (/* callback */) {
-  this.setAuthorizationHeader = function (uid) {
+  this.setAuthorizationHeader = function (uid, apiKey) {
+    if (apiKey) {
+      return function (request) {
+        request.set('Authorization', `Basic api:${apiKey}`)
+        return request
+      }
+    }
     const roles = uid === 'system' ? ['admin'] : []
     const token = uid ? jwt.sign({
       sub: uid,

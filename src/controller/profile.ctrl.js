@@ -1,6 +1,8 @@
 'use strict'
 
+const crypto = require('crypto')
 const errors = require('../helper').errors
+const logger = require('../helper').logger
 const decorator = require('../decorator')
 const userService = require('../service').user
 
@@ -21,17 +23,20 @@ module.exports = {
   },
 
   /**
-   * Update current profile data (public alias).
+   * Update current profile data.
    */
   update: function (req, res, next) {
-    req.sanitizeBody('alias').trim()
-    req.checkBody('alias', 'Invalid alias').optional().isLength(4, 64)
+    req.sanitizeBody('resetApiKey').toBoolean()
     const validationErrors = req.validationErrors(true)
     if (validationErrors) {
       return next(new errors.BadRequest(null, validationErrors))
     }
-    const update = {
-      alias: req.body.alias
+
+    const update = {}
+
+    if (req.body.resetApiKey) {
+      logger.info('Reset user API key: %j', req.user.uid)
+      update.apiKey = crypto.randomBytes(20).toString('hex')
     }
 
     userService.update(req.user, update)
@@ -44,6 +49,9 @@ module.exports = {
       )
     })
     .then(function (resource) {
+      if (req.body.resetApiKey) {
+        resource.apiKey = update.apiKey
+      }
       res.json(resource)
     }, next)
   }

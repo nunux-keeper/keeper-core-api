@@ -78,7 +78,7 @@ UserService.count = function () {
  * @return {Object} the updated user
  */
 UserService.update = function (user, update) {
-  update = _.pick(update, 'name')
+  update = _.pick(update, 'apiKey')
   update.date = new Date()
   return userDao.update(user, update)
     .then(function (u) {
@@ -124,7 +124,7 @@ UserService.remove = function (uid) {
 
 /**
  * Login.
- * @param {String} user User to login
+ * @param {Object} user User to login
  * @return {Object} the logged user
  */
 UserService.login = function (user) {
@@ -158,6 +158,27 @@ UserService.login = function (user) {
       logger.warn('User %s not authorized.', user.uid)
       eventHandler.user.emit('unauthorized', user)
       return Promise.reject(new errors.Unauthorized('Auto-provisioning disabled.'))
+    }
+  })
+}
+
+/**
+ * Login with API key.
+ * @param {String} key     API key
+ * @param {String} options login options
+ * @return {Object} the logged user
+ */
+UserService.loginWithApiKey = function (key, options) {
+  logger.debug('Login attempt with API KEY: %s', options.ip)
+  return userDao.findByApiKey(key).then(function (user) {
+    if (user) {
+      // Return the user.
+      logger.debug('User %s authorized.', user.uid)
+      return Promise.resolve(user)
+    } else {
+      // User not found and auto grant access is disabled.
+      logger.warn('API key not found: %s', key)
+      return Promise.reject(new errors.Unauthorized('Bad API key.'))
     }
   })
 }

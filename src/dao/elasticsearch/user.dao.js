@@ -14,11 +14,12 @@ class UserDao extends AbstractElasticsearchDao {
   getMapping () {
     return {
       properties: {
-        ip:    {type: 'string', store: 'yes', index: 'not_analyzed'},
-        uid:   {type: 'string', store: 'yes', index: 'not_analyzed'},
-        name:  {type: 'string', store: 'yes', index: 'not_analyzed'},
-        email: {type: 'string', store: 'yes', index: 'not_analyzed'},
-        date:  {type: 'date', store: 'yes', format: 'date_optional_time'}
+        ip:     {type: 'string', store: 'yes', index: 'not_analyzed'},
+        uid:    {type: 'string', store: 'yes', index: 'not_analyzed'},
+        apiKey: {type: 'string', store: 'yes', index: 'not_analyzed'},
+        name:   {type: 'string', store: 'yes', index: 'not_analyzed'},
+        email:  {type: 'string', store: 'yes', index: 'not_analyzed'},
+        date:   {type: 'date', store: 'yes', format: 'date_optional_time'}
       }
     }
   }
@@ -30,6 +31,18 @@ class UserDao extends AbstractElasticsearchDao {
    */
   findByUid (uid) {
     return this.find({uid: uid}, {size: 1}).then((users) => {
+      const user = users.length ? users[0] : null
+      return Promise.resolve(user)
+    })
+  }
+
+  /**
+   * Find user by its API key.
+   * @param {String} key API key.
+   * @return {Object} the user
+   */
+  findByApiKey (key) {
+    return this.find({apiKey: key}, {size: 1}).then((users) => {
       const user = users.length ? users[0] : null
       return Promise.resolve(user)
     })

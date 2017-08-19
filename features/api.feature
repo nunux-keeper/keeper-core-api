@@ -8,6 +8,6 @@ Feature: API
 
     Scenario: Access unauthorized API
         Given I am an anonymous user
-        When I access the API "/v2/user"
+        When I access the API "/v2/profiles/current"
         Then I should be rewarded by a 401 HTTP code
 

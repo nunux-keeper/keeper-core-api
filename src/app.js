@@ -76,10 +76,21 @@ app.get('/api-docs.json', (req, res) => {
   res.send(swaggerSpec)
 })
 
-// Protect API with access token.
-app.use(`/${urlConfig.apiVersion}`, middleware.token([
-  /^\/public\//
-]))
+// AuthN Middlewares...
+app.use(`/${urlConfig.apiVersion}`,
+  // Bypass authentification if public API
+  middleware.auth_bypass({
+    method: ['POST', 'GET'],
+    path: [/^\/public\//]
+  }),
+  // Allow API key for fetch and create document
+  middleware.auth_apikey({
+    method: ['POST', 'GET'],
+    path: [/^\/documents/]
+  }),
+  // Else require a valid JWT
+  middleware.auth_jwt()
+)
 
 // Register API...
 app.use(`/${urlConfig.apiVersion}`, require('./api'))

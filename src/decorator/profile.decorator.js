@@ -11,7 +11,7 @@ const urlConfig = require('../helper').urlConfig
  * @return {Promise} promise of the dto
  */
 const decorateWithoutPrivateData = function (profile) {
-  return Promise.resolve(_.omit(profile, 'ip'))
+  return Promise.resolve(_.omit(profile, ['ip', 'apiKey']))
 }
 
 /**

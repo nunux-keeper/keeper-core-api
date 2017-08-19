@@ -40,7 +40,7 @@ module.exports = function () {
     } else {
       req.send(doc).set('Content-Type', 'application/json')
     }
-    req.use(this.setAuthorizationHeader(this.uid))
+    req.use(this.setAuthorizationHeader(this.uid, this.apiKey))
     .expect('Content-Type', /json/)
     .expect(function (res) {
       expect(res.status).to.equals(201)
@@ -101,7 +101,7 @@ module.exports = function () {
     request(app)
     .delete('/v2/documents/' + this.myDocument.id)
     .set('Content-Type', 'application/json')
-    .use(this.setAuthorizationHeader(this.uid))
+    .use(this.setAuthorizationHeader(this.uid, this.apiKey))
     .expect(205, callback)
   })
 
@@ -127,7 +127,7 @@ module.exports = function () {
     const suffix = shoulBeRaw ? '?raw' : ''
     request(app)
     .get('/v2/documents/' + this.myDocument.id + suffix)
-    .use(this.setAuthorizationHeader(this.uid))
+    .use(this.setAuthorizationHeader(this.uid, this.apiKey))
     .expect('Content-Type', shoulBeRaw ? this.myDocument.contentType : /json/)
     .expect(function (res) {
       if (shoulBeRetrieve) {
