@@ -4,6 +4,7 @@ const _ = require('lodash')
 const logger = require('../helper').logger
 const globals = require('../helper').globals
 const errors = require('../helper').errors
+const hash = require('../helper/hash').hash
 const decorator = require('../decorator')
 const eventHandler = require('../event')
 const DecoratorStream = require('../decorator/decorator.stream')
@@ -80,6 +81,9 @@ UserService.count = function () {
 UserService.update = function (user, update) {
   update = _.pick(update, 'apiKey')
   update.date = new Date()
+  if (update.apiKey) {
+    update.apiKey = hash(update.apiKey)
+  }
   return userDao.update(user, update)
     .then(function (u) {
       logger.info('User updated: %j', u)
@@ -170,7 +174,7 @@ UserService.login = function (user) {
  */
 UserService.loginWithApiKey = function (key, options) {
   logger.debug('Login attempt with API KEY: %s', options.ip)
-  return userDao.findByApiKey(key).then(function (user) {
+  return userDao.findByApiKey(hash(key)).then(function (user) {
     if (user) {
       // Return the user.
       logger.debug('User %s authorized.', user.uid)
