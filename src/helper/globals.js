@@ -24,6 +24,8 @@ const globals = {
   SEARCH_ENGINE_URI: process.env.APP_SEARCH_ENGINE_URI || 'elasticsearch://elasticsearch/keeper',
   // Stats server URI
   STATS_SERVER_URI: process.env.APP_STATS_SERVER_URI || false,
+  // Event broker URI
+  EVENT_BROKER_URI: process.env.APP_EVENT_BROKER_URI || false,
   // Secret use to encypt token
   TOKEN_SECRET: process.env.APP_TOKEN_SECRET || new Chance().hash({length: 16}),
   // Secret use to encypt token

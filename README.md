@@ -27,6 +27,7 @@ collect, organize, and retrieve online documents.
 * Store attachments on disk or on [S3][s3]
 * Online API documentation
 * Produce metrics (with [StatsD][statsd])
+* Publish server event to external systems (with Webhooks, AMQP, ...)
 * BDD testing (with [Cucumber][cucumber])
 
 See `ROADMAP.md` for planned features.
