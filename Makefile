@@ -1,6 +1,8 @@
 .SILENT :
 .PHONY : test test-mongo test-elastic up up-metrics down down-metrics install uninstall deploy
 
+# Image name
+USERNAME:=nunux-keeper
 APPNAME:=keeper-core-api
 env?=dev
 
