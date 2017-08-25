@@ -142,7 +142,7 @@ UserService.login = function (user) {
         logger.debug('Updating user data: %s ...', user.uid, user)
         return userDao.update(_user, user)
           .then((_user) => {
-            logger.debug('User %s updated.', _user.uid)
+            logger.info('User %s updated.', _user.uid)
             eventHandler.user.emit('update', _user)
             return Promise.resolve(_user)
           })
@@ -153,7 +153,7 @@ UserService.login = function (user) {
       logger.debug('User %s authorized. Auto-provisioning...', user.uid)
       return userDao.create(user)
         .then((_user) => {
-          logger.debug('User %s created.', _user.uid)
+          logger.info('User %s created.', _user.uid)
           eventHandler.user.emit('create', _user)
           return Promise.resolve(_user)
         })

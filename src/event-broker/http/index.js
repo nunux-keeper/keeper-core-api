@@ -8,6 +8,7 @@ module.exports = function (uri) {
 
   const client = {
     emit: function (topic, payload) {
+      logger.debug(`Emitting event ${topic}...`, payload)
       request({
         url: uri,
         method: 'POST',
@@ -15,6 +16,8 @@ module.exports = function (uri) {
       }, function (err, res, body) {
         if (err || res.statusCode > 299) {
           logger.error('Unable to emit event to the HTTP broker', err || body)
+        } else {
+          logger.debug(`Event ${topic} emited`, payload)
         }
       })
     }
