@@ -15,14 +15,17 @@ module.exports = function (allowed) {
     }
 
     const authHeader = req.get('Authorization')
-    if (authHeader && authHeader.startsWith('Basic api:')) {
+    if (authHeader && authHeader.startsWith('Basic ')) {
+      // Extract credentials from the header
+      const [login, apiKey] = Buffer.from(authHeader.substr(6), 'base64').toString('ascii').split(':')
+      if (login !== 'api' || !apiKey) {
+        return next(new errors.Unauthorized('Bad API key'))
+      }
       // Only allow configured path and the method.
       if (!(allowed.path.find((p) => req.path.match(p)) &&
         allowed.method.find((m) => req.method === m))) {
         return next(new errors.Unauthorized('Path or method unauthorized'))
       }
-      // Extract token from the header
-      const apiKey = authHeader.substr(10)
       userService.loginWithApiKey(apiKey, {
         ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress
       }).then((user) => {

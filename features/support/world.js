@@ -15,7 +15,8 @@ function World (/* callback */) {
   this.setAuthorizationHeader = function (uid, apiKey) {
     if (apiKey) {
       return function (request) {
-        request.set('Authorization', `Basic api:${apiKey}`)
+        const encodedApiKey = new Buffer(`api:${apiKey}`).toString('base64')
+        request.set('Authorization', `Basic ${encodedApiKey}`)
         return request
       }
     }
