@@ -80,7 +80,6 @@ UserService.count = function () {
  */
 UserService.update = function (user, update) {
   update = _.pick(update, 'apiKey')
-  update.date = new Date()
   if (update.apiKey) {
     update.apiKey = hash(update.apiKey)
   }
