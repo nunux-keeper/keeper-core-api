@@ -79,7 +79,7 @@ UserService.count = function () {
  * @return {Object} the updated user
  */
 UserService.update = function (user, update) {
-  update = _.pick(update, 'apiKey')
+  update = _.pick(update, 'apiKey', 'exportRequest')
   if (update.apiKey) {
     update.apiKey = hash(update.apiKey)
   }

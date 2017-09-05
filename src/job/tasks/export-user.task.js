@@ -136,8 +136,8 @@ class ExportUserTask extends AbstractTask {
           exportAttachments(archive, doc).then(() => {
             logger.info('Document #%s exported.', doc.id)
             counter++
-            job.progress(counter, total)
-            if (ended) {
+            job.progress(counter, total, {completed: counter, total})
+            if (ended || total === 1) {
               job.log(`Exported ${counter} documents of ${user.uid} (#${user.id}) to ${file}`)
               archive.finalize()
             } else {

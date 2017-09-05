@@ -33,13 +33,23 @@ class JobService {
     })
   }
 
-  launch (name, params = {}, priority = 'normal') {
+  launch (name, params = {}, priority = 'normal', removeOnComplete = false) {
     logger.debug('Launching %s job with params', name, params)
-    const job = this.queue
-      .create(name, params)
-      .priority(priority).save()
-    // logger.debug('Launched job:', job)
-    return job
+    return new Promise((resolve, reject) => {
+      const job = this.queue
+        .create(name, params)
+        .priority(priority)
+        .removeOnComplete(removeOnComplete)
+        .save(err => err ? reject(err) : resolve(job))
+    })
+  }
+
+  get (id) {
+    return new Promise((resolve, reject) => {
+      kue.Job.get(id, (err, job) => {
+        return err ? reject(err) : resolve(job)
+      })
+    })
   }
 }
 

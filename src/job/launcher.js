@@ -38,22 +38,23 @@ const params = Object.assign({
 }, program.param)
 
 logger.debug('Queuing job %s with params %j', program.job, params)
-const job = jobService.launch(program.job, params, jobService.priority.HIGH)
-
-let progress = -1
-job.on('complete', function (result) {
-  logger.info('Job %d completed with', job.id, result)
-  process.exit(0)
-}).on('failed attempt', function (err, attempts) {
-  logger.error('Job %d failed after %d attempts:', job.id, attempts, err)
-  process.exit(1)
-}).on('failed', function (err) {
-  logger.error('Job %d failed:', job.id, err)
-  process.exit(1)
-}).on('progress', function (_progress) {
-  if (progress !== _progress) {
-    progress = _progress
-    logger.debug('Job %d progression: %d%', job.id, progress)
-  }
-})
+jobService.launch(program.job, params, jobService.priority.HIGH)
+  .then(job => {
+    let progress = -1
+    job.on('complete', function (result) {
+      logger.info('Job %d completed with', job.id, result)
+      process.exit(0)
+    }).on('failed attempt', function (err, attempts) {
+      logger.error('Job %d failed after %d attempts:', job.id, attempts, err)
+      process.exit(1)
+    }).on('failed', function (err) {
+      logger.error('Job %d failed:', job.id, err)
+      process.exit(1)
+    }).on('progress', function (_progress) {
+      if (progress !== _progress) {
+        progress = _progress
+        logger.debug('Job %d progression: %d%', job.id, progress)
+      }
+    })
+  })
 

@@ -31,9 +31,11 @@ const globals = {
   // Secret use to encypt token
   TOKEN_PUB_KEY: process.env.APP_TOKEN_PUB_KEY,
   // Allow login to auto create users
-  ALLOW_AUTO_CREATE_USERS: process.env.APP_ALLOW_AUTO_CREATE_USERS !== false,
+  ALLOW_AUTO_CREATE_USERS: process.env.APP_ALLOW_AUTO_CREATE_USERS === 'true',
   // Allow admin to remove users
-  ALLOW_REMOVE_USERS: process.env.APP_ALLOW_REMOVE_USERS !== false
+  ALLOW_REMOVE_USERS: process.env.APP_ALLOW_REMOVE_USERS === 'true',
+  // Use embedded worker
+  EMBEDDED_WORKER: process.env.APP_EMBEDDED_WORKER === 'true'
 }
 
 module.exports = globals

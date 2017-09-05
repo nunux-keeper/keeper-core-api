@@ -242,31 +242,3 @@ definitions:
       nbDocuments:
         type: integer
         description: Number of documents
-  JobDetails:
-    type: object
-    properties:
-      id:
-        type: string
-        description: Job id
-      type:
-        type: string
-        description: Job type
-      prority:
-        type: integer
-        description: Job priority level
-      progress:
-        type: integer
-        description: Job progress in percent
-      state:
-        type: string
-        description: Job state
-      created_at:
-        type: integer
-        description: Job creation timestamp
-      updated_at:
-        type: integer
-        description: Job update timestamp
-      duration:
-        type: integer
-        description: Job duration in secondes
-

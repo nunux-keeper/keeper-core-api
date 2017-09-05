@@ -30,12 +30,12 @@ class DownloadService {
    * @returns {Promise} Promise of download task
    */
   asyncDownload (resources, container) {
-    const job = jobService.launch(
+    return jobService.launch(
       'download',
       {resources, container},
-      jobService.priority.LOW
+      jobService.priority.LOW,
+      true
     )
-    return Promise.resolve(job)
   }
 
   /**

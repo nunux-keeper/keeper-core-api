@@ -84,25 +84,4 @@ module.exports = function (router) {
    *         - user
    */
   router.delete('/admin/users/:uid', middleware.admin.isAdmin, controller.admin.deleteUser)
-
-  /**
-   * @swagger
-   * /v2/admin/jobs/{name}:
-   *   post:
-   *     summary: Trigger a new job
-   *     description: Job parameters are provided by query params
-   *     tags:
-   *       - Admin
-   *     parameters:
-   *       - $ref: '#/parameters/jobName'
-   *     responses:
-   *       201:
-   *         description: Success
-   *         schema:
-   *           $ref: "#/definitions/JobDetails"
-   *     security:
-   *       - authenticated:
-   *         - user
-   */
-  router.post('/admin/jobs/:name', middleware.admin.isAdmin, controller.admin.triggerJob)
 }

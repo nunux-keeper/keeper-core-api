@@ -96,7 +96,7 @@ app.use(`/${urlConfig.apiVersion}`,
 app.use(`/${urlConfig.apiVersion}`, require('./api'))
 
 // register Kue GUI...
-app.use(`/${urlConfig.apiVersion}/admin/kue`, middleware.admin.isAdmin, kue.app)
+app.use(`/${urlConfig.apiVersion}/admin/worker`, middleware.admin.isAdmin, kue.app)
 
 // Error handler.
 app.use(middleware.error())
@@ -123,6 +123,10 @@ const shutdown = function (signal) {
 app.isReady = function () {
   return require('./service').isReady()
   .then(() => {
+    if (globals.EMBEDDED_WORKER) {
+      logger.info('Starting embedded job worker...')
+      require('./job/embedded').start()
+    }
     logger.info('App is ready.')
     return Promise.resolve()
   })

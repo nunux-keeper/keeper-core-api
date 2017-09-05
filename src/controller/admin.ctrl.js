@@ -4,7 +4,6 @@ const errors = require('../helper').errors
 const decorator = require('../decorator')
 const userService = require('../service').user
 const documentService = require('../service').document
-const jobService = require('../service').job
 const metrics = require('../metrics/client')
 const JSONStream = require('JSONStream')
 
@@ -80,24 +79,5 @@ module.exports = {
     .then(function () {
       res.status(205).json()
     }, next)
-  },
-
-  /**
-   * Trigger a new job.
-   */
-  triggerJob: function (req, res, next) {
-    const params = Object.assign({
-      title: `${req.params.name} job started by ${req.user.uid}`
-    }, req.query)
-    const job = jobService.launch(
-      req.params.name,
-      params,
-      jobService.priority.LOW
-    )
-    job.on('enqueue', () => {
-      res.status(201).json({
-        id: job.id
-      })
-    })
   }
 }

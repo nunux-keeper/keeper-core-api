@@ -2,6 +2,7 @@
 
 const path = require('path')
 const logger = require('../../helper').logger
+const globals = require('../../helper').globals
 const services = require('../../service')
 
 class TaskWorker {
@@ -11,11 +12,15 @@ class TaskWorker {
   }
 
   init () {
-    return services.isReady()
+    return globals.EMBEDDED_WORKER
+      ? Promise.resolve()
+      : services.isReady()
   }
 
   stop () {
-    return services.shutdown()
+    return globals.EMBEDDED_WORKER
+      ? Promise.resolve()
+      : services.shutdown()
   }
 
   start () {

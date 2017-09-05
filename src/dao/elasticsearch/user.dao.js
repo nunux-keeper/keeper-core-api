@@ -14,12 +14,13 @@ class UserDao extends AbstractElasticsearchDao {
   getMapping () {
     return {
       properties: {
-        ip:     {type: 'string', store: 'yes', index: 'not_analyzed'},
-        uid:    {type: 'string', store: 'yes', index: 'not_analyzed'},
-        apiKey: {type: 'string', store: 'yes', index: 'not_analyzed'},
-        name:   {type: 'string', store: 'yes', index: 'not_analyzed'},
-        email:  {type: 'string', store: 'yes', index: 'not_analyzed'},
-        date:   {type: 'date', store: 'yes', format: 'date_optional_time'}
+        ip:            {type: 'string', store: 'yes', index: 'not_analyzed'},
+        uid:           {type: 'string', store: 'yes', index: 'not_analyzed'},
+        apiKey:        {type: 'string', store: 'yes', index: 'not_analyzed'},
+        name:          {type: 'string', store: 'yes', index: 'not_analyzed'},
+        email:         {type: 'string', store: 'yes', index: 'not_analyzed'},
+        exportRequest: {type: 'integer', store: 'yes', index: 'not_analyzed'},
+        date:          {type: 'date', store: 'yes', format: 'date_optional_time'}
       }
     }
   }

@@ -19,13 +19,13 @@ class AbstractTask {
    */
   start (job, done) {
     logger.info(`Starting ${this.name} ...`)
-    this.process(job, (err) => {
+    this.process(job, (err, result) => {
       if (err) {
         logger.error(`Error during ${this.name} job processing`, err)
         done(err)
       } else {
         logger.info(`${this.name} job done.`)
-        done()
+        done(null, result)
       }
     })
   }
