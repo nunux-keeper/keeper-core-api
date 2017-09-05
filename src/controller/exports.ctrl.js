@@ -85,7 +85,7 @@ module.exports = {
       })
     } else {
       res.write('event: error\n')
-      res.write(`data: no export scheduled\n\n`)
+      res.write('data: no export scheduled\n\n')
       res.end()
     }
   },
