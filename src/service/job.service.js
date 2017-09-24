@@ -47,7 +47,13 @@ class JobService {
   get (id) {
     return new Promise((resolve, reject) => {
       kue.Job.get(id, (err, job) => {
-        return err ? reject(err) : resolve(job)
+        if (err) {
+          if (err.toString().match(/^job "[\d]+" doesnt exist$/)) {
+            return resolve(null)
+          }
+          return reject(err)
+        }
+        return resolve(job)
       })
     })
   }

@@ -138,16 +138,16 @@ module.exports = {
 
     if (req.user.exportRequest) {
       jobService.get(req.user.exportRequest).then((job) => {
-        if (job.state() === 'active' || job.state() === 'inactive' || job.state() === 'delayed') {
+        if (job && (job.state() === 'active' || job.state() === 'inactive' || job.state() === 'delayed')) {
           return res.status(304).json()
         }
         exportUser().then(j => {
-          return res.status(202).json()
+          return res.status(202).json({id: j.id})
         }, next)
       }, next)
     } else {
       exportUser().then(j => {
-        return res.status(202).json()
+        return res.status(202).json({id: j.id})
       }, next)
     }
   }
