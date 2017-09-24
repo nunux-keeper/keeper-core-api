@@ -23,6 +23,11 @@ module.exports = {
     if (req.user.exportRequest) {
       const jobId = req.user.exportRequest
       jobService.get(jobId).then((job) => {
+        if (!job) {
+          res.write('event: error\n')
+          res.write('data: no export scheduled\n\n')
+          return res.end()
+        }
         switch (job.state()) {
           case 'active':
           case 'inactive':
@@ -96,6 +101,9 @@ module.exports = {
   download: function (req, res, next) {
     if (req.user.exportRequest) {
       jobService.get(req.user.exportRequest).then((job) => {
+        if (!job) {
+          return next(new errors.NotFound('No export scheduled.'))
+        }
         if (job.state() === 'active' || job.state() === 'inactive' || job.state() === 'delayed') {
           return next(new errors.NotFound('Export file in progress.'))
         }
