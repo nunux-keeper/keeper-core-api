@@ -60,6 +60,10 @@ module.exports = {
               if (id === jobId) {
                 res.write('event: progress\n')
                 res.write(`data: ${progress}|${data.completed}|${data.total}\n\n`)
+                // support running within the compression middleware
+                if (res.flush) {
+                  res.flush()
+                }
               }
             }
 
