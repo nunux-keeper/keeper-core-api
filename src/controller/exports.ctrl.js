@@ -29,6 +29,7 @@ module.exports = {
           res.write('data: no export scheduled\n\n')
           return res.end()
         }
+        let previousProgress = -1
         switch (job.state()) {
           case 'active':
           case 'inactive':
@@ -57,7 +58,9 @@ module.exports = {
               }
             }
             const progressHandler = function progressHandler (id, progress, data) {
-              if (id === jobId) {
+              // We only sent a progress event if the progress percentage has evolved
+              if (id === jobId && progress !== previousProgress) {
+                previousProgress = progress
                 res.write('event: progress\n')
                 res.write(`data: ${progress}|${data.completed}|${data.total}\n\n`)
                 // support running within the compression middleware
