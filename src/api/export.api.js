@@ -16,11 +16,8 @@ module.exports = function (router) {
    *     responses:
    *       200:
    *         description: Success
-   *         content:
-   *           application/zip:
-   *             schema:
-   *               type: string
-   *               format: binary
+   *         schema:
+   *           type: file
    *     security:
    *       - authenticated:
    *         - user
@@ -56,9 +53,9 @@ module.exports = function (router) {
    *         description: Success
    *         content:
    *           text/event-stream:
-   *           schema:
-   *             type: string
-   *             example: 'data: {progress: 20, data: {}}'
+   *             schema:
+   *               type: string
+   *               example: 'data: {progress: 20, data: {}}'
    *     security:
    *       - authenticated:
    *         - user
