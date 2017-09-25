@@ -3,7 +3,11 @@
 const _ = require('lodash')
 const hal = require('hal')
 const hash = require('../helper/hash').hash
+const storage = require('../storage')
 const urlConfig = require('../helper').urlConfig
+const documentDao = require('../dao').document
+const labelDao = require('../dao').label
+const sharingDao = require('../dao').sharing
 
 /**
  * Remove private data from profile.
@@ -11,7 +15,7 @@ const urlConfig = require('../helper').urlConfig
  * @return {Promise} promise of the dto
  */
 const decorateWithoutPrivateData = function (profile) {
-  return Promise.resolve(_.omit(profile, ['ip', 'apiKey']))
+  return Promise.resolve(_.omit(profile, ['ip', 'apiKey', 'exportRequest']))
 }
 
 /**
@@ -22,6 +26,31 @@ const decorateWithoutPrivateData = function (profile) {
 const decorateWithHash = function (profile) {
   profile.hash = hash(profile.email || profile.uid)
   return Promise.resolve(profile)
+}
+
+/**
+ * Add profile statistics.
+ * @param {Object} profile profile DTO
+ * @return {Promise} promise of the dto
+ */
+const decorateWithStatsData = function (profile) {
+  return documentDao.count({owner: profile.id})
+  .then((nb) => {
+    profile.nbDocuments = nb
+    return labelDao.count({owner: profile.id})
+  })
+  .then((nb) => {
+    profile.nbLabels = nb
+    return sharingDao.count({owner: profile.id})
+  })
+  .then((nb) => {
+    profile.nbSharing = nb
+    return storage.usage(profile.id)
+  })
+  .then((usage) => {
+    profile.storageUsage = usage
+    return Promise.resolve(profile)
+  })
 }
 
 /**
@@ -42,12 +71,21 @@ module.exports = {
   privacy: function () {
     return decorateWithoutPrivateData
   },
+
   /**
    * Decorate profile DTO by adding hash.
    * @return {Function} decorator function
    */
   hash: function () {
     return decorateWithHash
+  },
+
+  /**
+   * Decorate profile DTO with statistics.
+   * @return {Function} decorator function
+   */
+  stats: function () {
+    return decorateWithStatsData
   },
 
   /**

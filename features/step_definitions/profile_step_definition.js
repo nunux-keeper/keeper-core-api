@@ -9,7 +9,7 @@ const ofAProfileObject = ['id', 'uid', 'date']
 module.exports = function () {
   this.When(/^I get my profile/, function (callback) {
     request(app)
-    .get('/v2/profiles/current')
+    .get('/v2/profiles/current?withStats=true')
     .set('Content-Type', 'application/json')
     .use(this.setAuthorizationHeader(this.uid))
     .expect('Content-Type', /json/)

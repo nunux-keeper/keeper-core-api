@@ -13,6 +13,12 @@ module.exports = function (router) {
    *     summary: Get current profile informations
    *     tags:
    *       - Profile
+   *     parameters:
+   *       - name: withStats
+   *         description: Add profile statistics
+   *         in: query
+   *         required: false
+   *         type: boolean
    *     responses:
    *       200:
    *         description: Success

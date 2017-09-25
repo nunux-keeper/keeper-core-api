@@ -11,11 +11,18 @@ module.exports = {
    * Get current profile data.
    */
   get: function (req, res/*, next*/) {
-    decorator.decorate(
-      req.user,
+    req.sanitizeQuery('withStats').toBoolean()
+    const decorators = [
       decorator.profile.privacy(),
       decorator.profile.hash(),
       decorator.profile.hal()
+    ]
+    if (req.query.withStats) {
+      decorators.push(decorator.profile.stats())
+    }
+    decorator.decorate(
+      req.user,
+      ...decorators
     )
     .then((resource) => {
       res.json(resource)
