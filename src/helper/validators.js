@@ -34,6 +34,16 @@ validators.isDocId = function (str) {
 }
 
 /**
+ * Test a valid array of which each element is valid.
+ * @param {String} arr the array to validate
+ * @param {Function} validator Validator iterator
+ * @return Boolean the test result
+ */
+validators.isArrayOf = function (arr, validator) {
+  return Array.isArray(arr) && arr.every(validator)
+}
+
+/**
  * Validators helper.
  * @module validators
  */

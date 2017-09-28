@@ -85,7 +85,7 @@ definitions:
         x-faker: date.past
       labels:
         type: array
-        description: Lables of the document
+        description: Labels of the document
         items:
           type: string
       attacments:
@@ -107,7 +107,7 @@ definitions:
         description: Source URL of the document
       labels:
         type: array
-        description: Lables of the document
+        description: Labels of the document
         items:
           type: string
   Label:
@@ -242,3 +242,60 @@ definitions:
       nbDocuments:
         type: integer
         description: Number of documents
+  Webhook:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Webhook ID
+      url:
+        type: string
+        description: Payload URL
+      secret:
+        type: string
+        description: Webhook secret
+      events:
+        type: array
+        description: Event filter
+        items:
+          type: string
+      labels:
+        type: array
+        description: Label filter
+        items:
+          type: string
+      active:
+        type: boolean
+        description: Webhook status
+      cdate:
+        type: string
+        format: date-time
+        description: Date of creation
+      mdate:
+        type: string
+        format: date-time
+        description: Date of the last modification
+  WebhookPayload:
+    type: object
+    properties:
+      url:
+        type: string
+        description: Payload URL
+      secret:
+        type: string
+        description: Webhook secret
+      events:
+        type: array
+        description: Event filter
+        items:
+          type: string
+      labels:
+        type: array
+        description: Label filter
+        items:
+          type: string
+      active:
+        type: boolean
+        description: Webhook status
+
+

@@ -12,6 +12,7 @@ const userDao = require('../dao').user
 const documentDao = require('../dao').document
 const labelDao = require('../dao').label
 const sharingDao = require('../dao').sharing
+const webhookDao = require('../dao').webhook
 const storage = require('../storage')
 
 /**
@@ -108,6 +109,7 @@ UserService.remove = function (uid) {
     logger.warn('Removing user: %j', user)
     const container = storage.getContainerName(user.id)
     return Promise.all([
+      webhookDao.remove({owner: user.id}),
       sharingDao.remove({owner: user.id}),
       labelDao.remove({owner: user.id}),
       documentDao.remove({owner: user.id}),

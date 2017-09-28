@@ -47,7 +47,7 @@ module.exports = {
     const label = req.requestData.label
     if (label.sharing) {
       // Maybe we should overid the current share...
-      return next(new errors.BadRequest('Label allready shared.'))
+      return next(new errors.BadRequest('Label already shared.'))
     }
     req.sanitizeBody('sharing').escape()
     req.checkBody('startDate', 'Invalid starting date').optional({ checkFalsy: true }).isDate()

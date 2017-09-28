@@ -83,4 +83,35 @@ parameters:
     in: path
     required: true
     type: string
+  webhookId:
+    name: webhookId
+    description: Webhook ID
+    in: path
+    required: true
+    type: string
+  webhookLabel:
+    name: label
+    description: label filter
+    in: query
+    required: false
+    type: string
+  webhookEvent:
+    name: event
+    description: event filter
+    in: query
+    required: false
+    type: string
+  webhookActive:
+    name: active
+    description: active filter
+    in: query
+    required: false
+    type: boolean
+
+
+
+
+
+
+
 
