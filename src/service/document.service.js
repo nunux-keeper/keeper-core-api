@@ -60,8 +60,8 @@ DocumentService.get = function (docId, decorators) {
 /**
  * Search documents.
  * @param {String} owner Owner of the document
- * @param {Function[]} decorators Decorators to apply
  * @param {String} query Search query
+ * @param {Function[]} decorators Decorators to apply
  * @return {Object} the documents
  */
 DocumentService.search = function (owner, query, decorators) {
