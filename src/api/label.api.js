@@ -80,7 +80,7 @@ module.exports = function (router) {
    * @swagger
    * /v2/labels:
    *   post:
-   *     summary: Update label details
+   *     summary: Create new label
    *     tags:
    *       - Label
    *     parameters:
