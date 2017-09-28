@@ -67,7 +67,7 @@ AttachementCtrl.post = function (req, res, next) {
   const doc = req.requestData.document
   documentService.addAttachment(doc, req.files)
   .then(function (result) {
-    const resource = new hal.Resource(result, urlConfig.resolve(`/attachment/${result.id}`))
+    const resource = new hal.Resource(result, urlConfig.resolve(`/files/${result.id}`))
     res.status(201).json(resource)
   }, next)
 }

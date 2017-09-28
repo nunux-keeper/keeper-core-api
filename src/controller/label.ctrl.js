@@ -17,8 +17,8 @@ module.exports = {
   all: function (req, res, next) {
     labelService.all(req.user.id)
     .then(function (labels) {
-      const resource = new hal.Resource({labels}, urlConfig.resolve('/label'))
-      resource.link('get', {href: urlConfig.resolve('/label/{id}'), templated: true})
+      const resource = new hal.Resource({labels}, urlConfig.resolve('/labels'))
+      resource.link('get', {href: urlConfig.resolve('/labels/{id}'), templated: true})
       res.json(resource)
     }, next)
   },

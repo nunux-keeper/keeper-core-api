@@ -66,13 +66,13 @@ module.exports = {
     const query = Object.assign({order: 'asc', from:0, size: 50}, req.query)
     documentService.search(req.user.id, query, [decorator.document.hal()])
     .then(function (result) {
-      const resource = new hal.Resource(result, urlConfig.resolve('/document'))
+      const resource = new hal.Resource(result, urlConfig.resolve('/documents'))
       query.from = query.form + 1
       if (result.total > query.from * query.size) {
         const qs = querystring.stringify(query)
-        resource.link('next', urlConfig.resolve(`/document?${qs}`))
+        resource.link('next', urlConfig.resolve(`/documents?${qs}`))
       }
-      resource.link('get', {href: urlConfig.resolve('/document/{id}'), templated: true})
+      resource.link('get', {href: urlConfig.resolve('/documents/{id}'), templated: true})
       res.json(resource)
     }, next)
   },
