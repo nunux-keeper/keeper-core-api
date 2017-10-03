@@ -45,17 +45,17 @@ module.exports = function (router) {
    * /v2/exports/status:
    *   get:
    *     summary: Get export status
-   *     description: The response is an event stream of the export job.
+   *     description: |
+   *       The response is an event stream of the export job.
+   *
+   *       example: 'data: {progress: 20, data: {}}'
    *     tags:
    *       - Export
+   *     produces:
+   *       - text/event-stream
    *     responses:
    *       200:
    *         description: Success
-   *         content:
-   *           text/event-stream:
-   *             schema:
-   *               type: string
-   *               example: 'data: {progress: 20, data: {}}'
    *     security:
    *       - authenticated:
    *         - user
