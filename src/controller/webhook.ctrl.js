@@ -14,11 +14,7 @@ const webhookSchema = {
     isURL: {}
   },
   'secret': {
-    optional: true,
-    isLength: {
-      options: [{ min: 2 }],
-      errorMessage: 'Invalid secret'
-    }
+    optional: true
   },
   'active': {
     optional: true,
