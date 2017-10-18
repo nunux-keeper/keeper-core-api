@@ -5,7 +5,7 @@ This document lists all metrics sent to the external metric system.
 ## Document's metrics
 
 ```
-<set> keeper_document_total
+<gauge> keeper_document_total
 <gauge> keeper_document_usage,owner=${owner}
 <count> keeper_document_event,action=${action},owner=${owner},id=${id}
 ```
@@ -20,7 +20,7 @@ Sample reports:
 ## Label's metrics
 
 ```
-<set> keeper_label_total
+<gauge> keeper_label_total
 <gauge> keeper_label_usage,owner=${owner}
 <count> keeper_label_event,action=${action},owner=${owner},id=${id}
 ```
@@ -34,7 +34,7 @@ Sample reports:
 ## Sharing metrics
 
 ```
-<set> keeper_sharing_total
+<gauge> keeper_sharing_total
 <gauge> keeper_sharing_usage,owner=${owner}
 <count> keeper_sharing_event,action=${action},owner=${owner},id=${id}
 ```
@@ -48,7 +48,7 @@ Sample reports:
 ## Webhook's metrics
 
 ```
-<set> keeper_webhook_total
+<gauge> keeper_webhook_total
 <gauge> keeper_webhook_usage,owner=${owner}
 <count> keeper_webhook_event,action=${action},owner=${owner},id=${id}
 <timer> keeper_webhook_call,status=${status}owner=${owner},id=${id}
@@ -64,7 +64,7 @@ Sample reports:
 ## User's metrics
 
 ```
-<set> keeper_user_total
+<gauge> keeper_user_total
 <count> keeper_user_event,action=${action},uid=${uid}
 ```
 
@@ -76,7 +76,7 @@ Sample reports:
 ## Storage metrics
 
 ```
-<set> keeper_storage_total
+<gauge> keeper_storage_total
 <gauge> keeper_storage_usage,owner=${owner}
 ```
 

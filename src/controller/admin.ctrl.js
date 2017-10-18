@@ -20,32 +20,32 @@ module.exports = {
     userService.count()
     .then(nb => {
       infos.nbUsers = nb
-      metrics.set('user_total', nb)
+      metrics.gauge('user_total', nb)
       return documentService.count()
     })
     .then(nb => {
       infos.nbDocuments = nb
-      metrics.set('document_total', nb)
+      metrics.gauge('document_total', nb)
       return labelService.count()
     })
     .then(nb => {
       infos.nbLabels = nb
-      metrics.set('label_total', nb)
+      metrics.gauge('label_total', nb)
       return sharingService.count()
     })
     .then(nb => {
       infos.nbSharing = nb
-      metrics.set('sharing_total', nb)
+      metrics.gauge('sharing_total', nb)
       return webhookService.count()
     })
     .then(nb => {
       infos.nbWebhooks = nb
-      metrics.set('webhook_total', nb)
+      metrics.gauge('webhook_total', nb)
       return storage.usage('')
     })
     .then(usage => {
       infos.storage = usage
-      metrics.set('storage_total', usage)
+      metrics.gauge('storage_total', usage)
       res.json(infos)
     })
   },
