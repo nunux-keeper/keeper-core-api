@@ -4,6 +4,8 @@ const url = require('url')
 const logger = require('../helper').logger
 const globals = require('../helper').globals
 
+const PREFIX = 'keeper'
+
 /**
  * Stats server client.
  * @module stats/client
@@ -31,7 +33,7 @@ class StatsServerClient {
     if (this.disabled) {
       return
     }
-    this.provider.increment(name)
+    this.provider.increment(`${PREFIX}_${name}`)
   }
 
   /**
@@ -43,7 +45,7 @@ class StatsServerClient {
     if (this.disabled) {
       return
     }
-    this.provider.set(name, value)
+    this.provider.set(`${PREFIX}_${name}`, value)
   }
 
   /**
@@ -55,7 +57,7 @@ class StatsServerClient {
     if (this.disabled) {
       return
     }
-    this.provider.gauge(name, value)
+    this.provider.gauge(`${PREFIX}_${name}`, value)
   }
 
   /**
@@ -67,7 +69,7 @@ class StatsServerClient {
     if (this.disabled) {
       return
     }
-    this.provider.timing(name, value)
+    this.provider.timing(`${PREFIX}_${name}`, value)
   }
 }
 

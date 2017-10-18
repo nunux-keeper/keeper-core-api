@@ -6,6 +6,7 @@ const crypto = require('crypto')
 const webhookDao = require('../../dao').webhook
 const logger = require('../../helper').logger
 const urlConfig = require('../../helper').urlConfig
+const metrics = require('../../metrics/client')
 
 /**
  * Trigger for a webhook
@@ -32,17 +33,22 @@ const triggerWebhook = function (event, webhook, doc) {
   }
 
   logger.debug(`Sending payload to Webhook ${webhook.url} ...`, payload)
+  const t0 = new Date()
   request({
     url: webhook.url,
     method: 'POST',
     json: payload,
     headers
   }, function (err, res, body) {
+    const t1 = new Date()
+    let sts = 'ok'
     if (err || res.statusCode > 299) {
+      sts = 'ko'
       logger.error('Unable to send payload the Webhook', err || body)
     } else {
       logger.debug(`Payload sent to Webhook ${webhook.url}`, payload)
     }
+    metrics.timing(`webhook_call,owner=${webhook.owner},id=${webhook.id},status=${sts}`, t1 - t0)
   })
 }
 

@@ -206,7 +206,7 @@ DocumentService.remove = function (doc) {
   .then(function (ghost) {
     logger.info('Document removed: %j', ghost.id)
     // Broadcast document remove event.
-    eventHandler.document.emit('remove', _.pick(ghost, ['id', 'ghost']))
+    eventHandler.document.emit('remove', ghost)
     return Promise.resolve(ghost)
   })
 }
@@ -221,7 +221,7 @@ DocumentService.restore = function (ghost) {
   .then(function (doc) {
     logger.info('Document restored: %j', doc.id)
     // Broadcast document restore event.
-    eventHandler.document.emit('restore', _.pick(doc, ['id', 'ghost']))
+    eventHandler.document.emit('restore', doc)
     return Promise.resolve(doc)
   })
 }

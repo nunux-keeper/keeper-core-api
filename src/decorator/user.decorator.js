@@ -7,6 +7,7 @@ const urlConfig = require('../helper').urlConfig
 const documentDao = require('../dao').document
 const labelDao = require('../dao').label
 const sharingDao = require('../dao').sharing
+const webhookDao = require('../dao').webhook
 const metrics = require('../metrics/client')
 
 /**
@@ -29,22 +30,27 @@ const decorateWithStatsData = function (user) {
   return documentDao.count({owner: user.id})
   .then((nb) => {
     user.nbDocuments = nb
-    metrics.gauge(`document,owner=${user.id}`, nb)
+    metrics.gauge(`document_usage,owner=${user.id}`, nb)
     return labelDao.count({owner: user.id})
   })
   .then((nb) => {
     user.nbLabels = nb
-    metrics.gauge(`label,owner=${user.id}`, nb)
+    metrics.gauge(`label_usage,owner=${user.id}`, nb)
     return sharingDao.count({owner: user.id})
   })
   .then((nb) => {
     user.nbSharing = nb
-    metrics.gauge(`sharing,owner=${user.id}`, nb)
+    metrics.gauge(`sharing_usage,owner=${user.id}`, nb)
+    return webhookDao.count({owner: user.id})
+  })
+  .then((nb) => {
+    user.nbWebhooks = nb
+    metrics.gauge(`webhook_usage,owner=${user.id}`, nb)
     return storage.usage(user.id)
   })
   .then((usage) => {
     user.storageUsage = usage
-    metrics.gauge(`storage,owner=${user.id}`, usage)
+    metrics.gauge(`storage_usage,owner=${user.id}`, usage)
     return Promise.resolve(user)
   })
 }

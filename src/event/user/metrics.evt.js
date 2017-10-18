@@ -12,18 +12,18 @@ module.exports = function (userEventHandler) {
   }
 
   userEventHandler.on('create', (user) => {
-    metrics.increment(`user.create,uid=${user.uid}`)
+    metrics.increment(`user_event,action=create,uid=${user.uid}`)
   })
 
   userEventHandler.on('update', (user) => {
-    metrics.increment(`user.update,uid=${user.uid}`)
+    metrics.increment(`user_event,action=update,uid=${user.uid}`)
   })
 
   userEventHandler.on('remove', (user) => {
-    metrics.increment(`user.remove,uid=${user.uid}`)
+    metrics.increment(`user_event,action=remove,uid=${user.uid}`)
   })
 
   userEventHandler.on('unauthorized', (user) => {
-    metrics.increment(`login.unauthorized,uid=${user.uid}`)
+    metrics.increment(`user_event,action=login-failed,uid=${user.uid}`)
   })
 }

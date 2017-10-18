@@ -2,6 +2,7 @@
 
 const logger = require('../../helper').logger
 const jobService = require('../../service').job
+const metrics = require('../../metrics/client')
 
 /**
  * Abstarct definition of a job task.
@@ -19,14 +20,18 @@ class AbstractTask {
    */
   start (job, done) {
     logger.info(`Starting ${this.name} ...`)
+    const t0 = new Date()
     this.process(job, (err, result) => {
+      const t1 = new Date()
+      let sts = 'success'
       if (err) {
+        sts = 'error'
         logger.error(`Error during ${this.name} job processing`, err)
-        done(err)
       } else {
         logger.info(`${this.name} job done.`)
-        done(null, result)
       }
+      metrics.timing(`processed_job,name=${this.name},status=${sts}`, t1 - t0)
+      done(err, result)
     })
   }
 

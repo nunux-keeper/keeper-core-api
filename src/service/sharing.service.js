@@ -4,6 +4,7 @@ const _ = require('lodash')
 const logger = require('../helper').logger
 const sharingDao = require('../dao').sharing
 const labelDao = require('../dao').label
+const eventHandler = require('../event')
 
 /**
  * Sharing services.
@@ -30,6 +31,15 @@ SharingService.all = function (owner) {
 }
 
 /**
+ * Count sharing.
+ * @param {String} owner Owner of the sharing
+ * @return {Object} the number of sharing
+ */
+SharingService.count = function (owner) {
+  return sharingDao.count(owner ? {owner} : {})
+}
+
+/**
  * Create a sharing.
  * @param {Object} sharing Sharing to create
  * @return {Object} the created sharing
@@ -46,6 +56,7 @@ SharingService.create = function (sharing) {
   return sharingDao.create(newSharing)
   .then(function (_sharing) {
     logger.info('Sharing created: %j', _sharing)
+    eventHandler.sharing.emit('create', _sharing)
     // Update the sharing reference of the target
     return labelDao.update({id: _sharing.targetLabel}, {sharing: _sharing.id})
     .then(() => Promise.resolve(_sharing))
@@ -67,6 +78,7 @@ SharingService.update = function (sharing, update) {
   return sharingDao.update(sharing, update)
   .then(function (_sharing) {
     logger.info('Sharing updated: %j', _sharing)
+    eventHandler.sharing.emit('update', _sharing)
     return Promise.resolve(_sharing)
   })
 }
@@ -81,6 +93,7 @@ SharingService.remove = function (sharing) {
   .then(() => sharingDao.remove(sharing))
   .then((_sharing) => {
     logger.info('Sharing deleted: %j', _sharing)
+    eventHandler.sharing.emit('remove', _sharing)
     return Promise.resolve(_sharing)
   })
 }

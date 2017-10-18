@@ -4,6 +4,7 @@ const _ = require('lodash')
 const logger = require('../helper').logger
 const webhookDao = require('../dao').webhook
 const decorator = require('../decorator')
+const eventHandler = require('../event')
 
 /**
  * Webhook services.
@@ -51,6 +52,15 @@ WebhookService.search = function (owner, query, decorators) {
 }
 
 /**
+ * Count webhook.
+ * @param {String} owner Owner of the webhooks
+ * @return {Object} the number of webhooks
+ */
+WebhookService.count = function (owner) {
+  return webhookDao.count(owner ? {owner} : {})
+}
+
+/**
  * Create a webhook.
  * @param {Object} webhook webhook to create
  * @return {Object} the created webhook
@@ -61,6 +71,7 @@ WebhookService.create = function (webhook) {
     url, secret, events, labels, active, owner, cdate: new Date(), mdate: new Date()
   }).then(_webhook => {
     logger.info('Webhook created: %j', _webhook)
+    eventHandler.webhook.emit('create', _webhook)
     return Promise.resolve(_webhook)
   })
 }
@@ -78,6 +89,7 @@ WebhookService.update = function (webhook, update) {
   return webhookDao.update(webhook, _update)
     .then(_webhook => {
       logger.info('Webhook updated: %j', _webhook)
+      eventHandler.webhook.emit('update', _webhook)
       return Promise.resolve(_webhook)
     })
 }
@@ -91,6 +103,7 @@ WebhookService.remove = function (webhook) {
   return webhookDao.remove(webhook)
   .then(() => {
     logger.info('Webhook removed: %j', webhook)
+    eventHandler.webhook.emit('remove', webhook)
     return Promise.resolve(webhook)
   })
 }

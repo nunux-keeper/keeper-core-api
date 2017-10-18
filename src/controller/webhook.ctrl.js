@@ -70,8 +70,8 @@ module.exports = {
     req.sanitizeBody('active').toBoolean()
     req.checkBody(webhookSchema)
     req.checkBody('labels', 'Invalid label filter (should be a label ID)').optional().isArrayOf(validator.isHexadecimal)
-    req.checkBody('events', 'Invalid event filter (should be create, update or delete)').optional().isArrayOf(item => {
-      return validator.isIn(item, ['create', 'update', 'delete'])
+    req.checkBody('events', 'Invalid event filter (should be create, update or remove)').optional().isArrayOf(item => {
+      return validator.isIn(item, ['create', 'update', 'remove'])
     })
     const validationErrors = req.validationErrors(true)
     if (validationErrors) {

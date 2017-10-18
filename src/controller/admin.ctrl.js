@@ -4,6 +4,10 @@ const errors = require('../helper').errors
 const decorator = require('../decorator')
 const userService = require('../service').user
 const documentService = require('../service').document
+const labelService = require('../service').label
+const sharingService = require('../service').sharing
+const webhookService = require('../service').webhook
+const storage = require('../storage')
 const metrics = require('../metrics/client')
 const JSONStream = require('JSONStream')
 
@@ -14,14 +18,34 @@ module.exports = {
   getInfos: function (req, res, next) {
     const infos = {}
     userService.count()
-    .then((nb) => {
+    .then(nb => {
       infos.nbUsers = nb
-      metrics.gauge('user,type=total', nb)
+      metrics.set('user_total', nb)
       return documentService.count()
     })
-    .then((nb) => {
+    .then(nb => {
       infos.nbDocuments = nb
-      metrics.gauge('document,type=total', nb)
+      metrics.set('document_total', nb)
+      return labelService.count()
+    })
+    .then(nb => {
+      infos.nbLabels = nb
+      metrics.set('label_total', nb)
+      return sharingService.count()
+    })
+    .then(nb => {
+      infos.nbSharing = nb
+      metrics.set('sharing_total', nb)
+      return webhookService.count()
+    })
+    .then(nb => {
+      infos.nbWebhooks = nb
+      metrics.set('webhook_total', nb)
+      return storage.usage('')
+    })
+    .then(usage => {
+      infos.storage = usage
+      metrics.set('storage_total', usage)
       res.json(infos)
     })
   },
