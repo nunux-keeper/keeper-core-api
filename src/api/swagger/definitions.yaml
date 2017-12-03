@@ -297,5 +297,53 @@ definitions:
       active:
         type: boolean
         description: Webhook status
-
+  Client:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Client ID (internal)
+      name:
+        type: string
+        description: Client name
+      clientId:
+        type: string
+        description: Client ID (external)
+      secret:
+        type: string
+        description: Client secret
+      redirectUris:
+        type: array
+        description: Redirect URI list
+        items:
+          type: string
+      webOrigins:
+        type: array
+        description: Web origins list
+        items:
+          type: string
+      cdate:
+        type: string
+        format: date-time
+        description: Date of creation
+      mdate:
+        type: string
+        format: date-time
+        description: Date of the last modification
+  ClientPayload:
+    type: object
+    properties:
+      name:
+        type: string
+        description: Client name
+      redirectUris:
+        type: array
+        description: Redirect URI list
+        items:
+          type: string
+      webOrigins:
+        type: array
+        description: Web origins list
+        items:
+          type: string
 

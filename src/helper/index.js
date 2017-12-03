@@ -14,5 +14,6 @@ module.exports = {
   request:        require('./request'),
   thumbnail:      require('./thumbnail'),
   validators:     require('./validators'),
-  templateHolder: require('./template-holder')
+  templateHolder: require('./template-holder'),
+  OpenIDRegistrationClient: require('./openid-registration-client')
 }

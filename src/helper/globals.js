@@ -35,7 +35,9 @@ const globals = {
   // Allow admin to remove users
   ALLOW_REMOVE_USERS: process.env.APP_ALLOW_REMOVE_USERS === 'true',
   // Use embedded worker
-  EMBEDDED_WORKER: process.env.APP_EMBEDDED_WORKER === 'true'
+  EMBEDDED_WORKER: process.env.APP_EMBEDDED_WORKER === 'true',
+  // Initial client registration access token
+  CLIENT_INITIAL_ACCESS_TOKEN: process.env.APP_CLIENT_INITIAL_ACCESS_TOKEN
 }
 
 module.exports = globals
