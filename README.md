@@ -38,10 +38,10 @@ The project is developed with [Node.js][nodejs] and uses the [Express][express]
 Framework.
 
 The backend storage is pluggable. Documents can be stored into
-[MongoDB][mongodb] or [ElasticSearch][elasticsearch]. It's planned to support
+[MongoDB][mongodb] or [Elasticsearch][elasticsearch]. It's planned to support
 other storage backends (like CouchBase, Cassandra, ...)
 
-The indexation engine is also pluggable, but only ElasticSearch is supported for
+The indexation engine is also pluggable, but only Elasticsearch is supported for
 now.
 
 [Redis][redis] is used as an event bus to exchange data between services.
@@ -52,6 +52,22 @@ now.
 ### Prerequisites
 
 * [Docker][docker]
+* [Docker compose][docker-compose]
+
+### Run tests
+
+```bash
+# Start required backends (ElasticSearch, MongoDB, Redis)
+# Launch tests
+# Teardown backends
+make up test down
+```
+
+You can also launch tests using Elasticsearch as main database:
+
+```bash
+make up with-elastic test down
+```
 
 ### Start the server
 
@@ -60,17 +76,16 @@ now.
 > below.
 
 ```bash
-# Start required backends (ElasticSearch, MongoDB, Redis)
-make up
-# Start the server (default configuration: etc/default/dev.env)
-make start logs
+# Start required backends (ElasticSearch, MongoDB, Redis) and the API server.
+# (Using dev configuration: etc/default/dev.env)
+make with-app up logs
 ```
 
 If you want to start the server with another configuration (for instance:
 *staging*) you need to override the `env` variable of the `Makefile`:
 
 ```bash
-make start env=staging
+make with-app up env=staging
 ```
 
 Configuration files are located into the `etc/default` directory.
@@ -80,9 +95,7 @@ details.
 Finally you can remove everything like this:
 
 ```bash
-# Stop and destroy the server
-make stop rm
-# Stop and destroy backends (ElasticSearch, MongoDB, Redis)
+# Stop and destroy all services
 make down
 ```
 
@@ -112,7 +125,8 @@ Started services are:
 [keycloak]: http://www.keycloak.org
 [auth0]: https://auth0.com/
 [nodejs]: https://nodejs.org
-[docker]: http://www.docker.io
+[docker]: https://www.docker.com
+[docker]: https://docs.docker.com/compose/
 [mongodb]: https://www.mongodb.com
 [elasticsearch]: https://www.elastic.co
 [redis]: http://redis.io/

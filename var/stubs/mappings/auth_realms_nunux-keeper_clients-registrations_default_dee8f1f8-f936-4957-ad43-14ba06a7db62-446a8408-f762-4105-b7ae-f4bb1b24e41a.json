@@ -1,0 +1,25 @@
+{
+  "id" : "446a8408-f762-4105-b7ae-f4bb1b24e41a",
+  "name" : "auth_realms_nunux-keeper_clients-registrations_default_dee8f1f8-f936-4957-ad43-14ba06a7db62",
+  "request" : {
+    "url" : "/auth/realms/nunux-keeper/clients-registrations/default/dee8f1f8-f936-4957-ad43-14ba06a7db62",
+    "method" : "PUT",
+    "bodyPatterns" : [ {
+      "equalToJson" : "{\"redirectUris\":[\"https://httpbin.org/test\"],\"clientId\":\"dee8f1f8-f936-4957-ad43-14ba06a7db62\"}",
+      "ignoreArrayOrder" : true,
+      "ignoreExtraElements" : true
+    } ]
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"id\":\"dee8f1f8-f936-4957-ad43-14ba06a7db62\",\"clientId\":\"dee8f1f8-f936-4957-ad43-14ba06a7db62\",\"surrogateAuthRequired\":false,\"enabled\":true,\"clientAuthenticatorType\":\"client-secret\",\"registrationAccessToken\":\"eyJhbGciOiJSUzI1NiIsImtpZCIgOiAicE9FdE1la2FmY1NfZXBRQlQ1XzQtU3JxX1Z6WFdwcmdtVzdIT3dUNkFmNCJ9.eyJqdGkiOiIyZWIwMDlmYy0wMWNiLTRiNDctOTMzZS0wZWZiNDRmMzBlZWIiLCJleHAiOjAsIm5iZiI6MCwiaWF0IjoxNTEyMzQyNzkzLCJpc3MiOiJodHRwczovL2xvZ2luLm51bnV4Lm9yZy9hdXRoL3JlYWxtcy9udW51eC1rZWVwZXIiLCJhdWQiOiJodHRwczovL2xvZ2luLm51bnV4Lm9yZy9hdXRoL3JlYWxtcy9udW51eC1rZWVwZXIiLCJ0eXAiOiJSZWdpc3RyYXRpb25BY2Nlc3NUb2tlbiIsInJlZ2lzdHJhdGlvbl9hdXRoIjoiYXV0aGVudGljYXRlZCJ9.hbacmLpwcvLD7jPysVbBOqBEnubVMb9bmn4BK01UYQ_UgwJtO8MIXfqLzMixcWXh0fLKHTlVonS6GLNTvR0EcS0VminG4aPRGE_OSwEDi9zCiYpGH0nKPQNcuPO_tlBo39cVdzk2aiJlwVzhtRHINoBbytQmoFOSH_qTGx05kl8\",\"redirectUris\":[\"https://httpbin.org/test\"],\"webOrigins\":[\"+\"],\"notBefore\":0,\"bearerOnly\":false,\"consentRequired\":false,\"standardFlowEnabled\":true,\"implicitFlowEnabled\":false,\"directAccessGrantsEnabled\":false,\"serviceAccountsEnabled\":false,\"publicClient\":false,\"frontchannelLogout\":false,\"attributes\":{},\"fullScopeAllowed\":true,\"nodeReRegistrationTimeout\":-1,\"protocolMappers\":[{\"id\":\"cd96cefa-bda0-447d-a1f1-6100ccf05fac\",\"name\":\"username\",\"protocol\":\"openid-connect\",\"protocolMapper\":\"oidc-usermodel-property-mapper\",\"consentRequired\":true,\"consentText\":\"${username}\",\"config\":{\"userinfo.token.claim\":\"true\",\"user.attribute\":\"username\",\"id.token.claim\":\"true\",\"access.token.claim\":\"true\",\"claim.name\":\"preferred_username\",\"jsonType.label\":\"String\"}},{\"id\":\"63f340cd-68c5-4948-a030-cae8c1511b88\",\"name\":\"role list\",\"protocol\":\"saml\",\"protocolMapper\":\"saml-role-list-mapper\",\"consentRequired\":true,\"consentText\":\"role list\",\"config\":{\"single\":\"false\",\"attribute.nameformat\":\"Basic\",\"attribute.name\":\"Role\"}},{\"id\":\"19538234-5102-4f98-8be5-bc29068f88a0\",\"name\":\"email\",\"protocol\":\"openid-connect\",\"protocolMapper\":\"oidc-usermodel-property-mapper\",\"consentRequired\":true,\"consentText\":\"${email}\",\"config\":{\"userinfo.token.claim\":\"true\",\"user.attribute\":\"email\",\"id.token.claim\":\"true\",\"access.token.claim\":\"true\",\"claim.name\":\"email\",\"jsonType.label\":\"String\"}},{\"id\":\"1d699ee8-3657-43b5-b89d-09d42f4c88fa\",\"name\":\"family name\",\"protocol\":\"openid-connect\",\"protocolMapper\":\"oidc-usermodel-property-mapper\",\"consentRequired\":true,\"consentText\":\"${familyName}\",\"config\":{\"userinfo.token.claim\":\"true\",\"user.attribute\":\"lastName\",\"id.token.claim\":\"true\",\"access.token.claim\":\"true\",\"claim.name\":\"family_name\",\"jsonType.label\":\"String\"}},{\"id\":\"25012697-b670-4293-b1a1-5a894eb162a6\",\"name\":\"full name\",\"protocol\":\"openid-connect\",\"protocolMapper\":\"oidc-full-name-mapper\",\"consentRequired\":true,\"consentText\":\"${fullName}\",\"config\":{\"id.token.claim\":\"true\",\"access.token.claim\":\"true\"}},{\"id\":\"7b3b4522-85d2-4273-b18f-be49a8a4d3a9\",\"name\":\"given name\",\"protocol\":\"openid-connect\",\"protocolMapper\":\"oidc-usermodel-property-mapper\",\"consentRequired\":true,\"consentText\":\"${givenName}\",\"config\":{\"userinfo.token.claim\":\"true\",\"user.attribute\":\"firstName\",\"id.token.claim\":\"true\",\"access.token.claim\":\"true\",\"claim.name\":\"given_name\",\"jsonType.label\":\"String\"}}],\"useTemplateConfig\":false,\"useTemplateScope\":false,\"useTemplateMappers\":false}",
+    "headers" : {
+      "Server" : "nginx/1.6.2",
+      "Date" : "Sun, 03 Dec 2017 23:13:13 GMT",
+      "Content-Type" : "application/json",
+      "Connection" : "keep-alive"
+    }
+  },
+  "uuid" : "446a8408-f762-4105-b7ae-f4bb1b24e41a",
+  "persistent" : true
+}

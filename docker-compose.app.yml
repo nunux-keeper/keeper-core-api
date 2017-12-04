@@ -1,0 +1,23 @@
+version: "2.1"
+services:
+  #######################################
+  # Core API
+  #######################################
+  api:
+    image: "ncarlier/keeper-core-api:latest"
+    env_file: "etc/default/${ENV:-dev}.env"
+    command: "${CMD:-start}"
+    environment:
+      - APP_DATABASE_URI=${APP_DATABASE_URI:-mongodb://mongo/keeper}
+    volumes:
+      - ${PWD}:/usr/src/app
+    ports:
+      - "${PORT:-3000}:3000"
+    depends_on:
+      redis:
+        condition: service_started
+      mongo:
+        condition: service_started
+      elasticsearch:
+        condition: service_healthy
+

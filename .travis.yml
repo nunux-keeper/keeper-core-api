@@ -5,8 +5,8 @@ services:
   - docker
 
 env:
-  - TARGET=test-mongo
-  - TARGET=test-elastic
+  - TARGET=
+  - TARGET=with-elastic
 
 script:
-  - make image up ${TARGET} down
+  - make image up ${TARGET} test down

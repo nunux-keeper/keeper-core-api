@@ -1,0 +1,37 @@
+version: "2.1"
+services:
+  #######################################
+  # Redis
+  #######################################
+  redis:
+    image: "redis:latest"
+
+  #######################################
+  # Database (Mongo)
+  #######################################
+  mongo:
+    image: "mongo:latest"
+
+  #######################################
+  # Searchengine (ElasticSearch)
+  #######################################
+  elasticsearch:
+    image: "elasticsearch:5"
+    environment:
+      ES_JAVA_OPTS: "-Xms256m -Xmx256m"
+    healthcheck:
+      test: "curl --silent --fail localhost:9200/_cluster/health || exit 1"
+      interval: 5s
+      timeout: 2s
+      retries: 15
+
+  #######################################
+  # Mock server (wiremock)
+  #######################################
+  wiremock:
+    image: "rodolpheche/wiremock:latest"
+    ports:
+      - "${MOCK_PORT:-8888}:8080"
+    volumes:
+      - ${PWD}/var/stubs:/home/wiremock
+

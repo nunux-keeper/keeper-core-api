@@ -1,87 +1,53 @@
 .SILENT :
-.PHONY : test test-mongo test-elastic up up-metrics down down-metrics install uninstall deploy
 
 # Image name
-USERNAME:=nunux-keeper
+USERNAME:=ncarlier
 APPNAME:=keeper-core-api
 env?=dev
 
-# Default configuration
-ENV_FLAGS?=--env-file="./etc/default/$(env).env"
+# Compose files
+COMPOSE_FILES?=-f docker-compose.yml
 
-# Define port
-PORT?=3000
-PORTS_FLAGS=-p $(PORT):3000
-
-# Custom run flags
-RUN_CUSTOM_FLAGS?=$(PORTS_FLAGS) $(ENV_FLAGS)
-
-# Docker configuration regarding the system architecture
-BASEIMAGE=node:6-onbuild
+# Database
+DB?=mongodb://mongo/keeper
 
 # Include common Make tasks
 root_dir:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 makefiles:=$(root_dir)/makefiles
 include $(makefiles)/help.Makefile
-include $(makefiles)/docker.Makefile
-
-# Define dockerfiles
-dockerfiles:=$(root_dir)/dockerfiles
+include $(makefiles)/docker/compose.Makefile
 
 all: help
 
+## Build Docker image
+image:
+	docker build --rm -t $(USERNAME)/$(APPNAME) .
+.PHONY: image
+
+with-app:
+	$(eval COMPOSE_FILES += -f docker-compose.app.yml)
+.PHONY: with-app
+
 ## Run the container in test mode
-test:
+test: with-app
 	echo "Running tests..."
-	$(DOCKER) run --rm --net=$(NETWORK) $(VOLUME_FLAGS) $(ENV_FLAGS) $(IMAGE) test
+	make compose-wait service=elasticsearch
+	CMD=test APP_DATABASE_URI=${DB} docker-compose $(COMPOSE_FILES) up --no-deps --no-build --abort-on-container-exit --exit-code-from api api
+.PHONY: test
 
-## Run the container in test mode using MongoDB
-test-mongo:
-	echo "Running tests with MongoDB..."
-	$(eval DB_FLAGS=-e APP_DATABASE_URI=mongodb://mongo/keeper)
-	$(DOCKER) run --rm --net=$(NETWORK) $(VOLUME_FLAGS) $(ENV_FLAGS) $(DB_FLAGS) $(IMAGE) test
+## Using Elasticsearch as main database)
+with-elastic:
+	echo "Using Elsaticsearch as DB..."
+	$(eval DB=elasticsearch://elasticsearch:9200/keeper)
+.PHONY: with-elastic
 
-## Run the container in test mode using Elasticsearch
-test-elastic:
-	echo "Running tests with Elasticsearch..."
-	$(eval DB_FLAGS=-e APP_DATABASE_URI=elasticsearch://elasticsearch:9200/keeper)
-	$(DOCKER) run --rm --net=$(NETWORK) $(VOLUME_FLAGS) $(ENV_FLAGS) $(DB_FLAGS) $(IMAGE) test
+## Start required services
+up: compose-up
+.PHONY: up
 
-## Start a complete infrastucture
-up: network
-	echo "Starting Redis..."
-	make -C $(dockerfiles)/redis stop rm update start
-	echo "Starting MongoDB..."
-	make -C $(dockerfiles)/mongodb stop rm update start
-	echo "Starting Elasticsearch..."
-	make -C $(dockerfiles)/elasticsearch stop rm update start wait
-
-## Start a complete metrics stack
-up-metrics:
-	echo "Starting InfluxDB..."
-	make -C $(dockerfiles)/influxdb stop rm update start init
-	echo "Starting Telegraf..."
-	make -C $(dockerfiles)/telegraf stop rm update start
-	echo "Starting Grafana..."
-	make -C $(dockerfiles)/grafana stop rm update start
-
-## Stop the infrastucture
-down:
-	echo "Stoping MongoDB..."
-	make -C $(dockerfiles)/mongodb stop rm
-	echo "Stoping Elasticsearch ..."
-	make -C $(dockerfiles)/elasticsearch stop rm
-	echo "Stoping Redis ..."
-	make -C $(dockerfiles)/redis stop rm
-
-## Stop the metrics stack
-down-metrics:
-	echo "Stoping Grafana..."
-	make -C $(dockerfiles)/grafana stop rm
-	echo "Stoping Telegraf..."
-	make -C $(dockerfiles)/telegraf stop rm
-	echo "Stoping InfluxDB..."
-	make -C $(dockerfiles)/influxdb stop rm
+## Stop all services
+down: compose-down-force
+.PHONY: down
 
 ## Install as a service (needs root privileges)
 install: image
@@ -98,6 +64,7 @@ install: image
 	systemctl enable keeper-data-backup.timer
 	systemctl restart keeper-data-backup.timer
 	$(MAKE) cleanup
+.PHONY: install
 
 ## Un-install service (needs root privileges)
 uninstall:
@@ -112,9 +79,11 @@ uninstall:
 	rm /etc/default/$(APPNAME)
 	systemctl daemon-reload
 	$(MAKE) rm clean
+.PHONY: uninstall
 
 ## Deploy application
 deploy:
 	echo "Deploying application..."
 	git push deploy
+.PHONY: deploy
 

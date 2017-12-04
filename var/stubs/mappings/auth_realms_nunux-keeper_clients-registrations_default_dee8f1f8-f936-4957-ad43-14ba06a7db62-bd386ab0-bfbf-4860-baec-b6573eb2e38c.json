@@ -1,0 +1,18 @@
+{
+  "id" : "bd386ab0-bfbf-4860-baec-b6573eb2e38c",
+  "name" : "auth_realms_nunux-keeper_clients-registrations_default_dee8f1f8-f936-4957-ad43-14ba06a7db62",
+  "request" : {
+    "url" : "/auth/realms/nunux-keeper/clients-registrations/default/dee8f1f8-f936-4957-ad43-14ba06a7db62",
+    "method" : "DELETE"
+  },
+  "response" : {
+    "status" : 204,
+    "headers" : {
+      "Server" : "nginx/1.6.2",
+      "Date" : "Sun, 03 Dec 2017 23:13:13 GMT",
+      "Connection" : "keep-alive"
+    }
+  },
+  "uuid" : "bd386ab0-bfbf-4860-baec-b6573eb2e38c",
+  "persistent" : true
+}
