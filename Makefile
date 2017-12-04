@@ -19,6 +19,10 @@ include $(makefiles)/docker/compose.Makefile
 
 all: help
 
+infos:
+	echo "Using $(shell docker-compose --version)"
+.PHONY: infos
+
 ## Build Docker image
 image:
 	docker build --rm -t $(USERNAME)/$(APPNAME) .
@@ -42,7 +46,7 @@ with-elastic:
 .PHONY: with-elastic
 
 ## Start required services
-up: compose-up
+up: infos compose-up
 .PHONY: up
 
 ## Stop all services
