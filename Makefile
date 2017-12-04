@@ -20,6 +20,7 @@ include $(makefiles)/docker/compose.Makefile
 all: help
 
 infos:
+	echo "Using $(shell docker --version)"
 	echo "Using $(shell docker-compose --version)"
 .PHONY: infos
 
