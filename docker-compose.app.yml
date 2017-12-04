@@ -10,7 +10,7 @@ services:
     environment:
       - APP_DATABASE_URI=${APP_DATABASE_URI:-mongodb://mongo/keeper}
     volumes:
-      - ${PWD}:/usr/src/app
+      - ${PWD}:${APP_SRC_DIR:-/usr/src/app_src}
     ports:
       - "${PORT:-3000}:3000"
     depends_on:
