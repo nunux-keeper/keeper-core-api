@@ -32,7 +32,7 @@ with-app:
 test: with-app
 	echo "Running tests..."
 	make compose-wait service=elasticsearch
-	CMD=test APP_DATABASE_URI=${DB} docker-compose $(COMPOSE_FILES) up --no-deps --no-build --abort-on-container-exit --exit-code-from api api
+	CMD=test APP_DATABASE_URI=$(DB) docker-compose $(COMPOSE_FILES) up --no-deps --no-build --abort-on-container-exit --exit-code-from api api
 .PHONY: test
 
 ## Using Elasticsearch as main database)

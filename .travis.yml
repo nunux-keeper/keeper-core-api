@@ -9,4 +9,4 @@ env:
   - TARGET=with-elastic
 
 script:
-  - make image up ${TARGET} test down
+  - make image up ${TARGET} test
