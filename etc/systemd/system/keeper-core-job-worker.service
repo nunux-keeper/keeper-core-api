@@ -24,6 +24,6 @@ ExecStart=/usr/bin/docker run --rm --name %p \
     --link redis:redis \
     --link elasticsearch:elasticsearch \
     --label traefik.enable=false \
-    nunux-keeper/keeper-core-api run job-worker
+    ncarlier/keeper-core-api run job-worker
 ExecStop=/usr/bin/docker stop %p
 

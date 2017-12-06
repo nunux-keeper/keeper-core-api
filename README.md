@@ -60,13 +60,13 @@ now.
 # Start required backends (ElasticSearch, MongoDB, Redis)
 # Launch tests
 # Teardown backends
-make up test down
+make image up test down
 ```
 
 You can also launch tests using Elasticsearch as main database:
 
 ```bash
-make up with-elastic test down
+make image up with-elastic test down
 ```
 
 ### Start the server
