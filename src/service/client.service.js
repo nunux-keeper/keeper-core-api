@@ -61,7 +61,7 @@ ClientService.all = function (owner, decorators = []) {
 ClientService.create = function (owner, metadata) {
   const { redirectUris = [], webOrigins = ['+'], name } = metadata
   if (webOrigins.length === 0) {
-    webOrigins.push(['*'])
+    webOrigins.push('*')
   }
   logger.debug('Creating client for owner %s: %j ...', owner, metadata)
   return oidcRegistrationClient.register({redirectUris, webOrigins})
