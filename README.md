@@ -60,13 +60,13 @@ now.
 # Start required backends (ElasticSearch, MongoDB, Redis)
 # Launch tests
 # Teardown backends
-make image up test down
+make build deploy test undeploy
 ```
 
 You can also launch tests using Elasticsearch as main database:
 
 ```bash
-make image up with-elastic test down
+make build deploy with-elastic test undeploy
 ```
 
 ### Start the server
@@ -78,14 +78,14 @@ make image up with-elastic test down
 ```bash
 # Start required backends (ElasticSearch, MongoDB, Redis) and the API server.
 # (Using dev configuration: etc/default/dev.env)
-make with-app up logs
+make with-app deploy logs
 ```
 
 If you want to start the server with another configuration (for instance:
 *staging*) you need to override the `env` variable of the `Makefile`:
 
 ```bash
-make with-app up env=staging
+make with-app deploy env=staging
 ```
 
 Configuration files are located into the `etc/default` directory.
@@ -96,7 +96,7 @@ Finally you can remove everything like this:
 
 ```bash
 # Stop and destroy all services
-make down
+make undeploy
 ```
 
 ### Install the server as a service

@@ -19,16 +19,18 @@ include $(makefiles)/docker/compose.Makefile
 
 all: help
 
+# Get Docker binaries version
 infos:
 	echo "Using $(shell docker --version)"
 	echo "Using $(shell docker-compose --version)"
 .PHONY: infos
 
 ## Build Docker image
-image:
+build:
 	docker build --rm -t $(USERNAME)/$(APPNAME) .
-.PHONY: image
+.PHONY: build
 
+# Add app to the Docker stack
 with-app:
 	$(eval COMPOSE_FILES += -f docker-compose.app.yml)
 .PHONY: with-app
@@ -40,22 +42,26 @@ test: with-app
 	CMD=test APP_DATABASE_URI=$(DB) docker-compose $(COMPOSE_FILES) up --no-deps --no-build --abort-on-container-exit --exit-code-from api api
 .PHONY: test
 
-## Using Elasticsearch as main database)
+## Using Elasticsearch as main database
 with-elastic:
 	echo "Using Elsaticsearch as DB..."
 	$(eval DB=elasticsearch://elasticsearch:9200/keeper)
 .PHONY: with-elastic
 
 ## Start required services
-up: infos compose-up
+deploy: infos compose-up
 .PHONY: up
 
 ## Stop all services
-down: compose-down-force
+undeploy: compose-down-force
 .PHONY: down
 
+## Show services logs
+logs: compose-logs
+.PHONY: logs
+
 ## Install as a service (needs root privileges)
-install: image
+install: build
 	echo "Install as a service..."
 	mkdir -p /var/opt/$(APPNAME)/storage/upload
 	mkdir -p /var/opt/$(APPNAME)/storage/exports
@@ -85,10 +91,4 @@ uninstall:
 	systemctl daemon-reload
 	$(MAKE) rm clean
 .PHONY: uninstall
-
-## Deploy application
-deploy:
-	echo "Deploying application..."
-	git push deploy
-.PHONY: deploy
 
