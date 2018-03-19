@@ -44,7 +44,7 @@ const extractOpenGraphProps = function (document) {
   for (let tag of metas) {
     const attr = tag.getAttribute('property')
     if (attr !== null && attr.startsWith('og:')) {
-      const prop = attr.split(':')[1]
+      const prop = attr.substr(3)
       result[prop] = tag.getAttribute('content')
     }
   }
