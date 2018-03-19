@@ -31,6 +31,27 @@ const extractBaseUrl = function (document) {
 }
 
 /**
+ * Extract Open Graph properties from the document head.
+ * @param {Object} document DOM
+ * @return {Object} open graph properties
+ */
+const extractOpenGraphProps = function (document) {
+  const result = {}
+  if (!document.head) {
+    return result
+  }
+  const metas = document.head.getElementsByTagName('meta')
+  for (let tag of metas) {
+    const attr = tag.getAttribute('property')
+    if (attr !== null && attr.startsWith('og:')) {
+      const prop = attr.split(':')[1]
+      result[prop] = tag.getAttribute('content')
+    }
+  }
+  return result
+}
+
+/**
  * Extract resources from document content.
  * For now, only images are extracted.
  * @param {Object} doc Document
@@ -41,6 +62,16 @@ const extractResources = function (doc, document) {
   // Extract resources from the DOM and remove src attribute
   // from the DOM in order to prevent direct reference.
   const resources = []
+  if (doc.metas.image) {
+    // Add document Open Graph illustration in first position
+    // This in order to be the document illustration.
+    const src = doc.metas.image
+    resources.push({
+      key: hash.hashUrl(src),
+      contentType: mime.lookup(src.replace(/\?.*$/, '')),
+      origin: src
+    })
+  }
   const images = document.getElementsByTagName('img')
   for (let img of images) {
     if (img.hasAttribute('src')) {
@@ -86,6 +117,7 @@ const extractHtml = function (doc, meta) {
   .then((read) => {
     // Step 1: Clean up the DOM
     const baseUrl = extractBaseUrl(read.document) || doc.origin
+    doc.metas = extractOpenGraphProps(read.document)
     cleaner.cleanup(read.document, {baseUrl: baseUrl})
     // Step 2: Ask to Readability to extract the main content
     // But before save the whole content in case of Readability fails
@@ -109,9 +141,10 @@ const extractHtml = function (doc, meta) {
         })
       })
     }
-    // Step 3: Setup the title
+    // Step 3: Setup the title if not provided
     if (!doc.title && read.title) {
-      doc.title = read.title
+      // Extract title from metas or header
+      doc.title = doc.metas.title || read.title
     }
     return dom
   })
