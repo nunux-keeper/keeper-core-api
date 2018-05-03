@@ -75,10 +75,10 @@ module.exports = {
       decorator.user.gravatar(),
       decorator.user.hal()
     ]
-    userService.getByUid(req.params.uid, decorators)
-    .then(function (user) {
-      res.json(user)
-    }, next)
+    userService.get(req.params.uid, decorators)
+      .then(function (user) {
+        res.json(user)
+      }, next)
   },
 
   /**
@@ -96,7 +96,7 @@ module.exports = {
    */
   deleteUser: function (req, res, next) {
     const uid = req.params.uid
-    if (req.user.uid === uid) {
+    if (req.user.uid === uid || req.user.id === uid) {
       return next(new errors.BadRequest('Unable to self destroy.'))
     }
     userService.remove(uid)

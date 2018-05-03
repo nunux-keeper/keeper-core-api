@@ -15,6 +15,8 @@ const sharingDao = require('../dao').sharing
 const webhookDao = require('../dao').webhook
 const storage = require('../storage')
 
+const objectIdRegExp = new RegExp('^[0-9a-fA-F]{24}$')
+
 /**
  * User services.
  * @module user.service
@@ -23,13 +25,13 @@ const UserService = {}
 
 /**
  * Get user's details.
- * @param {String} id ID
+ * @param {String} id Internal ID or UID
  * @param {Function[]} decorators Decorators to apply
  * @return {Object} the user
  */
 UserService.get = function (id, decorators = []) {
-  return userDao.get(id)
-  .then(function (user) {
+  const fetchUser = objectIdRegExp.test(id) ? userDao.get.bind(userDao) : userDao.findByUid.bind(userDao)
+  return fetchUser(id).then(user => {
     if (!user) {
       return Promise.reject(new errors.NotFound('User not found: ' + id))
     }
@@ -42,6 +44,7 @@ UserService.get = function (id, decorators = []) {
  * @param {String} uid User ID
  * @param {Function[]} decorators Decorators to apply
  * @return {Object} the user
+ * @deprecated get is able to retrieve an user by its UID or its internal ID
  */
 UserService.getByUid = function (uid, decorators = []) {
   return userDao.findByUid(uid)
@@ -94,15 +97,15 @@ UserService.update = function (user, update) {
 
 /**
  * Remove user account.
- * @param {String} uid User ID
+ * @param {String} id Internal ID or UID
  * @return {Object} the removed user
  */
-UserService.remove = function (uid) {
+UserService.remove = function (id) {
   if (!globals.ALLOW_REMOVE_USERS) {
     return Promise.reject('Remove an user is not allowed by the configuration.')
   }
-  return this.getByUid(uid)
-  .then((user) => {
+  const fetchUser = objectIdRegExp.test(id) ? userDao.get.bind(userDao) : userDao.findByUid.bind(userDao)
+  return fetchUser(id).then((user) => {
     if (!user.id) {
       return Promise.reject('Unable to remove user %j. ID not defined.')
     }
@@ -121,7 +124,7 @@ UserService.remove = function (uid) {
       eventHandler.user.emit('remove', user)
       return Promise.resolve(user)
     }, (err) => {
-      logger.error('Unable to remove user %j. Data may be inconsistent!')
+      logger.error('Unable to remove user %j. Data may be inconsistent!', id)
       return Promise.reject(err)
     })
   })
