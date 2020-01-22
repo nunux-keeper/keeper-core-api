@@ -4,13 +4,13 @@ services:
   # Redis
   #######################################
   redis:
-    image: "redis:latest"
+    image: "redis:4"
 
   #######################################
   # Database (Mongo)
   #######################################
   mongo:
-    image: "mongo:latest"
+    image: "mongo:3"
 
   #######################################
   # Searchengine (ElasticSearch)
