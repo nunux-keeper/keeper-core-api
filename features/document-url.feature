@@ -19,7 +19,7 @@ Feature: Document API using url
         When I create the following document:
             | origin | https://reader.nunux.org |
         Then I should retrieve the document
-        And  I should have "text/html; charset=utf-8" into the document contentType
+        And  I should have "text/html; charset=UTF-8" into the document contentType
         And  I should have "https://reader.nunux.org" into the document origin
         When I am waiting 1000 ms
         Then I should retrieve the document 1st attachment
