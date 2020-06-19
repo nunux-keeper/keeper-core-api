@@ -37,7 +37,9 @@ const globals = {
   // Use embedded worker
   EMBEDDED_WORKER: process.env.APP_EMBEDDED_WORKER === 'true',
   // Initial client registration access token
-  CLIENT_INITIAL_ACCESS_TOKEN: process.env.APP_CLIENT_INITIAL_ACCESS_TOKEN
+  CLIENT_INITIAL_ACCESS_TOKEN: process.env.APP_CLIENT_INITIAL_ACCESS_TOKEN,
+  // Export format (internal, portable)
+  EXPORT_FORMAT: process.env.APP_EXPORT_FORMAT || 'internal'
 }
 
 module.exports = globals
